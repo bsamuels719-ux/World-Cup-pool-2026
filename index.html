@@ -569,18 +569,41 @@ function removedFromBracket(bp, teamsToRemove) {
   };
 }
 function stripStaleBracketPicks(currentBP, oldGP, newGP, oldWCR, newWCR) {
+  // Build the new R32 bracket to know who can appear where
+  const newR32 = resolveR32(newGP, (newWCR||[]).length===12 ? newWCR : GROUPS.map(g=>(newGP[g.id]||g.teams)[2]));
+  // Map of team -> their R32 opponent slot index
+  const r32SlotOf = {};
+  newR32.forEach((m,i) => { r32SlotOf[m.a] = i; r32SlotOf[m.b] = i; });
+
+  // For each team currently picked in R32, check if they still appear in ANY R32 slot
+  const validR32teams = new Set(newR32.flatMap(m=>[m.a,m.b]).filter(t=>t&&t!=="TBD"));
+
   const bad = new Set();
-  GROUPS.forEach(g => {
-    const o = oldGP[g.id] || g.teams;
-    const n = newGP[g.id] || g.teams;
-    if (o[0] !== n[0]) bad.add(o[0]);
-    if (o[1] !== n[1]) bad.add(o[1]);
-    if (o[2] !== n[2]) bad.add(o[2]);
+
+  // R32 picks: remove if team no longer in the R32 field at all
+  (currentBP.R32||[]).forEach(t => {
+    if (!validR32teams.has(t)) bad.add(t);
   });
+
+  // For downstream rounds: a team is invalid if they were removed from R32
+  // OR if a team they needed to beat in R32 is now on the same side
+  // Simple rule: if not in R32 anymore, cascade out
+  const newR32w = (currentBP.R32||[]).filter(t => !bad.has(t));
+  const newR16w = (currentBP.R16||[]).filter(t => newR32w.includes(t));
+  const newQFw  = (currentBP.QF||[]).filter(t => newR16w.includes(t));
+  const newSFw  = (currentBP.SF||[]).filter(t => newQFw.includes(t));
+  const newFw   = (currentBP.F||[]).filter(t => newSFw.includes(t));
+  const newChamp = newFw.includes(currentBP.Champion) ? currentBP.Champion : null;
+
+  // Also remove wildcard teams that dropped out of top 8
   const oldWC = new Set((oldWCR||[]).slice(0,8));
   const newWC = new Set((newWCR||[]).slice(0,8));
-  oldWC.forEach(t => { if (!newWC.has(t)) bad.add(t); });
-  return removedFromBracket(currentBP, [...bad]);
+  const droppedWC = [...oldWC].filter(t => !newWC.has(t));
+
+  return removedFromBracket(
+    { R32: newR32w, R16: newR16w, QF: newQFw, SF: newSFw, F: newFw, Champion: newChamp },
+    droppedWC
+  );
 }
 function App(){
   const[screen,setScreen]=useState("home");
@@ -810,8 +833,8 @@ function App(){
           <span style={S.sh}>Rank 12 third-place teams — top 8 advance as wildcards</span>
           <p style={{color:"#3a3a3a",fontSize:10,marginBottom:12,lineHeight:1.6,fontFamily:"'Courier New',monospace"}}>Everything above the gold line advances. Your ranking also sets bracket slots (FIFA Annex C).</p>
           <div style={S.card}><WildcardRanker groupPicks={gp} wcRanking={wcr} onChange={r=>{
+            setBP(prev=>stripStaleBracketPicks(prev,gp,gp,wcr,r));
             setWCR(r);
-            setBP(prev=>stripStaleBracketPicks(prev,gp,r));
           }}/></div>
           <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
             <button style={S.ghost} onClick={()=>setStep(0)}>← Back</button>
