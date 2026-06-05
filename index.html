@@ -793,7 +793,22 @@ function App(){
             {GROUPS.map(g=>(
               <div key={g.id} style={S.card}>
                 <div style={{fontWeight:900,fontSize:11,color:"#c9a227",marginBottom:8,letterSpacing:2,fontFamily:"'Courier New',monospace"}}>GROUP {g.id}</div>
-                <RankList teams={g.teams} ranked={gp[g.id]||g.teams} onChange={o=>setGP(p=>({...p,[g.id]:o}))}/>
+                <RankList teams={g.teams} ranked={gp[g.id]||g.teams} onChange={o=>{
+                  const newGP={...gp,[g.id]:o};
+                  setGP(newGP);
+                  // Only clear bracket picks for teams no longer in R32 field
+                  const newR32=resolveR32(newGP, wcr.length===12?wcr:GROUPS.map(x=>(newGP[x.id]||x.teams)[2]));
+                  const validTeams=new Set(newR32.flatMap(m=>[m.a,m.b]).filter(t=>t&&t!=="TBD"));
+                  setBP(prev=>({
+                    ...prev,
+                    R32:(prev.R32||[]).filter(t=>validTeams.has(t)),
+                    R16:(prev.R16||[]).filter(t=>validTeams.has(t)),
+                    QF:(prev.QF||[]).filter(t=>validTeams.has(t)),
+                    SF:(prev.SF||[]).filter(t=>validTeams.has(t)),
+                    F:(prev.F||[]).filter(t=>validTeams.has(t)),
+                    Champion:validTeams.has(prev.Champion)?prev.Champion:null,
+                  }));
+                }}/>
               </div>
             ))}
           </div>
@@ -821,7 +836,21 @@ function App(){
         {step===1&&<>
           <span style={S.sh}>Rank 12 third-place teams — top 8 advance as wildcards</span>
           <p style={{color:"#3a3a3a",fontSize:10,marginBottom:12,lineHeight:1.6,fontFamily:"'Courier New',monospace"}}>Everything above the gold line advances. Your ranking also sets bracket slots (FIFA Annex C).</p>
-          <div style={S.card}><WildcardRanker groupPicks={gp} wcRanking={wcr} onChange={r=>setWCR(r)}/></div>
+          <div style={S.card}><WildcardRanker groupPicks={gp} wcRanking={wcr} onChange={r=>{
+            setWCR(r);
+            // Only clear bracket picks for teams no longer in R32 field
+            const newR32=resolveR32(gp, r.length===12?r:GROUPS.map(x=>(gp[x.id]||x.teams)[2]));
+            const validTeams=new Set(newR32.flatMap(m=>[m.a,m.b]).filter(t=>t&&t!=="TBD"));
+            setBP(prev=>({
+              ...prev,
+              R32:(prev.R32||[]).filter(t=>validTeams.has(t)),
+              R16:(prev.R16||[]).filter(t=>validTeams.has(t)),
+              QF:(prev.QF||[]).filter(t=>validTeams.has(t)),
+              SF:(prev.SF||[]).filter(t=>validTeams.has(t)),
+              F:(prev.F||[]).filter(t=>validTeams.has(t)),
+              Champion:validTeams.has(prev.Champion)?prev.Champion:null,
+            }));
+          }}/></div>
           <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
             <button style={S.ghost} onClick={()=>setStep(0)}>← Back</button>
             <button style={S.gold} onClick={()=>{const g=ensureGP();setGP(g);setWCR(ensureWCR(g));setStep(2);}}>NEXT: BRACKET →</button>
@@ -941,7 +970,7 @@ function App(){
             setName(entry.name);
             setGP(entry.groupPicks||{});
             setWCR(entry.wcRanking||[]);
-            setBP(EMPTY_BP);
+            setBP(entry.bracketPicks||EMPTY_BP);
             setStep(0);setSub(false);setScreen("entry");
           }}/>
       </div>
