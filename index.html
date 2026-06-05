@@ -790,7 +790,7 @@ function App(){
           <span style={S.sh}>Fill out the knockout bracket</span>
           <p style={{color:"#3a3a3a",fontSize:10,marginBottom:8,lineHeight:1.6,fontFamily:"'Courier New',monospace"}}>R32 is pre-populated from your picks. Tap teams to advance them.</p>
           {entries.find(e=>e.name===name)&&<div style={{background:"rgba(201,162,39,0.07)",border:"1px solid rgba(201,162,39,0.2)",borderRadius:7,padding:"9px 13px",marginBottom:12,fontSize:10,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>
-            ⚠ If you changed your group or wildcard picks, review your bracket — teams that no longer qualify may still appear. Tap the correct team in each match to fix it.
+            ⚠ Your bracket has been reset so it reflects your updated group and wildcard picks. Please redo your bracket picks below.
           </div>}
           <Bracket r32={r32} picks={bp} setPicks={setBP}/>
           <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
@@ -899,7 +899,7 @@ function App(){
             setName(entry.name);
             setGP(entry.groupPicks||{});
             setWCR(entry.wcRanking||[]);
-            setBP(entry.bracketPicks||EMPTY_BP);
+            setBP(EMPTY_BP);
             setStep(0);setSub(false);setScreen("entry");
           }}/>
       </div>
