@@ -753,7 +753,25 @@ function App(){
               </div>
             ))}
           </div>
-          <div style={{textAlign:"right"}}><button style={S.gold} onClick={()=>{const g=ensureGP();setGP(g);setStep(1);}}>NEXT: WILDCARDS →</button></div>
+          <div style={{textAlign:"right"}}><button style={S.gold} onClick={()=>{
+            const g=ensureGP();setGP(g);
+            // Remap wcRanking to new third-place teams, preserving relative order
+            const newThirds=GROUPS.map(x=>(g[x.id]||x.teams)[2]);
+            if(wcr.length===12){
+              // Keep existing order but swap in new third-place teams by group
+              const oldThirds=GROUPS.map(x=>(gp[x.id]||x.teams)[2]);
+              const remapped=wcr.map(t=>{
+                const idx=oldThirds.indexOf(t);
+                return idx!==-1?newThirds[idx]:t;
+              });
+              // Replace any still-stale teams with the correct new thirds
+              const final=remapped.map(t=>newThirds.includes(t)?t:newThirds.find(nt=>!remapped.includes(nt))||t);
+              setWCR(final);
+            } else {
+              setWCR(newThirds);
+            }
+            setStep(1);
+          }}>NEXT: WILDCARDS →</button></div>
         </>}
 
         {step===1&&<>
