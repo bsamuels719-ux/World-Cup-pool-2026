@@ -386,14 +386,23 @@ function EntryViewer({entry, onClose}) {
 }
 
 // ─── LEADERBOARD ──────────────────────────────────────────────────────────────
-function Leaderboard({entries,actuals,hasSubmitted}){
+function Leaderboard({entries,actuals,hasSubmitted,onUnlock,onEdit}){
   const[viewing,setViewing]=useState(null);
+  const[unlockName,setUnlockName]=useState("");
+  const[unlockErr,setUnlockErr]=useState("");
+  const[unlockedName,setUnlockedName]=useState(()=>{try{return localStorage.getItem("wc26_submitted_name")||"";}catch(e){return"";}});
   const scored=entries.map(e=>{
     const g=scoreGroups(e.groupPicks||{},actuals.groupResults||{});
     const w=scoreWildcards(e.groupPicks||{},e.wcRanking||[],actuals.wildcards||[],actuals.groupResults||{});
     const b=scoreBracket(e.bracketPicks||{},actuals.bracket||{});
     return{...e,total:g+w+b,gPts:g,wPts:w,bPts:b};
   }).sort((a,b)=>b.total-a.total||(b.bracketPicks?.Champion===actuals.bracket?.Champion?1:0)-(a.bracketPicks?.Champion===actuals.bracket?.Champion?1:0));
+
+  function tryUnlock(){
+    const match=entries.find(e=>e.name.trim().toLowerCase()===unlockName.trim().toLowerCase());
+    if(match){setUnlockErr("");setUnlockedName(match.name);onUnlock(match.name);}
+    else setUnlockErr("No entry found with that name.");
+  }
 
   return(
     <div>
@@ -403,9 +412,24 @@ function Leaderboard({entries,actuals,hasSubmitted}){
         <span style={{fontSize:10,color:"#333",fontFamily:"'Courier New',monospace"}}>{scored.length} entries</span>
       </div>
       {hasSubmitted
-        ?<p style={{fontSize:10,color:"#555",marginBottom:14,fontFamily:"'Courier New',monospace"}}>Tap any entry to view their full picks.</p>
-        :<div style={{fontSize:10,color:"#555",marginBottom:14,padding:"8px 12px",background:"rgba(201,162,39,0.05)",border:"1px solid rgba(201,162,39,0.1)",borderRadius:6,fontFamily:"'Courier New',monospace"}}>
-          🔒 Submit your own picks to unlock everyone's entries.
+        ?<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+           <p style={{fontSize:10,color:"#555",fontFamily:"'Courier New',monospace"}}>Tap any entry to view their full picks.</p>
+           {unlockedName&&<button style={{...S.ghost,padding:"6px 12px",fontSize:10}} onClick={()=>{const e=entries.find(x=>x.name===unlockedName);if(e)onEdit(e);}}>✏ Edit my picks</button>}
+         </div>
+        :<div style={{marginBottom:16,padding:"12px 14px",background:"rgba(201,162,39,0.05)",border:"1px solid rgba(201,162,39,0.12)",borderRadius:8}}>
+          <div style={{fontSize:10,color:"#c9a227",fontWeight:700,marginBottom:8,fontFamily:"'Courier New',monospace",letterSpacing:1}}>🔒 UNLOCK PICKS VIEWER</div>
+          <p style={{fontSize:10,color:"#555",marginBottom:10,fontFamily:"'Courier New',monospace"}}>Enter your name to confirm you've submitted and unlock everyone's picks.</p>
+          <div style={{display:"flex",gap:6}}>
+            <input
+              style={{...S.inp,flex:1,padding:"8px 10px",fontSize:11}}
+              placeholder="Your name…"
+              value={unlockName}
+              onChange={e=>setUnlockName(e.target.value)}
+              onKeyDown={e=>e.key==="Enter"&&tryUnlock()}
+            />
+            <button style={{...S.gold,padding:"8px 14px",fontSize:10,whiteSpace:"nowrap"}} onClick={tryUnlock}>UNLOCK</button>
+          </div>
+          {unlockErr&&<p style={{fontSize:10,color:"#a44",marginTop:6,fontFamily:"'Courier New',monospace"}}>{unlockErr}</p>}
         </div>
       }
       {scored.length===0&&<p style={{color:"#3a3a3a",fontSize:12,fontFamily:"'Courier New',monospace"}}>No entries yet.</p>}
@@ -746,7 +770,15 @@ function App(){
       </header>
       <div style={S.main}>
         <div style={{fontSize:9,color:"#222",marginBottom:12,textAlign:"right",fontFamily:"'Courier New',monospace"}}>auto-refreshes every 15s</div>
-        <Leaderboard entries={entries} actuals={actuals} hasSubmitted={hasSubmitted}/>
+        <Leaderboard entries={entries} actuals={actuals} hasSubmitted={hasSubmitted}
+          onUnlock={(n)=>{try{localStorage.setItem(SUBMITTED_KEY,n);}catch(e){}setHasSubmitted(true);setName(n);}}
+          onEdit={(entry)=>{
+            setName(entry.name);
+            setGP(entry.groupPicks||{});
+            setWCR(entry.wcRanking||[]);
+            setBP(entry.bracketPicks||EMPTY_BP);
+            setStep(0);setSub(false);setScreen("entry");
+          }}/>
       </div>
     </div>
   );
