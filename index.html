@@ -24,7 +24,7 @@ const { useState, useEffect, useCallback } = React;
 
 const FB_URL = "https://world-cup-pool-2026-1b598-default-rtdb.firebaseio.com";
 const SUBMITTED_KEY = "wc26_submitted_name";
-const LOCK_TIME = new Date("2026-06-12T21:00:00Z"); // 5pm ET = 21:00 UTC
+const LOCK_TIME = new Date("2026-06-12T19:00:00Z"); // 3pm ET = 19:00 UTC
 
 function isLocked() { return new Date() >= LOCK_TIME; }
 function timeUntilLock() {
@@ -158,7 +158,7 @@ function LockBanner(){
   if(msg) return(
     <div style={{background:"rgba(201,162,39,0.07)",border:"1px solid rgba(201,162,39,0.15)",borderRadius:7,padding:"8px 14px",marginBottom:14,display:"flex",alignItems:"center",gap:8}}>
       <span style={{fontSize:12}}>⏳</span>
-      <span style={{fontSize:10,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>{msg} · Picks lock June 12 at 5:00 PM ET</span>
+      <span style={{fontSize:10,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>{msg} · Picks lock June 12 at 3:00 PM ET</span>
     </div>
   );
   return null;
@@ -237,7 +237,27 @@ function RankList({teams,ranked,onChange,disabled}){
 function WildcardRanker({groupPicks,wcRanking,onChange}){
   const[sel,setSel]=useState(null);
   const thirds=GROUPS.map(g=>({group:g.id,team:(groupPicks[g.id]||g.teams)[2]||g.teams[2]}));
-  const ranking=wcRanking.length===12?wcRanking:thirds.map(t=>t.team);
+  const currentThirds=thirds.map(t=>t.team);
+  // Rebuild ranking: start from wcRanking but replace any team whose group's 3rd has changed,
+  // and ensure no duplicates
+  let ranking;
+  if(wcRanking.length===12){
+    // Map old wcRanking entries to current thirds by group position
+    const seen=new Set();
+    ranking=wcRanking.map(team=>{
+      // Find which group this team was 3rd in (by matching current thirds)
+      const inCurrent=currentThirds.includes(team);
+      if(inCurrent&&!seen.has(team)){seen.add(team);return team;}
+      // Find a current third not yet seen
+      const replacement=currentThirds.find(t=>!seen.has(t));
+      if(replacement){seen.add(replacement);return replacement;}
+      return team;
+    });
+    // Ensure all current thirds are present
+    currentThirds.forEach(t=>{if(!ranking.includes(t)){const idx=ranking.findIndex(x=>!currentThirds.includes(x));if(idx!==-1)ranking[idx]=t;}});
+  } else {
+    ranking=currentThirds;
+  }
   const groupOf=t=>thirds.find(x=>x.team===t)?.group||"?";
   const tap=i=>{if(sel===null){setSel(i);return;}if(sel===i){setSel(null);return;}const a=[...ranking];[a[sel],a[i]]=[a[i],a[sel]];onChange(a);setSel(null);};
   const move=(i,dir)=>{const n=i+dir;if(n<0||n>=ranking.length)return;const a=[...ranking];[a[i],a[n]]=[a[n],a[i]];onChange(a);setSel(null);};
@@ -288,7 +308,29 @@ function MatchBox({label,a,b,winner,onPick}){
 // ─── BRACKET ──────────────────────────────────────────────────────────────────
 function Bracket({r32,picks,setPicks,readOnly}){
   const pr32=(i,team)=>{if(readOnly)return;const{a,b}=r32[i];setPicks(p=>({...p,R32:(p.R32||[]).filter(t=>t!==a&&t!==b).concat(team)}));};
-  const pL=(round,team,limit)=>{if(readOnly)return;setPicks(p=>{const c=p[round]||[];if(c.includes(team))return{...p,[round]:c.filter(t=>t!==team)};if(c.length>=limit)return p;return{...p,[round]:[...c,team]};});};
+  const pL=(round,team,limit)=>{if(readOnly)return;setPicks(p=>{
+    const c=p[round]||[];
+    // If already picked, deselect
+    if(c.includes(team))return{...p,[round]:c.filter(t=>t!==team)};
+    // Find the opponent of this team in the relevant match pool
+    // For R16: opponent is whoever was in the same R32 pair
+    // For QF/SF/F: opponent is whoever is in the same pair from previous round
+    let opponent=null;
+    const pool=round==="R16"?R32w:round==="QF"?R16w:round==="SF"?QFw:round==="F"?SFw:[];
+    const pairs=round==="R16"?R16_PAIRS:round==="QF"?QF_PAIRS:round==="SF"?SF_PAIRS:round==="F"?F_PAIRS:[];
+    const teamIdx=pool.indexOf(team);
+    if(teamIdx!==-1){
+      pairs.forEach(([ai,bi])=>{
+        if(ai===teamIdx)opponent=pool[bi];
+        if(bi===teamIdx)opponent=pool[ai];
+      });
+    }
+    // Remove opponent if they were already picked (swap within match)
+    const filtered=opponent?c.filter(t=>t!==opponent):c;
+    // If still at limit after removing opponent, block
+    if(filtered.length>=limit&&!opponent)return p;
+    return{...p,[round]:[...filtered,team]};
+  });};
   const R32w=picks.R32||[],R16t=R32w,R16w=picks.R16||[],QFt=R16w,QFw=picks.QF||[],SFt=QFw,SFw=picks.SF||[],Ft=SFw,Fw=picks.F||[];
   const bp=(teams,pairs)=>pairs.map(([ai,bi])=>({a:teams[ai]||"TBD",b:teams[bi]||"TBD"}));
   const rs={display:"flex",flexDirection:"column",gap:6,minWidth:158};
@@ -487,7 +529,7 @@ function Leaderboard({entries,actuals,onEdit}){
       </div>}
 
       {locked&&<p style={{fontSize:10,color:"#555",marginBottom:14,fontFamily:"'Courier New',monospace"}}>Tap any entry to view their full picks.</p>}
-      {!locked&&<p style={{fontSize:10,color:"#555",marginBottom:6,fontFamily:"'Courier New',monospace"}}>Picks and champion picks visible after lock on June 12 at 5pm ET.</p>}
+      {!locked&&<p style={{fontSize:10,color:"#555",marginBottom:6,fontFamily:"'Courier New',monospace"}}>Picks and champion picks visible after lock on June 12 at 3pm ET.</p>}
 
       {scored.length===0&&<p style={{color:"#3a3a3a",fontSize:12,fontFamily:"'Courier New',monospace"}}>No entries yet.</p>}
       <div style={{display:"flex",flexDirection:"column",gap:5}}>
@@ -531,7 +573,7 @@ function Rules({onClose}){
           <button onClick={onClose} style={{background:"none",border:"none",color:"#666",fontSize:20,cursor:"pointer"}}>✕</button>
         </div>
         {[
-          {t:"OVERVIEW",b:"Three stages: Group Stage → Wildcard Ranking → Knockout Bracket. Submit your picks. Scores update live as results come in. Picks lock at 5pm ET on June 12."},
+          {t:"OVERVIEW",b:"Three stages: Group Stage → Wildcard Ranking → Knockout Bracket. Submit your picks. Scores update live as results come in. Picks lock at 3pm ET on June 12."},
           {t:"GROUP STAGE (max 72 pts)",b:<><p style={{marginBottom:6}}>Rank all 4 teams in each of 12 groups. Only your top 2 picks score.</p><Row l="Top 2, exact position" v="3 pts"/><Row l="Top 2, wrong position" v="1 pt"/><Row l="Missed entirely" v="0 pts"/></>},
           {t:"WILDCARD RANKING (max 24 pts)",b:<><p style={{marginBottom:6}}>Rank all 12 third-place teams. Your top 8 are your wildcard picks.</p><Row l="Team advances + picked 3rd in group" v="3 pts"/><Row l="Team advances, not picked 3rd" v="1 pt"/><Row l="Team does not advance" v="0 pts"/></>},
           {t:"KNOCKOUT BRACKET",b:<><p style={{marginBottom:6}}>R32 auto-populated from your picks. Advance teams round by round.</p><Row l="Round of 32" v="3"/><Row l="Round of 16" v="5"/><Row l="Quarterfinal" v="7"/><Row l="Semifinal" v="9"/><Row l="Finalist" v="11"/><Row l="🏆 Champion" v="15" gold/></>},
