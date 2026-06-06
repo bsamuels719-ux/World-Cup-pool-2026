@@ -601,6 +601,7 @@ const STEPS=["GROUPS","WILDCARDS","BRACKET","REVIEW"];
 function App(){
   const[screen,setScreen]=useState("home");
   const[name,setName]=useState("");
+  const[originalName,setOriginalName]=useState(""); // name before edit, for rename
   const[adminCode,setAC]=useState("");
   const[isAdmin,setAdmin]=useState(false);
   const[adminErr,setAErr]=useState("");
@@ -734,8 +735,8 @@ function App(){
                <button style={S.gold} onClick={()=>{refresh();setScreen("leaderboard");}}>VIEW LEADERBOARD →</button>
              </div>
             :<div style={{maxWidth:320,margin:"0 auto"}}>
-               <input style={S.inp} placeholder="Enter your name to begin…" value={name} onChange={e=>setName(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&name.trim()){setGP({});setWCR([]);setBP(EMPTY_BP);setPendingPin(null);setStep(0);setSub(false);setScreen("entry");}}}/>
-               <button style={{...S.gold,width:"100%",marginTop:7,fontSize:12}} onClick={()=>{if(!name.trim())return;setGP({});setWCR([]);setBP(EMPTY_BP);setPendingPin(null);setStep(0);setSub(false);setScreen("entry");}}>START MY PICKS →</button>
+               <input style={S.inp} placeholder="Enter your name to begin…" value={name} onChange={e=>setName(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&name.trim()){setGP({});setWCR([]);setBP(EMPTY_BP);setPendingPin(null);setOriginalName("");setStep(0);setSub(false);setScreen("entry");}}}/>
+               <button style={{...S.gold,width:"100%",marginTop:7,fontSize:12}} onClick={()=>{if(!name.trim())return;setGP({});setWCR([]);setBP(EMPTY_BP);setPendingPin(null);setOriginalName("");setStep(0);setSub(false);setScreen("entry");}}>START MY PICKS →</button>
              </div>
           }
           <button style={{...S.ghost,marginTop:10}} onClick={()=>setRules(true)}>📋 How to Play</button>
@@ -883,6 +884,11 @@ function App(){
                </div>
              </div>
             :<>
+               {originalName&&<div style={S.card}>
+                 <span style={S.sh}>Display Name</span>
+                 <p style={{color:"#444",fontSize:10,marginBottom:8,fontFamily:"'Courier New',monospace"}}>Change your name as it appears on the leaderboard.</p>
+                 <input style={S.inp} placeholder="Your name…" value={name} onChange={e=>setName(e.target.value)} maxLength={30}/>
+               </div>}
                <div style={S.card}>
                  <span style={S.sh}>Groups</span>
                  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(170px,1fr))",gap:8}}>
@@ -926,14 +932,21 @@ function App(){
                  <button style={S.ghost} onClick={()=>setStep(2)}>← Back</button>
                  <button style={{...S.gold,opacity:syncing?0.6:1}} onClick={()=>{
                    // Check if editing existing entry with PIN already set
-                   const existing=entries.find(e=>e.name.trim()===name.trim());
+                   // Look up by originalName (in case name was changed)
+                   const lookupName=originalName||name.trim();
+                   const existing=entries.find(e=>e.name.trim()===lookupName.trim());
                    if(existing&&existing.pin){
-                     // Already has a PIN — just save with same PIN
                      (async()=>{
                        const g=ensureGP(),w=ensureWCR(g);
-                       const entry={name:name.trim(),groupPicks:g,wcRanking:w,bracketPicks:{...bp},pin:existing.pin,submittedAt:new Date().toISOString()};
+                       const newName=name.trim();
+                       const entry={name:newName,groupPicks:g,wcRanking:w,bracketPicks:{...bp},pin:existing.pin,submittedAt:new Date().toISOString()};
+                       // If name changed, delete old entry first
+                       if(newName!==existing.name){
+                         await deleteEntry(existing.name);
+                       }
                        await saveEntry(entry);
-                       try{localStorage.setItem(SUBMITTED_KEY,name.trim());}catch(e){}
+                       try{localStorage.setItem(SUBMITTED_KEY,newName);}catch(e){}
+                       setOriginalName(newName);
                        setHasSubmitted(true);setSub(true);
                      })();
                    } else {
@@ -968,6 +981,7 @@ function App(){
           onEdit={(entry,saveWithNewPin)=>{
             if(saveWithNewPin){(async()=>{await saveEntry(entry);})();}
             setName(entry.name);
+            setOriginalName(entry.name);
             setGP(entry.groupPicks||{});
             setWCR(entry.wcRanking||[]);
             setBP(entry.bracketPicks||EMPTY_BP);
