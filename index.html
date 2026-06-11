@@ -161,6 +161,111 @@ function LockBanner(){
       <span style={{fontSize:10,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>{msg} · Picks lock June 11 at 3:00 PM ET</span>
     </div>
   );
+
+  // REPORT
+  if(screen==="report") return(
+    <div style={S.app}>
+      <header style={S.hdr}>
+        <div style={{fontSize:14,fontWeight:900,letterSpacing:2,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
+        <nav style={{display:"flex",gap:5,alignItems:"center"}}>
+          <button style={S.nav(false)} onClick={()=>setScreen("leaderboard")}>← Leaderboard</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("home")}>Home</button>
+        </nav>
+      </header>
+      <div style={{...S.main,maxWidth:720}}>
+        <div style={{...S.card,lineHeight:1.8}}>
+          <div style={{fontSize:20,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:4,fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
+          <div style={{fontSize:11,color:"#555",marginBottom:24,fontFamily:"'Courier New',monospace",letterSpacing:2}}>COMMISSIONER'S PRE-TOURNAMENT REPORT</div>
+
+          {[
+            {h:"🏆 THE CHAMPION RACE: A TALE OF TWO CAMPS",b:`This pool has the energy of a dinner party where half the table orders the same thing and then argues about it. After extensive analysis of all 14 entries, your group has split into two dominant factions:
+
+Camp España (5 entries): Brian, Chris L, FIFA World Peace (of shit) Prize, G3, Je Suis Baguette
+Camp France (5 entries): Brian's 1st born, Caroline, Croissant, Mbappe Ever After, Mike W
+
+That's right — if Spain or France wins, five people immediately tie on champion points and the tiebreaker math gets very ugly very fast. Prepare for debates. Prepare for spreadsheets. Prepare for someone texting the group chat at 2am.
+
+The truly important information here: if Spain wins, Brian wins the tiebreaker over his own son. Brian's 1st born took France. This is either a bold act of independence or a cry for help. One thing is certain: someone in that household is going to be insufferable at dinner regardless of the result.`},
+            {h:"🦅 THE CONTRARIANS: FOUR BRAVE SOULS GOING THEIR OWN WAY",b:`These four looked at the conventional wisdom, said "no thank you," and went rogue:
+
+🇧🇷 48 Teams, No Clue! → Brazil
+Bold. Nostalgic. The username is doing a lot of honest work here. Brazil hasn't won since 2002 but sure, why not, chaos is fun.
+
+🏴󠁧󠁢󠁥󠁮󠁧󠁿 Byron Someoneson → England
+Fifty years of hurt. Byron looked at that history and said "this is the year." Respect the commitment. Pour one out for the inevitable penalty shootout loss.
+
+🇦🇷 Carly → Argentina
+Defending champion pick. Actually not crazy! But Carly also has South Africa and Tunisia in her R16, which is either genius or the result of a dartboard.
+
+🇵🇹 Eric → Portugal
+Eric is alone on this island and he seems fine with it. If Ronaldo lifts the trophy, Eric wins. It's beautiful and lonely.`},
+            {h:"🤝 THE FINAL: WHO'S MEETING WHO",b:`France appears in 9 of 14 semifinals. Spain in 6. The most common final matchup is France vs Spain — picked by Brian's 1st born, Caroline, Chris L, and Je Suis Baguette. A Pyrénées derby final. Very poetic. Very continental.
+
+Meanwhile Croissant has somehow maneuvered Paraguay into the Final. Paraguay. In a World Cup Final. Against France. Croissant either knows something we don't, has never watched football, or both.
+
+Carly has constructed an alternate universe where Mexico beats Argentina in the semis and Tunisia makes the Final. The bracket is a work of fiction. It is also the only entry with genuine chaos energy and I respect it enormously.`},
+            {h:"📊 THE CONSENSUS: WHAT EVERYONE AGREES ON",b:`Some teams are so universally trusted that picking against them takes courage:
+
+• France: 12/14 picked in R16 — only Carly and G3 left her out
+• Portugal: 12/14 — only Croissant and Carly said no
+• Spain: 11/14 — nearly universal
+• England: 10/14 — the 4 who didn't are brave
+
+If the usual suspects all make R16, the early leaderboard will be very boring and very tight.`},
+            {h:"🔥 THE HOT TAKES: PICKS ONLY 1-3 PEOPLE MADE",b:`These are where pools are won and lost:
+
+Colombia (3 picks: 48 Teams, Brian's 1st born, Mike W) — If Los Cafeteros run, these three get paid.
+
+Senegal (2 picks: Brian's 1st born, Je Suis Baguette) — A sleeper pick 12 others ignored.
+
+Iran (2 picks: Brian's 1st born, Caroline) — Brian's 1st born has Iran AND Senegal AND Colombia in R16. If any two of those hit, he leaps the board and beats his dad.
+
+Paraguay (1 pick: Croissant only) — In the Final. Alone. Magnificent.
+
+Qatar (1 pick: Caroline only) — The host nation getting R16 treatment. Diplomatic.
+
+Ivory Coast (1 pick: G3 only) — G3 flying the Ivory Coast flag deep. Niche. Spicy.
+
+Türkiye (1 pick: Mike W only) — Mike W, alone, flying the Turkish flag deep into the bracket.`},
+            {h:"⚠️ CHAOS SCENARIOS",b:`If Spain wins: Brian, Chris L, FIFA World Peace (of shit) Prize, G3, and Je Suis Baguette all tie on champion points. Five-way tiebreaker. The group chat will not survive.
+
+If France wins: Brian's 1st born beats his father. Brian will have to live with this for the rest of his life. Conrad Theodore will hear about it at every family dinner until 2045.
+
+If Argentina wins: Carly wins alone and never lets anyone forget it.
+
+If Portugal wins: Eric collects in complete silence, having always known.
+
+If Brazil wins: 48 Teams, No Clue! proves that not having a clue is actually a strategy.
+
+If England wins: Byron Someoneson ascends. Football comes home. Decades of therapy finally pay off.`},
+            {h:"🎖️ POWER RANKINGS (vibes-based, non-scientific)",b:`1. Brian — Methodical. Spain pick, strong conventional bracket. Dad energy, dad picks.
+2. Je Suis Baguette — Spain champion, France final. Clean structure, solid upside.
+3. Brian's 1st born — The chaos wildcard. Colombia, Senegal, Iran in R16. If two hit he's unstoppable.
+4. Mike W — France champion, Argentina SF. Logical, good upside.
+5. Mbappe Ever After — Nearly identical to Mike W. These two will be fighting all tournament.
+6. G3 — Spain winner, England SF, Ivory Coast in R16. Interesting.
+7. FIFA World Peace (of shit) Prize — Best team name. Spain/Brazil final. Feisty.
+8. Eric — Lives and dies with Portugal. Peaceful.
+9. Croissant — Paraguay in the Final. Unhinged. Lovable.
+10. Carly — Pure chaos bracket. High variance. Could win it all or finish last.
+11. 48 Teams, No Clue! — Honest. Brazil. We'll see.
+12. Byron Someoneson — England champion. Brave. Possibly delusional. Definitely fun.
+13. Caroline — Qatar in R16. Egypt in R16. The most hospitable bracket in the pool.
+
+Good luck everyone. May your picks be correct, your wildcards be wild, and your group chat remain civil. The Commissioner has spoken.`},
+          ].map(({h,b})=>(
+            <div key={h} style={{marginBottom:28}}>
+              <div style={{fontSize:13,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:6}}>{h}</div>
+              {b.split("\n\n").map((para,i)=>(
+                <p key={i} style={{fontSize:12,color:"#aaa",marginBottom:10,lineHeight:1.8,fontFamily:"Georgia,serif"}}>{para}</p>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   return null;
 }
 
@@ -720,6 +825,7 @@ function App(){
           <SB/>
           <button style={S.nav(false)} onClick={()=>setRules(true)}>Rules</button>
           <button style={S.nav(false)} onClick={()=>{refresh();setScreen("leaderboard");}}>Leaderboard</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("report")}>📋 Report</button>
           <button style={S.nav(false)} onClick={()=>setScreen("admin")}>Admin</button>
         </nav>
       </header>
@@ -971,6 +1077,7 @@ function App(){
           <SB/>
           <button style={S.nav(false)} onClick={refresh}>↻</button>
           <button style={S.nav(false)} onClick={()=>setScreen("home")}>← Home</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("report")}>📋 Report</button>
           <button style={S.nav(false)} onClick={()=>setScreen("admin")}>Admin</button>
         </nav>
       </header>
@@ -1076,6 +1183,111 @@ function App(){
       </div>
     );
   }
+
+
+  // REPORT
+  if(screen==="report") return(
+    <div style={S.app}>
+      <header style={S.hdr}>
+        <div style={{fontSize:14,fontWeight:900,letterSpacing:2,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
+        <nav style={{display:"flex",gap:5,alignItems:"center"}}>
+          <button style={S.nav(false)} onClick={()=>setScreen("leaderboard")}>← Leaderboard</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("home")}>Home</button>
+        </nav>
+      </header>
+      <div style={{...S.main,maxWidth:720}}>
+        <div style={{...S.card,lineHeight:1.8}}>
+          <div style={{fontSize:20,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:4,fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
+          <div style={{fontSize:11,color:"#555",marginBottom:24,fontFamily:"'Courier New',monospace",letterSpacing:2}}>COMMISSIONER'S PRE-TOURNAMENT REPORT</div>
+
+          {[
+            {h:"🏆 THE CHAMPION RACE: A TALE OF TWO CAMPS",b:`This pool has the energy of a dinner party where half the table orders the same thing and then argues about it. After extensive analysis of all 14 entries, your group has split into two dominant factions:
+
+Camp España (5 entries): Brian, Chris L, FIFA World Peace (of shit) Prize, G3, Je Suis Baguette
+Camp France (5 entries): Brian's 1st born, Caroline, Croissant, Mbappe Ever After, Mike W
+
+That's right — if Spain or France wins, five people immediately tie on champion points and the tiebreaker math gets very ugly very fast. Prepare for debates. Prepare for spreadsheets. Prepare for someone texting the group chat at 2am.
+
+The truly important information here: if Spain wins, Brian wins the tiebreaker over his own son. Brian's 1st born took France. This is either a bold act of independence or a cry for help. One thing is certain: someone in that household is going to be insufferable at dinner regardless of the result.`},
+            {h:"🦅 THE CONTRARIANS: FOUR BRAVE SOULS GOING THEIR OWN WAY",b:`These four looked at the conventional wisdom, said "no thank you," and went rogue:
+
+🇧🇷 48 Teams, No Clue! → Brazil
+Bold. Nostalgic. The username is doing a lot of honest work here. Brazil hasn't won since 2002 but sure, why not, chaos is fun.
+
+🏴󠁧󠁢󠁥󠁮󠁧󠁿 Byron Someoneson → England
+Fifty years of hurt. Byron looked at that history and said "this is the year." Respect the commitment. Pour one out for the inevitable penalty shootout loss.
+
+🇦🇷 Carly → Argentina
+Defending champion pick. Actually not crazy! But Carly also has South Africa and Tunisia in her R16, which is either genius or the result of a dartboard.
+
+🇵🇹 Eric → Portugal
+Eric is alone on this island and he seems fine with it. If Ronaldo lifts the trophy, Eric wins. It's beautiful and lonely.`},
+            {h:"🤝 THE FINAL: WHO'S MEETING WHO",b:`France appears in 9 of 14 semifinals. Spain in 6. The most common final matchup is France vs Spain — picked by Brian's 1st born, Caroline, Chris L, and Je Suis Baguette. A Pyrénées derby final. Very poetic. Very continental.
+
+Meanwhile Croissant has somehow maneuvered Paraguay into the Final. Paraguay. In a World Cup Final. Against France. Croissant either knows something we don't, has never watched football, or both.
+
+Carly has constructed an alternate universe where Mexico beats Argentina in the semis and Tunisia makes the Final. The bracket is a work of fiction. It is also the only entry with genuine chaos energy and I respect it enormously.`},
+            {h:"📊 THE CONSENSUS: WHAT EVERYONE AGREES ON",b:`Some teams are so universally trusted that picking against them takes courage:
+
+• France: 12/14 picked in R16 — only Carly and G3 left her out
+• Portugal: 12/14 — only Croissant and Carly said no
+• Spain: 11/14 — nearly universal
+• England: 10/14 — the 4 who didn't are brave
+
+If the usual suspects all make R16, the early leaderboard will be very boring and very tight.`},
+            {h:"🔥 THE HOT TAKES: PICKS ONLY 1-3 PEOPLE MADE",b:`These are where pools are won and lost:
+
+Colombia (3 picks: 48 Teams, Brian's 1st born, Mike W) — If Los Cafeteros run, these three get paid.
+
+Senegal (2 picks: Brian's 1st born, Je Suis Baguette) — A sleeper pick 12 others ignored.
+
+Iran (2 picks: Brian's 1st born, Caroline) — Brian's 1st born has Iran AND Senegal AND Colombia in R16. If any two of those hit, he leaps the board and beats his dad.
+
+Paraguay (1 pick: Croissant only) — In the Final. Alone. Magnificent.
+
+Qatar (1 pick: Caroline only) — The host nation getting R16 treatment. Diplomatic.
+
+Ivory Coast (1 pick: G3 only) — G3 flying the Ivory Coast flag deep. Niche. Spicy.
+
+Türkiye (1 pick: Mike W only) — Mike W, alone, flying the Turkish flag deep into the bracket.`},
+            {h:"⚠️ CHAOS SCENARIOS",b:`If Spain wins: Brian, Chris L, FIFA World Peace (of shit) Prize, G3, and Je Suis Baguette all tie on champion points. Five-way tiebreaker. The group chat will not survive.
+
+If France wins: Brian's 1st born beats his father. Brian will have to live with this for the rest of his life. Conrad Theodore will hear about it at every family dinner until 2045.
+
+If Argentina wins: Carly wins alone and never lets anyone forget it.
+
+If Portugal wins: Eric collects in complete silence, having always known.
+
+If Brazil wins: 48 Teams, No Clue! proves that not having a clue is actually a strategy.
+
+If England wins: Byron Someoneson ascends. Football comes home. Decades of therapy finally pay off.`},
+            {h:"🎖️ POWER RANKINGS (vibes-based, non-scientific)",b:`1. Brian — Methodical. Spain pick, strong conventional bracket. Dad energy, dad picks.
+2. Je Suis Baguette — Spain champion, France final. Clean structure, solid upside.
+3. Brian's 1st born — The chaos wildcard. Colombia, Senegal, Iran in R16. If two hit he's unstoppable.
+4. Mike W — France champion, Argentina SF. Logical, good upside.
+5. Mbappe Ever After — Nearly identical to Mike W. These two will be fighting all tournament.
+6. G3 — Spain winner, England SF, Ivory Coast in R16. Interesting.
+7. FIFA World Peace (of shit) Prize — Best team name. Spain/Brazil final. Feisty.
+8. Eric — Lives and dies with Portugal. Peaceful.
+9. Croissant — Paraguay in the Final. Unhinged. Lovable.
+10. Carly — Pure chaos bracket. High variance. Could win it all or finish last.
+11. 48 Teams, No Clue! — Honest. Brazil. We'll see.
+12. Byron Someoneson — England champion. Brave. Possibly delusional. Definitely fun.
+13. Caroline — Qatar in R16. Egypt in R16. The most hospitable bracket in the pool.
+
+Good luck everyone. May your picks be correct, your wildcards be wild, and your group chat remain civil. The Commissioner has spoken.`},
+          ].map(({h,b})=>(
+            <div key={h} style={{marginBottom:28}}>
+              <div style={{fontSize:13,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:6}}>{h}</div>
+              {b.split("\n\n").map((para,i)=>(
+                <p key={i} style={{fontSize:12,color:"#aaa",marginBottom:10,lineHeight:1.8,fontFamily:"Georgia,serif"}}>{para}</p>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   return null;
 }
