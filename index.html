@@ -24,7 +24,7 @@ const { useState, useEffect, useCallback } = React;
 
 const FB_URL = "https://world-cup-pool-2026-1b598-default-rtdb.firebaseio.com";
 const SUBMITTED_KEY = "wc26_submitted_name";
-const LOCK_TIME = new Date("2026-06-12T19:00:00Z"); // 3pm ET = 19:00 UTC
+const LOCK_TIME = new Date("2026-06-11T19:00:00Z"); // 3pm ET June 11 = 19:00 UTC
 
 function isLocked() { return new Date() >= LOCK_TIME; }
 function timeUntilLock() {
@@ -158,7 +158,7 @@ function LockBanner(){
   if(msg) return(
     <div style={{background:"rgba(201,162,39,0.07)",border:"1px solid rgba(201,162,39,0.15)",borderRadius:7,padding:"8px 14px",marginBottom:14,display:"flex",alignItems:"center",gap:8}}>
       <span style={{fontSize:12}}>⏳</span>
-      <span style={{fontSize:10,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>{msg} · Picks lock June 12 at 3:00 PM ET</span>
+      <span style={{fontSize:10,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>{msg} · Picks lock June 11 at 3:00 PM ET</span>
     </div>
   );
   return null;
@@ -529,7 +529,7 @@ function Leaderboard({entries,actuals,onEdit}){
       </div>}
 
       {locked&&<p style={{fontSize:10,color:"#555",marginBottom:14,fontFamily:"'Courier New',monospace"}}>Tap any entry to view their full picks.</p>}
-      {!locked&&<p style={{fontSize:10,color:"#555",marginBottom:6,fontFamily:"'Courier New',monospace"}}>Picks and champion picks visible after lock on June 12 at 3pm ET.</p>}
+      {!locked&&<p style={{fontSize:10,color:"#555",marginBottom:6,fontFamily:"'Courier New',monospace"}}>Picks and champion picks visible after lock on June 11 at 3pm ET.</p>}
 
       {scored.length===0&&<p style={{color:"#3a3a3a",fontSize:12,fontFamily:"'Courier New',monospace"}}>No entries yet.</p>}
       <div style={{display:"flex",flexDirection:"column",gap:5}}>
@@ -573,7 +573,7 @@ function Rules({onClose}){
           <button onClick={onClose} style={{background:"none",border:"none",color:"#666",fontSize:20,cursor:"pointer"}}>✕</button>
         </div>
         {[
-          {t:"OVERVIEW",b:"Three stages: Group Stage → Wildcard Ranking → Knockout Bracket. Submit your picks. Scores update live as results come in. Picks lock at 3pm ET on June 12."},
+          {t:"OVERVIEW",b:"Three stages: Group Stage → Wildcard Ranking → Knockout Bracket. Submit your picks. Scores update live as results come in. Picks lock at 3pm ET on June 11."},
           {t:"GROUP STAGE (max 72 pts)",b:<><p style={{marginBottom:6}}>Rank all 4 teams in each of 12 groups. Only your top 2 picks score.</p><Row l="Top 2, exact position" v="3 pts"/><Row l="Top 2, wrong position" v="1 pt"/><Row l="Missed entirely" v="0 pts"/></>},
           {t:"WILDCARD RANKING (max 24 pts)",b:<><p style={{marginBottom:6}}>Rank all 12 third-place teams. Your top 8 are your wildcard picks.</p><Row l="Team advances + picked 3rd in group" v="3 pts"/><Row l="Team advances, not picked 3rd" v="1 pt"/><Row l="Team does not advance" v="0 pts"/></>},
           {t:"KNOCKOUT BRACKET",b:<><p style={{marginBottom:6}}>R32 auto-populated from your picks. Advance teams round by round.</p><Row l="Round of 32" v="3"/><Row l="Round of 16" v="5"/><Row l="Quarterfinal" v="7"/><Row l="Semifinal" v="9"/><Row l="Finalist" v="11"/><Row l="🏆 Champion" v="15" gold/></>},
