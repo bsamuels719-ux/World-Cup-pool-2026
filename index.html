@@ -1028,7 +1028,9 @@ function App(){
       }
       return thirds;
     })();
-    const ar32=resolveR32(Object.keys(actuals.groupResults||{}).length===12?actuals.groupResults:Object.fromEntries(GROUPS.map(g=>[g.id,g.teams])),awcr);
+    // Use entered results per-group, fall back to default only for missing groups
+    const ar32gp=Object.fromEntries(GROUPS.map(g=>[g.id,(actuals.groupResults[g.id]&&actuals.groupResults[g.id].length===4)?actuals.groupResults[g.id]:g.teams]));
+    const ar32=resolveR32(ar32gp,awcr);
     const abp={R32:actuals.bracket?.R32||[],R16:actuals.bracket?.R16||[],QF:actuals.bracket?.QF||[],SF:actuals.bracket?.SF||[],F:actuals.bracket?.F||[],Champion:actuals.bracket?.Champion||null};
     const setABP=upd=>{const n=typeof upd==="function"?upd(abp):upd;saveActuals({...actuals,bracket:n});};
 
