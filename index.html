@@ -10,32 +10,6 @@
     #root { min-height: 100vh; }
   </style>
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-    // ── PASTE YOUR FIREBASE CONFIG HERE ──────────────────────────────────────
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "world-cup-pool-2026-1b598.firebaseapp.com",
-      databaseURL: "https://world-cup-pool-2026-1b598-default-rtdb.firebaseio.com",
-      projectId: "world-cup-pool-2026-1b598",
-      storageBucket: "world-cup-pool-2026-1b598.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID",
-    };
-    // ─────────────────────────────────────────────────────────────────────────
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    window._firebaseDb = db;
-    window.firebaseDatabase = { ref, get, set };
-
-    // Signal React app that Firebase is ready
-    window.dispatchEvent(new Event("firebaseReady"));
-  </script>
-
   <!-- React + Babel -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -109,7 +83,7 @@ const ADMIN_CODE = "France2026";
 const STORAGE_KEY_ENTRIES = "wc26_entries";
 const STORAGE_KEY_ACTUALS = "wc26_actuals";
 
-// ─── CLOUD SYNC (Firebase Realtime Database) ─────────────────────────────────
+// ─── CLOUD SYNC ──────────────────────────────────────────────────────────────
 function withTimeout(promise, ms = 6000) {
   return Promise.race([
     promise,
@@ -118,19 +92,13 @@ function withTimeout(promise, ms = 6000) {
 }
 async function cloudGet(key) {
   try {
-    const db = window._firebaseDb;
-    if (!db) return null;
-    const { ref, get } = window.firebaseDatabase;
-    const snap = await withTimeout(get(ref(db, key)));
-    return snap.exists() ? snap.val() : null;
+    const result = await withTimeout(window.storage.get(key, true));
+    return result ? JSON.parse(result.value) : null;
   } catch { return null; }
 }
 async function cloudSet(key, value) {
   try {
-    const db = window._firebaseDb;
-    if (!db) return false;
-    const { ref, set } = window.firebaseDatabase;
-    await withTimeout(set(ref(db, key), value));
+    await withTimeout(window.storage.set(key, JSON.stringify(value), true));
     return true;
   } catch { return false; }
 }
@@ -1570,19 +1538,8 @@ function App() {
 }
 
 
-    // Mount after Firebase is ready (or immediately if already loaded)
-    function mount() {
-      const root = ReactDOM.createRoot(document.getElementById("root"));
-      root.render(React.createElement(App));
-    }
-
-    if (window._firebaseDb) {
-      mount();
-    } else {
-      window.addEventListener("firebaseReady", mount, { once: true });
-      // Fallback: mount after 3s even if Firebase fails (app still works read-only)
-      setTimeout(() => { if (!window._firebaseDb) mount(); }, 3000);
-    }
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(React.createElement(App));
   </script>
 </body>
 </html>
