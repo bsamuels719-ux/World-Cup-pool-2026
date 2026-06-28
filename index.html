@@ -288,7 +288,7 @@ function MatchBox({label,a,b,winner,onPick}){
 
 // ─── BRACKET ──────────────────────────────────────────────────────────────────
 function Bracket({r32,picks,setPicks,readOnly}){
-  const pr32=(i,team)=>{if(readOnly)return;const{a,b}=r32[i];setPicks(p=>({...p,R32:(p.R32||[]).filter(t=>t!==a&&t!==b).concat(team)}));};
+  const pr32=(i,team)=>{if(readOnly)return;const{a,b}=r32[i];setPicks(p=>{const cur=p.R32||[];if(cur.includes(team))return{...p,R32:cur.filter(t=>t!==team)};return{...p,R32:cur.filter(t=>t!==a&&t!==b).concat(team)};});};
   const pL=(round,team,limit)=>{if(readOnly)return;setPicks(p=>{
     const c=p[round]||[];
     if(c.includes(team))return{...p,[round]:c.filter(t=>t!==team)};
@@ -445,12 +445,41 @@ function Leaderboard({entries,actuals,onEdit}){
   const[editErr,setEditErr]=useState("");
   const[showEditBox,setShowEditBox]=useState(false);
 
+  // Calculate max possible points remaining for each entry
+  function maxPossible(e, actuals){
+    // Already scored points
+    const g=scoreGroups(e.groupPicks||{},actuals.groupResults||{});
+    const w=scoreWildcards(e.groupPicks||{},e.wcRanking||[],actuals.wildcards||[],actuals.groupResults||{});
+    const b=scoreBracket(e.bracketPicks||{},actuals.bracket||{});
+    const current=g+w+b;
+    // Max remaining from bracket rounds not yet decided
+    const ab=actuals.bracket||{};
+    const bp=e.bracketPicks||{};
+    let remaining=0;
+    // For each round, if actual not yet set, add pts for each pick still alive
+    const roundsLeft={R32:3,R16:5,QF:7,SF:9,F:11,Champion:15};
+    ["R32","R16","QF","SF","F"].forEach(r=>{
+      const actualPicks=ab[r]||[];
+      const myPicks=bp[r]||[];
+      // If round not completed yet in actuals, count unscored picks as potentially scoreable
+      myPicks.forEach(t=>{
+        if(!actualPicks.includes(t)) remaining+=roundsLeft[r];
+      });
+    });
+    if(bp.Champion&&!ab.Champion) remaining+=15;
+    // Add group/wildcard max remaining (simplified: ungiven groups)
+    const missingGroups=GROUPS.filter(g=>!actuals.groupResults[g.id]);
+    remaining+=missingGroups.length*6; // max 6pts per group
+    return current+remaining;
+  }
+
   const scored=entries.map(e=>{
     const g=scoreGroups(e.groupPicks||{},actuals.groupResults||{});
     const w=scoreWildcards(e.groupPicks||{},e.wcRanking||[],actuals.wildcards||[],actuals.groupResults||{});
     const b=scoreBracket(e.bracketPicks||{},actuals.bracket||{});
     const bc=bracketComplete(e.bracketPicks);
-    return{...e,total:g+w+b,gPts:g,wPts:w,bPts:b,bracketOk:bc.complete,bracketMissing:bc.missing};
+    const mp=maxPossible(e,actuals);
+    return{...e,total:g+w+b,gPts:g,wPts:w,bPts:b,bracketOk:bc.complete,bracketMissing:bc.missing,maxPts:mp};
   }).sort((a,b)=>b.total-a.total||(b.bracketPicks?.Champion===actuals.bracket?.Champion?1:0)-(a.bracketPicks?.Champion===actuals.bracket?.Champion?1:0));
 
   function tryEdit(){
@@ -502,7 +531,10 @@ function Leaderboard({entries,actuals,onEdit}){
           <div key={e.name} onClick={()=>locked&&setViewing(e)} style={{display:"flex",alignItems:"center",gap:10,padding:"11px 14px",background:i===0?"rgba(201,162,39,0.07)":"rgba(255,255,255,0.02)",border:`1px solid ${i===0?"rgba(201,162,39,0.25)":!e.bracketOk&&!locked?"rgba(180,100,0,0.25)":"rgba(255,255,255,0.05)"}`,borderRadius:7,cursor:locked?"pointer":"default"}}>
             <span style={{fontSize:16,minWidth:24}}>{"🥇🥈🥉".split("").slice(i*2,i*2+2).join("")||`${i+1}.`}</span>
             <div style={{flex:1,minWidth:0}}>
-              <div style={{fontWeight:700,fontSize:13,color:"#ddd"}}>{e.name}</div>
+              <div style={{display:"flex",alignItems:"center",gap:6}}>
+                <span style={{fontWeight:700,fontSize:13,color:"#ddd"}}>{e.name}</span>
+                <span style={{fontSize:8,color:"#555",fontFamily:"'Courier New',monospace"}}>#{i+1}</span>
+              </div>
               {locked&&(e.bracketPicks?.Champion
                 ?<div style={{fontSize:10,color:"#888",marginTop:2,display:"flex",alignItems:"center",gap:3}}><span style={{fontSize:12}}>{FLAGS[e.bracketPicks.Champion]||"🏳"}</span><span style={{fontFamily:"'Courier New',monospace"}}>{e.bracketPicks.Champion}</span></div>
                 :<div style={{fontSize:9,color:"#3a3a3a",marginTop:2,fontFamily:"'Courier New',monospace"}}>no champion picked</div>
@@ -511,6 +543,7 @@ function Leaderboard({entries,actuals,onEdit}){
                 ?<div style={{fontSize:9,color:"#4a8",marginTop:2,fontFamily:"'Courier New',monospace"}}>✓ bracket complete</div>
                 :<div style={{fontSize:9,color:"#c96",marginTop:2,fontFamily:"'Courier New',monospace"}}>⚠ incomplete: {e.bracketMissing.join(" · ")}</div>
               )}
+              <div style={{fontSize:8,color:"#444",marginTop:2,fontFamily:"'Courier New',monospace"}}>max possible: <b style={{color:"#666"}}>{e.maxPts}</b></div>
             </div>
             <div style={{display:"flex",gap:8,fontSize:10,color:"#444",fontFamily:"'Courier New',monospace"}}>
               <span>G:<b style={{color:"#777"}}>{e.gPts}</b></span>
