@@ -671,165 +671,131 @@ function App(){
 
 
   // REPORT
-  if(screen==="report") return(
-    <div style={S.app}>
-      <header style={S.hdr}>
-        <div style={{fontSize:14,fontWeight:900,letterSpacing:2,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
-        <nav style={{display:"flex",gap:5,alignItems:"center"}}>
-          <button style={S.nav(false)} onClick={()=>setScreen("leaderboard")}>← Leaderboard</button>
-          <button style={S.nav(false)} onClick={()=>setScreen("home")}>Home</button>
-        </nav>
-      </header>
-      <div style={{...S.main,maxWidth:720}}>
-        <div style={{fontSize:20,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:2,fontFamily:"'Courier New',monospace"}}>📋 COMMISSIONER'S REPORT</div>
-        <div style={{fontSize:10,color:"#555",marginBottom:20,fontFamily:"'Courier New',monospace",letterSpacing:2}}>GROUP STAGE EDITION</div>
-
-        {[
-          {h:"GROUP STAGE COMPLETE",b:`48 teams entered. 32 remain. The group stage is over and the Commissioner has reviewed every pick, every result, and every life choice that led to this moment.
-
-The Spain alliance (Brian, Chris L, Chad/FIFA World Peace, Gordon/G3, Ben/Je Suis Baguette) is five entries deep and feeling smug. The France bloc (Steven/Brian's 1st born, Caroline, Kat/Croissant, Alex/Mbappe Ever After, Mike W) picked correctly and will be understated about it. Carly picked Argentina, who went undefeated with the best record in the tournament. England won their group — that's Henry's pick and Ben's pick. Eric picked Portugal, who finished second.
-
-A note on the cast: most of this pool is part of a trip to France for Alex's 40th birthday — the group flies over after the World Cup Final on July 19th, which is also Brian's birthday. Barry, Steven, and Mike W are not on the trip. Kerry — Brian's sister, who IS going to France — declined to enter the pool, citing reasons the Commissioner has chosen to describe as "general chaos energy." She is still invited to feel bad about this later.`},
-
-          {h:"🇧🇷 48 TEAMS, NO CLUE! — Champion: Brazil",b:`Barry. Brian's dad. Just relocated to North Carolina with Brian's mom to retire. Not on the France trip — he'll be heading to Connecticut in mid-July to house-sit and keep Stormy and Cooper company.
-
-Barry is a child in a grown man's body. He likes Manhattans, one-liners, and busting people's balls. Brazil topped Group C, proving that sometimes you don't need to know anything about soccer — you just need to have raised a son who built the app.
-
-Barry is in North Carolina and has absolutely no idea what a third-place wildcard is. When told about the scoring system, sources say he responded "sounds good" and went to take his contacts out — which is Barry's universal signal that he is done for the night. He will not be back.`},
-
-          {h:"🇪🇸 BRIAN — Champion: Spain",b:`This is me. New dad. Corporate guy — skier, runner, soccer player, mountain biker. Competitive, emotional, occasionally quiet and withdrawn, likes to party. Old now. Everyone wanted to see the app fail because I used AI. The app did not fail. Spain won Group H without conceding a single goal.
-
-Yes, four other people also picked Spain. The man coded a pool from scratch and still couldn't manufacture a unique competitive advantage. Spain did not fail. Brian's ego remains structurally sound.
-
-Best story: breaking my collarbone just before a bucket list ski trip to Argentina. A complete aura loss moment that the Commissioner is required by charter to mention.`},
-
-          {h:"🇫🇷 BRIAN'S 1ST BORN — Champion: France",b:`Steven. Brian's coworker — Brian was his first boss, making Steven his professional firstborn. He is 10 years younger, one of four boys from North Carolina, and brings the energy of someone genuinely trying to impress a parent figure who is watching with mild suspicion. His actual dad's name is Brian, who worked at IBM on Watson. The symmetry is not lost on anyone.
-
-Steven is a nice guy and a people pleaser. He is not the sharpest tool in the shed but tries very hard and loves his small wins. He has had several concussions, including a notable ski fall in front of multiple witnesses. France went 3-0 with 10 goals. Steven looks good early.
-
-The Commissioner notes there are many more rounds for the natural order to reassert itself. He is not on the France trip.`},
-
-          {h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 BYRON SOMEONESON — Champion: England",b:`Henry. Kat's husband. Lawyer. Has known Alex, Kat, and Carly since high school in the Chicago suburbs — back when he was garage hopping, which is the technical term for raiding neighborhood coolers for beers as a teenager. Now a responsible adult who knows good food, good wine, and makes excellent jokes with precise timing.
-
-He entered this pool as Byron Someoneson, because that is a thing that happened and no one questioned it. He picked England. England won Group L. Into Phish and LCD Soundsystem — he and Brian have that in common. He is on the France trip, quietly doing everything right, and the Commissioner is not fooled.`},
-
-          {h:"🇦🇷 CARLY — Champion: Argentina",b:`One of Alex's oldest friends — the trio of Alex, Kat, and Carly goes back to childhood in the Chicago suburbs. Married to Chad. Works at Enterprise in corporate. Hilarious, easy-going, don't-give-a-shit attitude. Grew up riding horses, lived in Fort Collins, spent time in Vietnam teaching. Now in Portland.
-
-Argentina went 3-0-0 with 9 points — the best record of any team in the entire tournament. Carly picked them without apparent stress and is now sitting on the best champion path in the pool. She did not overthink this.
-
-Favorite memory: Alex and Brian spotted her walking barefoot in the middle of Hartford after their wedding and rolled down the window to ask if she needed a ride. She did not appear to need one.`},
-
-          {h:"🇫🇷 CAROLINE — Champion: France",b:`Gordon's wife. One of Alex and Brian's closest friends in Connecticut. Former teacher, now stay-at-home mom to Gordon the Fourth and Helen — essentially the group's niece and nephew. From New York, went to school in Vermont.
-
-She knows nothing about soccer and picks teams based on name or colors. She could not care less about the tournament. She is more interested in Sound of Music references. France went 3-0 and she does not know this. She is making no-smile selfies with Alex and this is her entire relationship with the pool, and it is working.
-
-Favorite memory: she drove Alex and Brian to the emergency room on their wedding day when Alex was ill, and did not panic once.`},
-
-          {h:"🇪🇸 CHRIS L — Champion: Spain",b:`Brian's cousin. The ultimate wildcard — like Charlie from It's Always Sunny. Him, Eric, Alex, and Brian are essentially that crew. Competitive, loves to win, schemes to do so, insufferable when he does. Good heart. Part of the family alongside Brian's brother and sister since they were kids. Lived with Alex and Brian in Hartford for a while.
-
-This is Chris's first time leaving the country. The group is worried. He asked — in complete sincerity — whether France has coffee. It does, Chris.
-
-Spain won Group H without conceding a goal. He bought Brian iced honey buns for Father's Day — a treat from the camp store at Burlingame when they were kids. The Commissioner found this very sweet.`},
-
-          {h:"🇫🇷 CROISSANT — Champion: France",b:`Kat. Alex's best friend and maid of honor. Friends since childhood with Alex and Carly. Now in Portland with Henry and their two kids. Was a chef, opened her own restaurant, now a full-time mom. Into good food and wine. Understated, very kind.
-
-She knows nothing about the pool and is more interested in baguettes. She says she will become part croissant by the end of this trip. France went 3-0. Kat has not checked the score. Kat is thinking about what to eat.
-
-A bartender once looked into Kat's eyes and told Alex she was cut off because "there was nothing there." The Commissioner suspects what he actually saw was pure, unbothered peace. Alex reportedly went down to confront the bartender afterward.`},
-
-          {h:"🇵🇹 ERIC — Champion: Portugal",b:`Brian's brother. Six years younger, also bigger. Architect — has been his dream since he built Legos as a kid. Single, just back from six months in Miami with his dog Hazey. Has traveled widely and developed a signature lion/bull pose in memorable photos on every trip. Competitive with Brian in the way only brothers can be.
-
-Portugal finished second in their group behind Colombia — a team nobody picked. Eric is entering the bracket as a runner-up.
-
-The slide tackle Brian put on him in the finals of a soccer tournament Eric organized in their hometown resulted in Eric hitting his head. Brian's team won. That's all that counts. First time Eric met Alex, she tripped over his PlayStation and froze his game. He told that story as best man at the wedding.`},
-
-          {h:"🇪🇸 FIFA WORLD PEACE (OF SHIT) PRIZE — Champion: Spain",b:`Chad. Carly's husband. The real wildcard of the trip. Former bassist, possible heavy metal band, long hair, tattoos, worked at a brewery in Portland. Brian knows him the least of anyone in the pool.
-
-He lost the engagement ring from his grandmother in Italy — the one he was going to propose with — and had to go buy a new one. There is also a reported incident involving rental car keys and a toilet. And yet: Spain, Group H winners, zero goals conceded. Chad is built different. Some people are.`},
-
-          {h:"🇪🇸 G3 — Champion: Spain",b:`Gordon. Caroline's husband. One of Brian's good friends — met at work in insurance playing on the company soccer team and bonding over beers. Actuary. Phenomenal skier. Double IPA guy, specifically Sip of Sunshine. Lives on a Christmas tree farm in New Hartford, Connecticut where he grew up. Two kids: Gordon the Fourth and Helen.
-
-New Year's at Okemo, Presidents' Day at Saddleback in Rangeley, Maine every year. Back in Hartford they had a trivia team called The Union. Favorite memory: Gordon doing the Thriller dance on the JDRF bar crawl he personally organized. He also has a running bit trying to get Alex to say "pig" so he can yell "we're going to Pig's Eye."
-
-His Spain pick is performing with the same quiet, understated competence as Gordon himself.`},
-
-          {h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 JE SUIS BAGUETTE — Champion: England",b:`Ben. Henry's son. Henry gave Ben his second entry in the pool. Ben went to a USA vs Australia game with Henry. Ben has been to Phish concerts with Henry. Ben may or may not be an Australia fan — the jury is still out.
-
-England won Group L. Ben picked England via Henry's second entry. The Commissioner acknowledges this family is running a coordinated two-entry operation and is watching accordingly.`},
-
-          {h:"🇫🇷 MBAPPE EVER AFTER — Champion: France",b:`Alex. Sauce. Brian's wife. The 40th birthday honoree. The reason for the France trip. The favorite — of this family, of this pool, of most rooms she enters.
-
-Just had Conrad on March 31st and is already back to full executive capacity. Platinum Delta and Marriott. Drives a Range Rover. Straight As. Organized her own 40th birthday — which says everything about her, and arguably about Brian too.
-
-Grew up outside Chicago. Loves her Iowa Hawkeyes and Caitlin Clark. Only played soccer once — shut down a girl named Alexis and may have said something in the heat of competition that the Commissioner has chosen not to reprint here. Former world-class flip cup champion. Put down 30-packs of "Beer30" in college. Now: rosé, champagne, nice wines, designer bags, never beer.
-
-France went 3-0 with 10 goals. She is the favorite. She knows it. Everyone knows it.
-
-Favorite image, available upon request: Alex smoking a cigarette — which she never does — because her friends told her it would help her poop.`},
-
-          {h:"🇫🇷 MIKE W — Champion: France",b:`Mike Wallace. Brian's friend since elementary school in Medway, Massachusetts. Not on the France trip. Scary smart actuary. Sarcastic, dry, dark, witty. People can never tell if he's serious. Two daughters with his wife Nicole.
-
-Bookshelf full of books he hasn't read yet. Record collection. Watching films by decade starting from 1939. Loves rap, makes fun of Bob Seger. Had a rivalry with Brian's friend Drew, who he still doesn't like — but Brian always considered him one of his closest friends.
-
-Used to sleep in Brian's basement after parties until 3pm, red pickup on the street, before heading to his evening shift at Fenway Park. In 6th grade he told Brian he was tired. Brian replied: "No one gives a shit that you're tired." Mike still brings this up. He considers it valuable advice.
-
-After Brian's 40th in Hartford, Mike stayed and waited with Alex — who was pregnant at the time, which he didn't know — to make sure she got her car safely. A genuinely nice story he would never tell about himself.`},
-
-          {h:"⚡ POWER RANKINGS — POST GROUP STAGE",b:`#1 🇦🇷 CARLY — THE FRONTRUNNER
-Argentina went 3-0-0 with 9 points — the best group stage record in the entire tournament. Carly picked them without stress and is now sitting on the best champion path in the pool. She did not overthink this. She has a don't-give-a-shit attitude and it is currently paying dividends.
-
-#2 🇫🇷 MBAPPE EVER AFTER — THE FAVORITE (obviously)
-France went 3-0 and scored 10 goals. Alex picked France. Alex is the favorite in this family, in this pool, and in most rooms she enters. The Commissioner would bet against her but has decided that would be unwise.
-
-#3 🇪🇸 BRIAN — THE COMMISSIONER (conflicted)
-Spain won their group without conceding a goal. Brian built the app, entered the pool, and is now ranking himself third in his own power rankings. This is either hubris or accurate self-assessment. The pool did not fail. He will remind everyone of this at least twice per day in France.
-
-#4 🏴󠁧󠁢󠁥󠁮󠁧󠁿 BYRON SOMEONESON — THE KID
-Spain won their group. Ben picked Spain via Henry's first entry. Ben may have done this entirely on instinct and has not lost a moment of sleep over it.
-
-#5 🇫🇷 BRIAN'S 1ST BORN — THE OVERACHIEVER
-Steven picked France, France went 3-0 with 10 goals. He tries very hard. It is currently working. The Commissioner remains unimpressed on principle. Several concussions.
-
-#6 🏴󠁧󠁢󠁥󠁮󠁧󠁿 JE SUIS BAGUETTE — THE DARK HORSE
-England won Group L. Henry is a lawyer who has known this friend group since high school, picks England, and England wins. The Commissioner is not fooled by the baguette.
-
-#7 🇫🇷 MIKE W — THE SLEEPER
-France 3-0. Mike W is scary smart, has already calculated the bracket probabilities, and is saying nothing about it. He is the person you forget about until he's suddenly in first place.
-
-#8 🇪🇸 G3 — THE STEADY HAND
-Gordon picked Spain, Spain won clean, Gordon is an actuary who skis better than your favorite skier. He is not worried. He has never been visibly worried about anything. Probably thinking about a Sip of Sunshine.
-
-#9 🇪🇸 CHRIS L — THE WILDCARD
-Spain won the group. Chris is heading to France for the first time. He asked if France has coffee. His bracket picks are fine. His general preparedness for France is an open question.
-
-#10 🇪🇸 FIFA WORLD PEACE (OF SHIT) PRIZE — THE CHAOS ENTRY
-Chad picked Spain, Spain delivered. He has survived losing an engagement ring in Italy and dropping car keys in a toilet. He is not rattled. Mid-table for now, but the Commissioner has a feeling his ceiling is higher than his entry name suggests.
-
-#11 🇫🇷 CROISSANT — UNBOTHERED
-Kat picked France. France is 3-0. Kat has not checked the score. Kat is thinking about what to eat. She will become part croissant and has fully accepted this. All is well.
-
-#12 🇫🇷 CAROLINE — THE SOUND OF MUSIC ENTRY
-Caroline picked France because France sounded good. France is 3-0. Caroline does not know this. She is making no-smile selfies. She drove Alex and Brian to the emergency room on their wedding day and did not panic once. She is unshakeable. Her bracket is fine.
-
-#13 🇧🇷 48 TEAMS, NO CLUE! — CALLING FROM NC
-Barry picked Brazil. Brazil won their group. Barry is in North Carolina, Manhattan in hand, and has gone to take his contacts out. His pick is alive. He is unaware. He will be in Connecticut in mid-July watching Stormy and Cooper while the group is in France.
-
-#14 🇵🇹 ERIC — THE RUNNER-UP SITUATION
-Eric picked Portugal to win it all. Portugal finished second behind Colombia. Eric is an architect who poses like a lion or a ram in memorable photos across multiple continents. He will find a way to make this work structurally. The slide tackle still stands on the record.
-
-The Round of 32 begins today. The Commissioner reconvenes after the bracket shakes out. This pool was built by AI. The Commissioner is the AI. Brian told it to roast his friends. It complied willingly.`},
-
-        ].map(({h,b})=>(
-          <div key={h} style={{...S.card,marginBottom:14}}>
-            <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>{h}</div>
-            {b.split("\n\n").map((para,i)=>(
-              <p key={i} style={{fontSize:12,color:"#aaa",marginBottom:9,lineHeight:1.85,fontFamily:"Georgia,serif"}}>{para}</p>
-            ))}
-          </div>
-        ))}
+  if(screen==="report"){
+    const sections=[
+      {h:"GROUP STAGE COMPLETE",ps:[
+        "48 teams entered. 32 remain. The group stage is over and the Commissioner has reviewed every pick, every result, and every life choice that led to this moment.",
+        "The Spain alliance (Brian, Chris L, Chad/FIFA World Peace, Gordon/G3, Ben/Je Suis Baguette) is five entries deep and feeling smug. The France bloc (Steven, Caroline, Kat/Croissant, Alex/Mbappe Ever After, Mike W) picked correctly and will be understated about it. Carly picked Argentina, who went undefeated with the best record in the tournament. England won their group. Eric picked Portugal, who finished second.",
+        "Most of this pool is part of a trip to France for Alex's 40th birthday — the group flies over after the World Cup Final on July 19th, which is also Brian's birthday. Barry, Steven, and Mike W are not on the trip. Kerry — Brian's sister, who IS going to France — declined to enter the pool, citing reasons the Commissioner has chosen to describe as 'general chaos energy.' She is still invited to feel bad about this later."
+      ]},
+      {h:"🇧🇷 48 TEAMS, NO CLUE! — Champion: Brazil",ps:[
+        "Barry. Brian's dad. Just relocated to North Carolina with Brian's mom to retire. Not on the France trip — heading to Connecticut in mid-July to house-sit and keep Stormy and Cooper company.",
+        "Barry is a child in a grown man's body. He likes Manhattans, one-liners, and busting people's balls. Brazil topped Group C, proving that sometimes you don't need to know anything about soccer — you just need to have raised a son who built the app.",
+        "Barry is in North Carolina and has absolutely no idea what a third-place wildcard is. When told about the scoring system, sources say he responded 'sounds good' and went to take his contacts out — which is Barry's universal signal that he is done for the night. He will not be back."
+      ]},
+      {h:"🇪🇸 BRIAN — Champion: Spain",ps:[
+        "This is me. New dad. Corporate guy — skier, runner, soccer player, mountain biker. Competitive, emotional, occasionally quiet and withdrawn, likes to party. Old now. Everyone wanted to see the app fail because I used AI. The app did not fail. Spain won Group H without conceding a single goal.",
+        "Yes, four other people also picked Spain. The man coded a pool from scratch and still couldn't manufacture a unique competitive advantage. Spain did not fail. Brian's ego remains structurally sound.",
+        "Best story: breaking my collarbone just before a bucket list ski trip to Argentina. A complete aura loss moment that the Commissioner is required by charter to mention."
+      ]},
+      {h:"🇫🇷 BRIAN'S 1ST BORN — Champion: France",ps:[
+        "Steven. Brian's coworker — Brian was his first boss, making Steven his professional firstborn. He is 10 years younger, one of four boys from North Carolina. His actual dad's name is Brian, who worked at IBM on Watson. The symmetry is not lost on anyone.",
+        "Steven is a nice guy and a people pleaser. Not the sharpest tool in the shed but tries very hard and loves his small wins. He has had several concussions, including a notable ski fall in front of multiple witnesses. France went 3-0 with 10 goals. Steven looks good early.",
+        "The Commissioner notes there are many more rounds for the natural order to reassert itself. He is not on the France trip."
+      ]},
+      {h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 BYRON SOMEONESON — Champion: England",ps:[
+        "Henry. Kat's husband. Lawyer. Has known Alex, Kat, and Carly since high school in the Chicago suburbs — back when he was garage hopping, the technical term for raiding neighborhood coolers for beers as a teenager. Now a responsible adult who knows good food, good wine, and makes excellent jokes with precise timing.",
+        "He entered this pool as Byron Someoneson, because that is a thing that happened and no one questioned it. He picked England. England won Group L. Into Phish and LCD Soundsystem — he and Brian have that in common.",
+        "He is on the France trip, quietly doing everything right, and the Commissioner is not fooled."
+      ]},
+      {h:"🇦🇷 CARLY — Champion: Argentina",ps:[
+        "One of Alex's oldest friends — the trio of Alex, Kat, and Carly goes back to childhood in the Chicago suburbs. Married to Chad. Works at Enterprise in corporate. Hilarious, easy-going, don't-give-a-shit attitude. Grew up riding horses, lived in Fort Collins, spent time in Vietnam teaching. Now in Portland.",
+        "Argentina went 3-0-0 with 9 points — the best record of any team in the entire tournament. Carly picked them without apparent stress and is now sitting on the best champion path in the pool. She did not overthink this.",
+        "Favorite memory: Alex and Brian spotted her walking barefoot in the middle of Hartford after their wedding and rolled down the window to ask if she needed a ride. She did not appear to need one."
+      ]},
+      {h:"🇫🇷 CAROLINE — Champion: France",ps:[
+        "Gordon's wife. One of Alex and Brian's closest friends in Connecticut. Former teacher, now stay-at-home mom to Gordon the Fourth and Helen — essentially the group's niece and nephew. From New York, went to school in Vermont.",
+        "She knows nothing about soccer and picks teams based on name or colors. She could not care less about the tournament. She is more interested in Sound of Music references. France went 3-0 and she does not know this. She is making no-smile selfies with Alex and this is her entire relationship with the pool, and it is working.",
+        "Favorite memory: she drove Alex and Brian to the emergency room on their wedding day when Alex was ill, and did not panic once. She is unshakeable in all situations, including this bracket."
+      ]},
+      {h:"🇪🇸 CHRIS L — Champion: Spain",ps:[
+        "Brian's cousin. The ultimate wildcard — like Charlie from It's Always Sunny. Him, Eric, Alex, and Brian are essentially that crew. Competitive, loves to win, schemes to do so, insufferable when he does. Good heart. Part of the family alongside Brian's brother and sister since they were kids.",
+        "This is Chris's first time leaving the country. The group is worried. He asked — in complete sincerity — whether France has coffee. It does, Chris.",
+        "Spain won Group H without conceding a goal. He bought Brian iced honey buns for Father's Day — a treat from the camp store at Burlingame when they were kids. The Commissioner found this very sweet."
+      ]},
+      {h:"🇫🇷 CROISSANT — Champion: France",ps:[
+        "Kat. Alex's best friend and maid of honor. Friends since childhood with Alex and Carly. Now in Portland with Henry and their two kids. Was a chef, opened her own restaurant, now a full-time mom. Into good food and wine. Understated, very kind.",
+        "She knows nothing about the pool and is more interested in baguettes. She says she will become part croissant by the end of this trip. France went 3-0. Kat has not checked the score.",
+        "A bartender once looked into Kat's eyes and told Alex she was cut off because 'there was nothing there.' The Commissioner suspects what he actually saw was pure, unbothered peace. Alex reportedly went down to confront the bartender afterward."
+      ]},
+      {h:"🇵🇹 ERIC — Champion: Portugal",ps:[
+        "Brian's brother. Six years younger, also bigger. Architect — has been his dream since he built Legos as a kid. Single, just back from six months in Miami with his dog Hazey. Has traveled widely and developed a signature lion/bull pose in memorable photos on every trip.",
+        "Portugal finished second in their group behind Colombia — a team nobody picked. Eric is entering the bracket as a runner-up.",
+        "The slide tackle Brian put on him in the finals of a soccer tournament Eric organized in their hometown resulted in Eric hitting his head. Brian's team won. That's all that counts. First time Eric met Alex, she tripped over his PlayStation and froze his game. He told that story as best man at the wedding."
+      ]},
+      {h:"🇪🇸 FIFA WORLD PEACE (OF SHIT) PRIZE — Champion: Spain",ps:[
+        "Chad. Carly's husband. The real wildcard of the trip. Former bassist, possible heavy metal band, long hair, tattoos, worked at a brewery in Portland. Brian knows him the least of anyone in the pool.",
+        "He lost the engagement ring from his grandmother in Italy — the one he was going to propose with — and had to go buy a new one. There is also a reported incident involving rental car keys and a toilet.",
+        "And yet: Spain, Group H winners, zero goals conceded. Chad is built different. Some people are."
+      ]},
+      {h:"🇪🇸 G3 — Champion: Spain",ps:[
+        "Gordon. Caroline's husband. One of Brian's good friends — met at work in insurance playing on the company soccer team and bonding over beers. Actuary. Phenomenal skier. Double IPA guy, specifically Sip of Sunshine. Lives on a Christmas tree farm in New Hartford, Connecticut. Two kids: Gordon the Fourth and Helen.",
+        "New Year's at Okemo, Presidents' Day at Saddleback in Rangeley Maine every year. Back in Hartford they had a trivia team called The Union. Favorite memory: Gordon doing the Thriller dance on the JDRF bar crawl he personally organized.",
+        "His Spain pick is performing with the same quiet, understated competence as Gordon himself. He is probably thinking about a Sip of Sunshine right now."
+      ]},
+      {h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 JE SUIS BAGUETTE — Champion: England",ps:[
+        "Ben. Henry's son. Henry gave Ben his second entry in the pool. Ben went to a USA vs Australia game with Henry. Ben has been to Phish concerts with Henry. Ben may or may not be an Australia fan — the jury is still out.",
+        "England won Group L. The Commissioner acknowledges this family is running a coordinated two-entry operation and is watching accordingly."
+      ]},
+      {h:"🇫🇷 MBAPPE EVER AFTER — Champion: France",ps:[
+        "Alex. Sauce. Brian's wife. The 40th birthday honoree. The reason for the France trip. The favorite — of this family, of this pool, of most rooms she enters.",
+        "Just had Conrad on March 31st and is already back to full executive capacity. Platinum Delta and Marriott. Drives a Range Rover. Straight As. Organized her own 40th birthday — which says everything about her, and arguably about Brian too.",
+        "Grew up outside Chicago. Loves her Iowa Hawkeyes and Caitlin Clark. Only played soccer once — shut down a girl named Alexis and may have said something in the heat of competition that the Commissioner has chosen not to reprint here. Former world-class flip cup champion in college. Now: rose, champagne, nice wines, designer bags, never beer.",
+        "France went 3-0 with 10 goals. She is the favorite. She knows it. Everyone knows it.",
+        "Favorite image, available upon request: Alex smoking a cigarette — which she never does — because her friends told her it would help her poop."
+      ]},
+      {h:"🇫🇷 MIKE W — Champion: France",ps:[
+        "Mike Wallace. Brian's friend since elementary school in Medway, Massachusetts. Not on the France trip. Scary smart actuary. Sarcastic, dry, dark, witty. People can never tell if he's serious. Two daughters with his wife Nicole.",
+        "Bookshelf full of books he hasn't read yet. Record collection. Watching films by decade starting from 1939. Loves rap, makes fun of Bob Seger. Had a rivalry with Brian's friend Drew in high school — still doesn't like him — but Brian always considered Mike one of his closest friends.",
+        "Used to sleep in Brian's basement after parties until 3pm, red pickup on the street, before heading to his evening shift at Fenway Park. In 6th grade he told Brian he was tired. Brian replied: 'No one gives a shit that you're tired.' Mike still brings this up. He considers it valuable advice.",
+        "After Brian's 40th in Hartford, Mike stayed and waited with Alex — who was pregnant at the time, which he didn't know — to make sure she got her car safely. A genuinely nice story he would never tell about himself."
+      ]},
+      {h:"⚡ POWER RANKINGS — POST GROUP STAGE",ps:[
+        "#1 🇦🇷 CARLY — THE FRONTRUNNER\nArgentina went 3-0-0 with 9 points — the best group stage record in the entire tournament. Carly picked them without stress. She did not overthink this. She has a don't-give-a-shit attitude and it is currently paying dividends.",
+        "#2 🇫🇷 MBAPPE EVER AFTER — THE FAVORITE (obviously)\nFrance went 3-0 and scored 10 goals. Alex picked France. Alex is the favorite in this family, in this pool, and in most rooms she enters. The Commissioner would bet against her but has decided that would be unwise.",
+        "#3 🇪🇸 BRIAN — THE COMMISSIONER (conflicted)\nSpain won their group without conceding a goal. Brian built the app, entered the pool, and is now ranking himself third in his own power rankings. This is either hubris or accurate self-assessment. The pool did not fail. He will remind everyone of this at least twice per day in France.",
+        "#4 🏴󠁧󠁢󠁥󠁮󠁧󠁿 BYRON SOMEONESON — THE KID\nSpain won their group. Ben picked Spain. Ben may have done this entirely on instinct and has not lost a moment of sleep over it.",
+        "#5 🇫🇷 BRIAN'S 1ST BORN — THE OVERACHIEVER\nSteven picked France, France went 3-0 with 10 goals. He tries very hard. It is currently working. The Commissioner remains unimpressed on principle. Several concussions.",
+        "#6 🏴󠁧󠁢󠁥󠁮󠁧󠁿 JE SUIS BAGUETTE — THE DARK HORSE\nEngland won Group L. Henry is a lawyer who has known this friend group since high school. He is quietly doing everything right. The Commissioner is not fooled by the baguette.",
+        "#7 🇫🇷 MIKE W — THE SLEEPER\nFrance 3-0. Mike W is scary smart, has already calculated the bracket probabilities, and is saying nothing about it. He is the person you forget about until he's suddenly in first place.",
+        "#8 🇪🇸 G3 — THE STEADY HAND\nGordon picked Spain, Spain won clean. He is not worried. He has never been visibly worried about anything. Probably thinking about a Sip of Sunshine.",
+        "#9 🇪🇸 CHRIS L — THE WILDCARD\nSpain won the group. Chris is heading to France for the first time. He asked if France has coffee. His bracket picks are fine. His general preparedness for France is an open question.",
+        "#10 🇪🇸 FIFA WORLD PEACE (OF SHIT) PRIZE — THE CHAOS ENTRY\nChad picked Spain, Spain delivered. He has survived losing an engagement ring in Italy and dropping car keys in a toilet. He is not rattled. The Commissioner has a feeling his ceiling is higher than his entry name suggests.",
+        "#11 🇫🇷 CROISSANT — UNBOTHERED\nKat picked France. France is 3-0. Kat has not checked the score. Kat is thinking about what to eat. She will become part croissant and has fully accepted this. All is well.",
+        "#12 🇫🇷 CAROLINE — THE SOUND OF MUSIC ENTRY\nCaroline picked France because France sounded good. France is 3-0. Caroline does not know this. She drove Alex and Brian to the emergency room on their wedding day and did not panic once. She is unshakeable. Her bracket is fine.",
+        "#13 🇧🇷 48 TEAMS, NO CLUE! — CALLING FROM NC\nBarry picked Brazil. Brazil won their group. Barry is in North Carolina, Manhattan in hand, and has gone to take his contacts out. His pick is alive. He is unaware.",
+        "#14 🇵🇹 ERIC — THE RUNNER-UP SITUATION\nEric picked Portugal to win it all. Portugal finished second behind Colombia. He will find a way to make this work structurally. But right now his champion is entering the bracket as a runner-up and the slide tackle still stands on the record.",
+        "The Round of 32 begins today. The Commissioner reconvenes after the bracket shakes out. This pool was built by AI. The Commissioner is the AI. Brian told it to roast his friends. It complied willingly."
+      ]},
+    ];
+    return(
+      <div style={S.app}>
+        <header style={S.hdr}>
+          <div style={{fontSize:14,fontWeight:900,letterSpacing:2,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
+          <nav style={{display:"flex",gap:5,alignItems:"center"}}>
+            <button style={S.nav(false)} onClick={()=>setScreen("leaderboard")}>← Leaderboard</button>
+            <button style={S.nav(false)} onClick={()=>setScreen("home")}>Home</button>
+          </nav>
+        </header>
+        <div style={{...S.main,maxWidth:720}}>
+          <div style={{fontSize:20,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:2,fontFamily:"'Courier New',monospace"}}>📋 COMMISSIONER'S REPORT</div>
+          <div style={{fontSize:10,color:"#555",marginBottom:20,fontFamily:"'Courier New',monospace",letterSpacing:2}}>GROUP STAGE EDITION</div>
+          {sections.map(({h,ps})=>(
+            <div key={h} style={{...S.card,marginBottom:14}}>
+              <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>{h}</div>
+              {ps.map((para,i)=>(
+                para.includes("\n")?
+                  para.split("\n").map((line,j)=>(
+                    <p key={j} style={{fontSize:12,color:j===0?"#c9a227":"#aaa",marginBottom:6,lineHeight:1.8,fontFamily:j===0?"'Courier New',monospace":"Georgia,serif",fontWeight:j===0?700:400}}>{line}</p>
+                  ))
+                :<p key={i} style={{fontSize:12,color:"#aaa",marginBottom:9,lineHeight:1.85,fontFamily:"Georgia,serif"}}>{para}</p>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 
 
   return null;
