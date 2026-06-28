@@ -1028,9 +1028,26 @@ function App(){
       }
       return thirds;
     })();
-    // Use entered results per-group, fall back to default only for missing groups
-    const ar32gp=Object.fromEntries(GROUPS.map(g=>[g.id,(actuals.groupResults[g.id]&&actuals.groupResults[g.id].length===4)?actuals.groupResults[g.id]:g.teams]));
-    const ar32=resolveR32(ar32gp,awcr);
+    // Official R32 bracket - hardcoded from actual tournament results
+    const ACTUAL_R32=[
+      {match:73,a:"South Africa",b:"Canada"},
+      {match:74,a:"Germany",b:"Paraguay"},
+      {match:75,a:"Netherlands",b:"Morocco"},
+      {match:76,a:"Brazil",b:"Japan"},
+      {match:77,a:"France",b:"Sweden"},
+      {match:78,a:"Ivory Coast",b:"Norway"},
+      {match:79,a:"Mexico",b:"Ecuador"},
+      {match:80,a:"England",b:"DR Congo"},
+      {match:81,a:"USA",b:"Bosnia-Herzegovina"},
+      {match:82,a:"Belgium",b:"Senegal"},
+      {match:83,a:"Portugal",b:"Croatia"},
+      {match:84,a:"Spain",b:"Austria"},
+      {match:85,a:"Colombia",b:"Ghana"},
+      {match:86,a:"Argentina",b:"Cape Verde"},
+      {match:87,a:"Australia",b:"Egypt"},
+      {match:88,a:"Switzerland",b:"Algeria"},
+    ];
+    const ar32=ACTUAL_R32;
     const abp={R32:actuals.bracket?.R32||[],R16:actuals.bracket?.R16||[],QF:actuals.bracket?.QF||[],SF:actuals.bracket?.SF||[],F:actuals.bracket?.F||[],Champion:actuals.bracket?.Champion||null};
     const setABP=upd=>{const n=typeof upd==="function"?upd(abp):upd;saveActuals({...actuals,bracket:n});};
 
