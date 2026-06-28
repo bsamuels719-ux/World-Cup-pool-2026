@@ -1195,23 +1195,8 @@ function App(){
         "Used to sleep in Brian's basement after parties until 3pm, red pickup on the street, before heading to his evening shift at Fenway Park. In 6th grade he told Brian he was tired. Brian replied: 'No one gives a shit that you're tired.' Mike still brings this up. He considers it valuable advice.",
         "After Brian's 40th in Hartford, Mike stayed and waited with Alex — who was pregnant at the time, which he didn't know — to make sure she got her car safely. A genuinely nice story he would never tell about himself."
       ]},
-      {h:"⚡ POWER RANKINGS — POST GROUP STAGE",ps:[
-        "#1 🇦🇷 CARLY — THE FRONTRUNNER\nArgentina went 3-0-0 with 9 points — the best group stage record in the entire tournament. Carly picked them without stress. She did not overthink this. She has a don't-give-a-shit attitude and it is currently paying dividends.",
-        "#2 🇫🇷 MBAPPE EVER AFTER — THE FAVORITE (obviously)\nFrance went 3-0 and scored 10 goals. Alex picked France. Alex is the favorite in this family, in this pool, and in most rooms she enters. The Commissioner would bet against her but has decided that would be unwise.",
-        "#3 🇪🇸 BRIAN — THE COMMISSIONER (conflicted)\nSpain won their group without conceding a goal. Brian built the app, entered the pool, and is now ranking himself third in his own power rankings. This is either hubris or accurate self-assessment. The pool did not fail. He will remind everyone of this at least twice per day in France.",
-        "#4 🏴󠁧󠁢󠁥󠁮󠁧󠁿 BYRON SOMEONESON — THE KID\nSpain won their group. Ben picked Spain. Ben may have done this entirely on instinct and has not lost a moment of sleep over it.",
-        "#5 🇫🇷 BRIAN'S 1ST BORN — THE OVERACHIEVER\nSteven picked France, France went 3-0 with 10 goals. He tries very hard. It is currently working. The Commissioner remains unimpressed on principle. Several concussions.",
-        "#6 🏴󠁧󠁢󠁥󠁮󠁧󠁿 JE SUIS BAGUETTE — THE DARK HORSE\nEngland won Group L. Henry is a lawyer who has known this friend group since high school. He is quietly doing everything right. The Commissioner is not fooled by the baguette.",
-        "#7 🇫🇷 MIKE W — THE SLEEPER\nFrance 3-0. Mike W is scary smart, has already calculated the bracket probabilities, and is saying nothing about it. He is the person you forget about until he's suddenly in first place.",
-        "#8 🇪🇸 G3 — THE STEADY HAND\nGordon picked Spain, Spain won clean. He is not worried. He has never been visibly worried about anything. Probably thinking about a Sip of Sunshine.",
-        "#9 🇪🇸 CHRIS L — THE WILDCARD\nSpain won the group. Chris is heading to France for the first time. He asked if France has coffee. His bracket picks are fine. His general preparedness for France is an open question.",
-        "#10 🇪🇸 FIFA WORLD PEACE (OF SHIT) PRIZE — THE CHAOS ENTRY\nChad picked Spain, Spain delivered. He has survived losing an engagement ring in Italy and dropping car keys in a toilet. He is not rattled. The Commissioner has a feeling his ceiling is higher than his entry name suggests.",
-        "#11 🇫🇷 CROISSANT — UNBOTHERED\nKat picked France. France is 3-0. Kat has not checked the score. Kat is thinking about what to eat. She will become part croissant and has fully accepted this. All is well.",
-        "#12 🇫🇷 CAROLINE — THE SOUND OF MUSIC ENTRY\nCaroline picked France because France sounded good. France is 3-0. Caroline does not know this. She drove Alex and Brian to the emergency room on their wedding day and did not panic once. She is unshakeable. Her bracket is fine.",
-        "#13 🇧🇷 48 TEAMS, NO CLUE! — CALLING FROM NC\nBarry picked Brazil. Brazil won their group. Barry is in North Carolina, Manhattan in hand, and has gone to take his contacts out. His pick is alive. He is unaware.",
-        "#14 🇵🇹 ERIC — THE RUNNER-UP SITUATION\nEric picked Portugal to win it all. Portugal finished second behind Colombia. He will find a way to make this work structurally. But right now his champion is entering the bracket as a runner-up and the slide tackle still stands on the record.",
-        "The Round of 32 begins today. The Commissioner reconvenes after the bracket shakes out. This pool was built by AI. The Commissioner is the AI. Brian told it to roast his friends. It complied willingly."
-      ]},
+      {h:"__LIVE_RANKINGS__",ps:[]},
+
     ];
     return(
       <div style={S.app}>
@@ -1225,18 +1210,65 @@ function App(){
         <div style={{...S.main,maxWidth:720}}>
           <div style={{fontSize:20,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:2,fontFamily:"'Courier New',monospace"}}>📋 COMMISSIONER'S REPORT</div>
           <div style={{fontSize:10,color:"#555",marginBottom:20,fontFamily:"'Courier New',monospace",letterSpacing:2}}>GROUP STAGE EDITION</div>
-          {sections.map(({h,ps})=>(
-            <div key={h} style={{...S.card,marginBottom:14}}>
-              <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>{h}</div>
-              {ps.map((para,i)=>(
-                para.includes("\n")?
-                  para.split("\n").map((line,j)=>(
-                    <p key={j} style={{fontSize:12,color:j===0?"#c9a227":"#aaa",marginBottom:6,lineHeight:1.8,fontFamily:j===0?"'Courier New',monospace":"Georgia,serif",fontWeight:j===0?700:400}}>{line}</p>
-                  ))
-                :<p key={i} style={{fontSize:12,color:"#aaa",marginBottom:9,lineHeight:1.85,fontFamily:"Georgia,serif"}}>{para}</p>
-              ))}
-            </div>
-          ))}
+          {(()=>{
+            // Compute live rankings for report
+            const BLURBS={
+              "48 Teams , No clue!":"Barry. NC. Manhattans. Brazil. Has not checked the score. Has gone to take his contacts out.",
+              "Brian":"Built the app. Picked Spain. Ranking himself in his own power rankings. The pool did not fail.",
+              "Brian's 1st born":"Steven. People pleaser. France. Several concussions. Tries very hard. Currently working.",
+              "Byron Someoneson":"Henry. Lawyer. England. Garage hopping since high school. Not fooled by the baguette.",
+              "Carly":"Don't-give-a-shit attitude. Argentina. Did not overthink this. Walking barefoot through Hartford.",
+              "Caroline":"Gordon's wife. France. Does not know the score. Sound of Music references. Unshakeable.",
+              "Chris L":"First time leaving the country. Spain. Asked if France has coffee. It does, Chris.",
+              "Croissant":"Kat. France. Has not checked the score. Thinking about what to eat. Becoming part croissant.",
+              "Eric":"Brian's brother. Portugal. Lion pose in every country. The slide tackle still stands on the record.",
+              "FIFA World Peace (of shit) Prize":"Chad. Spain. Lost an engagement ring in Italy. Dropped car keys in a toilet. Built different.",
+              "G3":"Gordon. Spain. Christmas tree farm. Sip of Sunshine. Thriller dance. Not worried. Never worried.",
+              "Je Suis Baguette":"Ben. Henry's son. England. Phish concerts. May be an Australia fan. Jury still out.",
+              "Mbappe Ever After":"Alex. The 40th birthday honoree. The favorite. France. Always the favorite.",
+              "Mike W":"Scary smart. France. Already calculated the probabilities. Saying nothing. Waiting.",
+            };
+            const liveScored=[...entries].map(e=>{
+              const g=scoreGroups(e.groupPicks||{},actuals.groupResults||{});
+              const w=scoreWildcards(e.groupPicks||{},e.wcRanking||[],actuals.wildcards||[],actuals.groupResults||{});
+              const b=scoreBracket(e.bracketPicks||{},actuals.bracket||{});
+              return{...e,total:g+w+b};
+            }).sort((a,b)=>b.total-a.total);
+            return sections.map(({h,ps})=>{
+              if(h==="__LIVE_RANKINGS__") return(
+                <div key="live-rankings" style={{...S.card,marginBottom:14}}>
+                  <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>⚡ LIVE POWER RANKINGS</div>
+                  <p style={{fontSize:10,color:"#555",marginBottom:14,fontFamily:"'Courier New',monospace"}}>Updated in real time from actual scores. The Commissioner's pre-tournament predictions were, as always, extremely accurate.</p>
+                  {liveScored.map((e,i)=>(
+                    <div key={e.name} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"10px 0",borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
+                      <span style={{fontSize:18,minWidth:28}}>{"🥇🥈🥉".split("").slice(i*2,i*2+2).join("")||`${i+1}.`}</span>
+                      <div style={{flex:1}}>
+                        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}>
+                          <span style={{fontWeight:700,fontSize:12,color:"#ddd",fontFamily:"'Courier New',monospace"}}>{e.name}</span>
+                          <span style={{fontSize:14,fontWeight:900,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>{e.total}pts</span>
+                          <span style={{fontSize:9,color:"#444",fontFamily:"'Courier New',monospace"}}>{FLAGS[e.bracketPicks?.Champion]||""} {e.bracketPicks?.Champion||"no champion"}</span>
+                        </div>
+                        <p style={{fontSize:11,color:"#666",lineHeight:1.6,fontFamily:"Georgia,serif"}}>{BLURBS[e.name]||""}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <p style={{fontSize:10,color:"#333",marginTop:14,fontFamily:"'Courier New',monospace",fontStyle:"italic"}}>This pool was built by AI. The Commissioner is the AI. Brian told it to roast his friends. It complied willingly.</p>
+                </div>
+              );
+              return(
+                <div key={h} style={{...S.card,marginBottom:14}}>
+                  <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>{h}</div>
+                  {ps.map((para,i)=>(
+                    para.includes("\n")?
+                      para.split("\n").map((line,j)=>(
+                        <p key={j} style={{fontSize:12,color:j===0?"#c9a227":"#aaa",marginBottom:6,lineHeight:1.8,fontFamily:j===0?"'Courier New',monospace":"Georgia,serif",fontWeight:j===0?700:400}}>{line}</p>
+                      ))
+                    :<p key={i} style={{fontSize:12,color:"#aaa",marginBottom:9,lineHeight:1.85,fontFamily:"Georgia,serif"}}>{para}</p>
+                  ))}
+                </div>
+              );
+            });
+          })()}
         </div>
       </div>
     );
