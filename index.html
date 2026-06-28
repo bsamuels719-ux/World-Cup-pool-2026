@@ -162,595 +162,6 @@ function LockBanner(){
     </div>
   );
 
-  // REPORT
-  if(screen==="report") return(
-    <div style={S.app}>
-      <header style={S.hdr}>
-        <div style={{fontSize:14,fontWeight:900,letterSpacing:2,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
-        <nav style={{display:"flex",gap:5,alignItems:"center"}}>
-          <button style={S.nav(false)} onClick={()=>setScreen("leaderboard")}>← Leaderboard</button>
-          <button style={S.nav(false)} onClick={()=>setScreen("home")}>Home</button>
-        </nav>
-      </header>
-      <div style={{...S.main,maxWidth:720}}>
-
-        <div style={{fontSize:20,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:2,fontFamily:"'Courier New',monospace"}}>📋 COMMISSIONER'S REPORT</div>
-        <div style={{fontSize:10,color:"#555",marginBottom:24,fontFamily:"'Courier New',monospace",letterSpacing:2}}>GROUP STAGE EDITION</div>
-
-        {[
-          {h:"GROUP STAGE COMPLETE",b:`48 teams entered. 32 remain. The group stage is over and the Commissioner has reviewed every pick, every result, and every life choice that led to this moment.
-
-The Spain alliance (Brian, Chris L, Chad/FIFA World Peace, Gordon/G3, Ben/Je Suis Baguette) is five entries deep and feeling smug. The France bloc (Steven/Brian's 1st born, Caroline, Kat/Croissant, Alex/Mbappe Ever After, Mike W) picked correctly and will be understated about it. Carly picked Argentina, who went undefeated with the best record in the tournament. England won their group — that's Henry's pick and Ben's pick. Eric picked Portugal, who finished second.
-
-A note on the cast: most of this pool is part of a trip to France for Alex's 40th birthday — the group flies over after the World Cup Final on July 19th, which is also Brian's birthday. Barry, Steven, and Mike W are not on the trip. Kerry — Brian's sister, who IS going to France — declined to enter the pool, citing reasons the Commissioner has chosen to describe as "general chaos energy." She is still invited to feel bad about this later.`},
-
-          {h:"🇧🇷 48 TEAMS, NO CLUE! — Champion: Brazil",b:`Barry. Brian's dad. Just relocated to North Carolina with Brian's mom to retire. Not on the France trip — he'll be heading to Connecticut in mid-July to house-sit and keep Stormy and Cooper company while the group is in France.
-
-Barry is a child in a grown man's body. He likes Manhattans, one-liners, and busting people's balls. Brazil topped Group C, proving that sometimes you don't need to know anything about soccer — you just need to have raised a son who built the app.
-
-Barry is in North Carolina. He has absolutely no idea what a third-place wildcard is. When told about the scoring system, sources say he responded "sounds good" and went to take his contacts out — which is Barry's universal signal that he is done for the night. He will not be back.`},
-
-          {h:"🇪🇸 BRIAN — Champion: Spain",b:`This is me. New dad. Corporate guy — skier, runner, soccer player, mountain biker. Competitive, emotional, occasionally quiet and withdrawn, likes to party. Old now. Everyone wanted to see the app fail because I used AI. The app did not fail. Spain won Group H without conceding a single goal.
-
-Yes, four other people also picked Spain. The man coded a pool from scratch and still couldn't manufacture a unique competitive advantage. Spain did not fail. Brian's ego remains structurally sound. 
-
-Best story? Breaking my collarbone just before a bucket list ski trip to Argentina. A complete aura loss moment that the Commissioner is required by charter to mention.`},
-
-          {h:"🇫🇷 BRIAN'S 1ST BORN — Champion: France",b:`Steven. Brian's coworker and first boss — which makes Steven, in the workplace sense, Brian's professional firstborn. He is 10 years younger, one of four boys from North Carolina, and brings the energy of someone genuinely trying to impress a parent figure who is watching with mild suspicion. His actual dad's name is Brian, who was an IBM employee who worked on Watson. The symmetry is not lost on anyone.
-
-Steven is a nice guy and a people pleaser. He is not the sharpest tool in the shed but he tries very hard and loves his small wins. He has had several concussions, including a notable ski fall in front of multiple witnesses. France went 3-0 with 10 goals. Steven looks good early. The Commissioner notes there are many more rounds for the natural order to reassert itself. He is not on the France trip.`},
-
-          {h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 BYRON SOMEONESON — Champion: England",b:`Henry. Kat's husband. Lawyer. Has known Alex, Kat, and Carly since high school in the Chicago suburbs — back when he was "garage hopping," which is the technical term for raiding neighborhood coolers for beers as a teenager. He is now a responsible adult who knows good food and good wine and makes excellent jokes with precise timing.
-
-He entered this pool under the name Byron Someoneson, because that is a thing that happened and no one questioned it. He picked England. England won Group L. Henry is on the France trip. He is into Phish and LCD Soundsystem — he and Brian have that in common. He is quietly doing everything right and the Commissioner is not fooled.`},
-
-          {h:"🇦🇷 CARLY — Champion: Argentina",b:`One of Alex's oldest friends — the trio of Alex, Kat, and Carly goes back to childhood in the Chicago suburbs. Married to Chad. Works at Enterprise in corporate. Hilarious, easy-going, has a very relaxed don't-give-a-shit attitude. Grew up riding horses. Lived in Fort Collins, traveled extensively — including time in Vietnam teaching. Now in Portland.
-
-Argentina went 3-0-0 with 9 points — the best record of any team in the entire tournament. Carly picked them, apparently without stress, and is now sitting on the best champion path in the pool. She did not overthink this. She did not consult anyone. 
-
-Favorite memory: Alex and Brian spotted her walking barefoot in the middle of Hartford after their wedding and rolled down the window to ask if she needed a ride. She did not appear to need one.`},
-
-          {h:"🇫🇷 CAROLINE — Champion: France",b:`Gordon's wife. One of Alex and Brian's closest friends in Connecticut. Former teacher, now stay-at-home mom to Gordon the Fourth and Helen — who are essentially the group's niece and nephew. From New York, went to school in Vermont, down to earth.
-
-She knows nothing about soccer and picks teams based on name or colors. She could not care less about the tournament or the pool. She is more interested in Sound of Music references. France went 3-0 and she does not know this. She is making no-smile selfies with Alex and this is her entire relationship with the pool, and it is working.
-
-Favorite memory: she drove Alex and Brian to the emergency room on their wedding day when Alex was ill, and did not panic once. She is unshakeable in all situations, including this bracket.`},
-
-          {h:"🇪🇸 CHRIS L — Champion: Spain",b:`Brian's cousin. The ultimate wildcard. Like Charlie from It's Always Sunny — him, Eric, Alex, and Brian are essentially that crew. Competitive, loves to win, schemes to do so, insufferable when he does. Good heart. As an only child he's been part of the family alongside Brian's brother and sister for years. Lived with Alex and Brian in Hartford for a while.
-
-This is Chris's first time leaving the country. The group is worried. He asked — in complete sincerity — whether France has coffee.
-
-Spain won Group H without conceding a goal. Chris will find this out eventually. He bought Brian iced honey buns for Father's Day — a treat they used to get at the camp store at Burlingame when they were kids. The Commissioner found this very sweet and has ranked him accordingly.`},
-
-          {h:"🇫🇷 CROISSANT — Champion: France",b:`Kat. Alex's best friend and maid of honor. Friends since childhood in Illinois with Alex and Carly. Now in Portland with Henry and their two kids. Was a chef, opened her own restaurant, now a full-time mom. Into good food and wine, great taste in everything culinary. Understated, very kind.
-
-She knows nothing about the pool and is more interested in baguettes. She says she will become part croissant by the end of this trip. France went 3-0. Kat has not checked the score.
-
-A bartender once looked into Kat's eyes and told Alex she was cut off because "there was nothing there." The Commissioner suspects what he actually saw was pure, unbothered peace. Alex reportedly went down to confront the bartender afterward. Classic.`},
-
-          {h:"🇵🇹 ERIC — Champion: Portugal",b:`Brian's brother. Six years younger, also bigger. An architect — has been his career dream since he built Legos as a kid. Single, just back from six months in Miami with his dog Hazey. Has traveled — Germany for Oktoberfest, London with Brian and Alex, Ireland for their mom's birthday. Has developed a signature lion/bull pose in memorable photos from every trip. Competitive with Brian in the way only brothers can be.
-
-Portugal finished second in their group behind Colombia — a team nobody picked. Eric is entering the bracket as a runner-up.
-
-The slide tackle Brian put on him in the finals of a soccer tournament he organized in their hometown resulted in Eric hitting his head. Brian's team won. That's all that counts. First time Eric met Alex, she was visiting Brian when they were kids and tripped over his PlayStation, freezing the game. He told this story as best man at the wedding.`},
-
-          {h:"🇪🇸 FIFA WORLD PEACE (OF SHIT) PRIZE — Champion: Spain",b:`Chad. Carly's husband. The real wildcard of the trip. Former bassist, possible heavy metal band, long hair, tattoos, worked at a brewery in Portland. Brian knows him the least of anyone in the pool — which makes this entry name a genuine act of creative independence that the Commissioner respects enormously.
-
-He lost the engagement ring from his grandmother in Italy — the one he was going to propose with — and had to go buy a new one. There is also a reported incident involving rental car keys and a toilet. And yet: Spain, Group H winners, zero goals conceded. Chad is built different. Some people are.`},
-
-          {h:"🇪🇸 G3 — Champion: Spain",b:`Gordon. Caroline's husband. One of Brian's good friends — they met at work in insurance years ago, playing on the company soccer team and sharing beers. Gordon lives on a Christmas tree farm in New Hartford, Connecticut — same land where he grew up. Actuary. Phenomenal skier. Double IPA guy, specifically Sip of Sunshine. Two kids: Gordon the Fourth and Helen.
-
-They do New Year's at Okemo and a Presidents' Day trip to Saddleback in Rangeley, Maine every year. Back in the Hartford days they had a trivia team called The Union and frequented the same bars.
-
-Favorite memory: Gordon doing the Thriller dance on the JDRF bar crawl he personally organized. He also has a running bit where he tries to get Alex to say "pig" so he can yell "we're going to Pig's Eye" — a bar from their 20s. His Spain pick is performing with the same quiet, understated competence as Gordon himself.`},
-
-          {h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 JE SUIS BAGUETTE — Champion: England",b:`Ben. Henry's son. This is Henry's second entry, which he gave to Ben. Ben went to a USA vs Australia game with Henry. Ben has been to Phish concerts with Henry. Ben may be an Australia fan — jury is still out. Ben entered this pool as Je Suis Baguette, which is the correct move.
-
-England won Group L. Spain won Group H. Ben and Byron Someoneson (also Henry, also England... wait, no — Byron Someoneson is Henry, Je Suis Baguette is Ben) — both Henrys are doing well. The Commissioner acknowledges this family is running a coordinated operation and is watching accordingly.`},
-
-          {h:"🇫🇷 MBAPPE EVER AFTER — Champion: France",b:`Alex. Sauce. Brian's wife. The 40th birthday honoree. The reason for the France trip. The favorite — of this family, of this pool, of most rooms she enters.
-
-Just had Conrad on March 31st and is already back to operating at full executive capacity. Platinum Delta and Marriott. Drives a Range Rover. Straight As. Got herself a designer bag and knows how to pack one. Organized her own 40th birthday — which says everything about her, and arguably about Brian too.
-
-Grew up outside Chicago. Loves her Iowa Hawkeyes and Caitlin Clark. Played basketball in high school. Only played soccer once — shut down a girl named Alexis (the ex-girlfriend's sister) and may have said something in the heat of competition that the Commissioner has chosen not to reprint here.
-
-France went 3-0 with 10 goals. She picked France. She is the favorite. She knows it. Everyone knows it. She asked who the favorite family member is. The answer is Alex. It is always Alex.
-
-Favorite image, available upon request: Alex smoking a cigarette — which she never does — because her friends told her it would help her poop.`},
-
-          {h:"🇫🇷 MIKE W — Champion: France",b:`Mike Wallace. Brian's friend since elementary school in Medway, Massachusetts. Not on the France trip. Scary smart, actuary, exceptional at math. Sarcastic, dry, dark, witty. People can never tell if he's serious. Married to Nicole. Two daughters, oldest is apparently also scary smart.
-
-Has a bookshelf full of books he hasn't read yet. A record collection. Loves rap and makes fun of classic rock like Bob Seger that Barry used to love. Watching films by decade starting from 1939. Was outside Brian's main friend group in high school — had a rivalry with one of Brian's friends, Drew, who he still doesn't like — but Brian always considered him one of his best friends. They text constantly with dark sarcastic jokes.
-
-He used to sleep in Brian's basement after parties until 3pm with his red pickup on the street — Brian's parents wondering when he'd leave — before heading to his evening shift at Fenway Park.
-
-In 6th grade he told Brian he was tired and hadn't slept the night before. Brian replied: "No one gives a shit that you're tired." Mike still brings this up. He considers it valuable advice.
-
-He stayed and waited with Alex after Brian's 40th in Hartford — she was pregnant at the time, which he didn't know — to make sure she got the car safely. A genuinely nice story he would never tell about himself.`},
-
-          {h:"⚡ POWER RANKINGS — POST GROUP STAGE",b:`#1 🇦🇷 CARLY — THE FRONTRUNNER
-Argentina went 3-0-0 with 9 points — the best group stage record in the entire tournament. Carly picked them, apparently without stress, and is now quietly sitting on the best champion path in the pool. She did not overthink this. She did not consult anyone. She has a don't-give-a-shit attitude and it is currently paying dividends. Dangerous.
-
-#2 🇫🇷 MBAPPE EVER AFTER — THE FAVORITE (obviously)
-France went 3-0 and scored 10 goals. Alex picked France. Alex is the favorite in this family, in this pool, and in most rooms she enters. She just had a baby, organized her own 40th birthday, and is still somehow the most prepared person in any bracket discussion. The Commissioner would bet against her but has decided that would be unwise.
-
-#3 🇪🇸 BRIAN — THE COMMISSIONER (conflicted)
-Spain won their group without conceding a goal. Brian built the app, entered the pool, and is now ranking himself third in his own power rankings. This is either hubris or accurate self-assessment. Spain is genuinely good. Brian is genuinely biased. The pool did not fail. He will remind everyone of this at least twice per day in France.
-
-#4 🇪🇸 BYRON SOMEONESON — THE KID
-Spain won their group without conceding a goal. Ben entered as Byron Someoneson. Ben is Henry's son. Ben picked Spain. Spain won. Ben may have done this entirely on instinct and has not lost a moment of sleep over it. The Commissioner has ranked him 4th as both a compliment and a warning.
-
-#5 🇫🇷 BRIAN'S 1ST BORN — THE OVERACHIEVER
-Steven named himself Brian's 1st Born, picked France, and France promptly went 3-0 with 10 goals. Steven tries very hard. He is currently trying hard and it is working. The Commissioner is monitoring this closely and remains unimpressed on principle. Several concussions.
-
-#6 🏴󠁧󠁢󠁥󠁮󠁧󠁿 JE SUIS BAGUETTE — THE DARK HORSE
-England won Group L. Henry entered as Je Suis Baguette and gave it to Ben. Ben picked England via Henry's account. Henry is a lawyer who has known this friend group since high school and picks England, and England wins their group. The Commissioner is not fooled by the baguette.
-
-#7 🇫🇷 MIKE W — THE SLEEPER
-France 3-0. Mike W is scary smart, has already calculated the bracket probabilities, and is saying nothing about it. He is the person in your pool you forget about until he's suddenly in first place and the only thing he says about it is something you have to think about for three days.
-
-#8 🇪🇸 G3 — THE STEADY HAND
-Gordon picked Spain, Spain won the group clean, and Gordon is an actuary who skis better than your favorite skier. He is not worried. He has never been visibly worried about anything. He is probably thinking about a Sip of Sunshine right now. His floor is high and his ceiling is real.
-
-#9 🇪🇸 CHRIS L — THE WILDCARD
-Spain won the group. Chris is heading to France for the first time. He asked if France has coffee. The Commissioner has confirmed that it does. His bracket picks are fine. His general preparedness for France is an open question. This ranking could move in either direction.
-
-#10 🇪🇸 FIFA WORLD PEACE (OF SHIT) PRIZE — THE CHAOS ENTRY
-Chad picked Spain, Spain delivered, and Chad has survived worse situations than a World Cup bracket — including losing an engagement ring in Italy and dropping car keys in a toilet. He is not rattled. Mid-table for now, but the Commissioner has a feeling Chad's ceiling is higher than his entry name suggests.
-
-#11 🇫🇷 CROISSANT — UNBOTHERED
-Kat picked France. France is 3-0. Kat has not checked the score. Kat is thinking about what to eat. She says she will become part croissant by the end of this trip and has fully accepted this. The bracket is alive. The croissant is alive. All is well.
-
-#12 🇫🇷 CAROLINE — THE SOUND OF MUSIC ENTRY
-Caroline picked France because France sounded good. France is 3-0. Caroline does not know this. She is making no-smile selfies and referencing The Sound of Music. She drove Alex and Brian to the emergency room on their wedding day and did not panic once. She is unshakeable. Her bracket is fine.
-
-#13 🇧🇷 48 TEAMS, NO CLUE! — CALLING FROM NC
-Barry picked Brazil. Brazil won their group. Barry is in North Carolina, Manhattan in hand, and has gone to take his contacts out for the night. His pick is alive. He is unaware. He will be in Connecticut in mid-July watching the house while everyone is in France. The Commissioner considers this the purest form of bracket participation.
-
-#14 🇵🇹 ERIC — THE RUNNER-UP SITUATION
-Eric picked Portugal to win it all. Portugal finished second in their group behind Colombia — a team nobody picked. Eric is an architect who poses like a lion or a ram in memorable photos across multiple continents. He will find a way to make this work structurally. But right now his champion is entering the bracket as a runner-up and the slide tackle still stands on the record.
-
-The Round of 32 begins today. The Commissioner reconvenes after the bracket shakes out. This pool was built by AI. The Commissioner is the AI. Brian told it to roast his friends. It complied willingly.`},
-
-        ].map(({h,b})=>(
-          <div key={h} style={{...S.card,marginBottom:16}}>
-            <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:12,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:8}}>{h}</div>
-            {b.split("\n\n").map((para,i)=>(
-              <p key={i} style={{fontSize:12,color:"#aaa",marginBottom:10,lineHeight:1.85,fontFamily:"Georgia,serif"}}>{para}</p>
-            ))}
-          </div>
-        ))}
-
-      </div>
-    </div>
-  );
-
-  return null;
-}
-
-// ─── PIN MODAL ────────────────────────────────────────────────────────────────
-function PinModal({mode, name, existingPin, onSuccess, onCancel}){
-  // mode: "set" | "verify"
-  const[pin,setPin]=useState("");
-  const[confirm,setConfirm]=useState("");
-  const[err,setErr]=useState("");
-
-  function submit(){
-    if(mode==="verify"){
-      if(pin===existingPin){onSuccess();}
-      else setErr("Incorrect PIN.");
-      return;
-    }
-    if(pin.length!==4||!/^\d{4}$/.test(pin)){setErr("PIN must be exactly 4 digits.");return;}
-    if(pin!==confirm){setErr("PINs don't match.");return;}
-    onSuccess(pin);
-  }
-
-  return(
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",zIndex:300,display:"flex",alignItems:"center",justifyContent:"center",padding:20}} onClick={onCancel}>
-      <div style={{background:"#0e0e0e",border:"1px solid rgba(201,162,39,0.25)",borderRadius:12,padding:"28px 24px",maxWidth:320,width:"100%"}} onClick={e=>e.stopPropagation()}>
-        <div style={{fontSize:30,textAlign:"center",marginBottom:10}}>🔐</div>
-        <h3 style={{color:"#c9a227",fontFamily:"'Courier New',monospace",letterSpacing:2,fontSize:13,textAlign:"center",marginBottom:6}}>
-          {mode==="set"?"SET YOUR PIN":"ENTER YOUR PIN"}
-        </h3>
-        <p style={{color:"#555",fontSize:10,textAlign:"center",marginBottom:18,fontFamily:"'Courier New',monospace"}}>
-          {mode==="set"?`Choose a 4-digit PIN for ${name}. You'll need it to edit your picks.`:`Enter the PIN for ${name} to continue.`}
-        </p>
-        <input style={S.pinInp} type="password" inputMode="numeric" maxLength={4} placeholder="• • • •" value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,"").slice(0,4))} onKeyDown={e=>e.key==="Enter"&&submit()}/>
-        {mode==="set"&&<input style={{...S.pinInp,marginTop:8}} type="password" inputMode="numeric" maxLength={4} placeholder="confirm" value={confirm} onChange={e=>setConfirm(e.target.value.replace(/\D/g,"").slice(0,4))} onKeyDown={e=>e.key==="Enter"&&submit()}/>}
-        {err&&<p style={{color:"#a44",fontSize:10,textAlign:"center",marginTop:8,fontFamily:"'Courier New',monospace"}}>{err}</p>}
-        <div style={{display:"flex",gap:8,marginTop:16}}>
-          <button style={{...S.ghost,flex:1}} onClick={onCancel}>Cancel</button>
-          <button style={{...S.gold,flex:1}} onClick={submit}>{mode==="set"?"Set PIN":"Unlock"}</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── RANK LIST ────────────────────────────────────────────────────────────────
-function RankList({teams,ranked,onChange,disabled}){
-  const[sel,setSel]=useState(null);
-  const d=ranked.length===teams.length?ranked:[...teams];
-  const move=(i,dir)=>{const n=i+dir;if(n<0||n>=d.length)return;const a=[...d];[a[i],a[n]]=[a[n],a[i]];onChange(a);setSel(null);};
-  const tap=i=>{if(disabled)return;if(sel===null){setSel(i);return;}if(sel===i){setSel(null);return;}const a=[...d];[a[sel],a[i]]=[a[i],a[sel]];onChange(a);setSel(null);};
-  const ab=(i,dir)=>({width:30,height:30,borderRadius:dir===-1?"4px 4px 0 0":"0 0 4px 4px",background:(dir===-1?i===0:i===d.length-1)?"rgba(255,255,255,0.01)":"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.07)",borderBottom:dir===-1?"none":undefined,borderTop:dir===1?"none":undefined,color:(dir===-1?i===0:i===d.length-1)?"#1a1a1a":"#888",fontSize:10,display:"flex",alignItems:"center",justifyContent:"center",cursor:(dir===-1?i===0:i===d.length-1)?"default":"pointer",flexShrink:0,WebkitTapHighlightColor:"transparent",touchAction:"manipulation"});
-  return(
-    <div style={{display:"flex",flexDirection:"column",gap:4}}>
-      <div style={{fontSize:9,textAlign:"center",marginBottom:2,color:sel!==null?"#c9a227":"#2a2a2a",fontFamily:"'Courier New',monospace"}}>{sel!==null?`swap ${d[sel]} with…`:"tap to select · ▲▼ to nudge"}</div>
-      {d.map((team,i)=>{const isSel=sel===i,isTop=i<2;return(
-        <div key={team} style={{display:"flex",alignItems:"center",gap:4}}>
-          {!disabled&&<div style={{display:"flex",flexDirection:"column",flexShrink:0}}>
-            <button onTouchEnd={e=>{e.preventDefault();move(i,-1);}} onClick={()=>move(i,-1)} disabled={i===0} style={ab(i,-1)}>▲</button>
-            <button onTouchEnd={e=>{e.preventDefault();move(i,1);}} onClick={()=>move(i,1)} disabled={i===d.length-1} style={ab(i,1)}>▼</button>
-          </div>}
-          <div onTouchEnd={e=>{e.preventDefault();tap(i);}} onClick={()=>tap(i)} style={{flex:1,display:"flex",alignItems:"center",gap:6,padding:"7px 9px",borderRadius:5,minHeight:40,background:isSel?"rgba(201,162,39,0.16)":isTop?"rgba(255,255,255,0.035)":"rgba(255,255,255,0.01)",border:`1px solid ${isSel?"rgba(201,162,39,0.55)":isTop?"rgba(201,162,39,0.18)":"rgba(255,255,255,0.05)"}`,cursor:disabled?"default":"pointer",userSelect:"none",WebkitTapHighlightColor:"transparent",touchAction:"manipulation"}}>
-            <span style={{width:16,height:16,borderRadius:"50%",background:isTop?"rgba(201,162,39,0.2)":"rgba(255,255,255,0.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:isTop?"#c9a227":"#444",flexShrink:0,fontFamily:"'Courier New',monospace"}}>{i+1}</span>
-            <span style={{fontSize:15}}>{FLAGS[team]||"🏳"}</span>
-            <span style={{fontSize:11,fontWeight:isTop?600:400,color:isSel?"#c9a227":isTop?"#ddd":"#666",flex:1}}>{team}</span>
-            {isTop&&!isSel&&<span style={{fontSize:7,color:"#c9a227",opacity:0.6,fontFamily:"'Courier New',monospace"}}>ADV</span>}
-            {isSel&&<span style={{fontSize:9,color:"#c9a227"}}>◉</span>}
-          </div>
-        </div>
-      );})}
-    </div>
-  );
-}
-
-// ─── WILDCARD RANKER ──────────────────────────────────────────────────────────
-function WildcardRanker({groupPicks,wcRanking,onChange}){
-  const[sel,setSel]=useState(null);
-  const thirds=GROUPS.map(g=>({group:g.id,team:(groupPicks[g.id]||g.teams)[2]||g.teams[2]}));
-  const currentThirds=thirds.map(t=>t.team);
-  // Simple reconciliation: if wcRanking has exactly 12 entries and all are valid current thirds, use it
-  // Otherwise rebuild from currentThirds
-  let ranking;
-  if(wcRanking.length===12 && wcRanking.every(t=>currentThirds.includes(t)) && new Set(wcRanking).size===12){
-    ranking=wcRanking;
-  } else {
-    // Start with current thirds, then slot in any valid wcRanking order we can
-    ranking=[...currentThirds];
-  }
-  const groupOf=t=>thirds.find(x=>x.team===t)?.group||"?";
-  const tap=i=>{if(sel===null){setSel(i);return;}if(sel===i){setSel(null);return;}const a=[...ranking];[a[sel],a[i]]=[a[i],a[sel]];onChange(a);setSel(null);};
-  const move=(i,dir)=>{const n=i+dir;if(n<0||n>=ranking.length)return;const a=[...ranking];[a[i],a[n]]=[a[n],a[i]];onChange(a);setSel(null);};
-  const ab=(i,dir)=>({width:30,height:30,borderRadius:dir===-1?"4px 4px 0 0":"0 0 4px 4px",background:(dir===-1?i===0:i===ranking.length-1)?"rgba(255,255,255,0.01)":"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.07)",borderBottom:dir===-1?"none":undefined,borderTop:dir===1?"none":undefined,color:(dir===-1?i===0:i===ranking.length-1)?"#1a1a1a":"#888",fontSize:10,display:"flex",alignItems:"center",justifyContent:"center",cursor:(dir===-1?i===0:i===ranking.length-1)?"default":"pointer",flexShrink:0,WebkitTapHighlightColor:"transparent",touchAction:"manipulation"});
-  return(
-    <div style={{display:"flex",flexDirection:"column",gap:4}}>
-      <div style={{fontSize:9,textAlign:"center",marginBottom:3,color:sel!==null?"#c9a227":"#2a2a2a",fontFamily:"'Courier New',monospace"}}>{sel!==null?`swap ${ranking[sel]} with…`:"tap to select · ▲▼ to nudge"}</div>
-      {ranking.map((team,i)=>{const isSel=sel===i,adv=i<8;return(
-        <div key={team}>
-          {i===8&&<div style={{display:"flex",alignItems:"center",gap:8,margin:"8px 0 5px"}}><div style={{flex:1,height:1,background:"rgba(201,162,39,0.25)"}}/><span style={{fontSize:8,color:"#c9a227",fontWeight:700,letterSpacing:2,fontFamily:"'Courier New',monospace"}}>ELIMINATION LINE</span><div style={{flex:1,height:1,background:"rgba(201,162,39,0.25)"}}/></div>}
-          <div style={{display:"flex",alignItems:"center",gap:4}}>
-            <div style={{display:"flex",flexDirection:"column",flexShrink:0}}>
-              <button onTouchEnd={e=>{e.preventDefault();move(i,-1);}} onClick={()=>move(i,-1)} disabled={i===0} style={ab(i,-1)}>▲</button>
-              <button onTouchEnd={e=>{e.preventDefault();move(i,1);}} onClick={()=>move(i,1)} disabled={i===ranking.length-1} style={ab(i,1)}>▼</button>
-            </div>
-            <div onTouchEnd={e=>{e.preventDefault();tap(i);}} onClick={()=>tap(i)} style={{flex:1,display:"flex",alignItems:"center",gap:6,padding:"7px 9px",borderRadius:5,minHeight:40,background:isSel?"rgba(201,162,39,0.16)":adv?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.008)",border:`1px solid ${isSel?"rgba(201,162,39,0.55)":adv?"rgba(201,162,39,0.12)":"rgba(255,255,255,0.03)"}`,cursor:"pointer",userSelect:"none",WebkitTapHighlightColor:"transparent",touchAction:"manipulation",opacity:!adv?0.4:1}}>
-              <span style={{width:16,height:16,borderRadius:"50%",background:adv?"rgba(201,162,39,0.18)":"rgba(180,50,50,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:adv?"#c9a227":"#a44",flexShrink:0,fontFamily:"'Courier New',monospace"}}>{i+1}</span>
-              <span style={{fontSize:7,color:"#444",minWidth:14,fontFamily:"'Courier New',monospace"}}>G{groupOf(team)}</span>
-              <span style={{fontSize:14}}>{FLAGS[team]||"🏳"}</span>
-              <span style={{fontSize:11,color:isSel?"#c9a227":adv?"#ccc":"#555",flex:1}}>{team}</span>
-              {adv&&!isSel&&<span style={{fontSize:7,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>WC</span>}
-              {!adv&&<span style={{fontSize:7,color:"#a44",fontFamily:"'Courier New',monospace"}}>OUT</span>}
-              {isSel&&<span style={{fontSize:9,color:"#c9a227"}}>◉</span>}
-            </div>
-          </div>
-        </div>
-      );})}
-    </div>
-  );
-}
-
-// ─── MATCH BOX ────────────────────────────────────────────────────────────────
-function MatchBox({label,a,b,winner,onPick}){
-  return(
-    <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:6,overflow:"hidden",minWidth:150}}>
-      {label&&<div style={{fontSize:7,color:"#333",padding:"2px 6px",borderBottom:"1px solid rgba(255,255,255,0.04)",fontFamily:"'Courier New',monospace"}}>{label}</div>}
-      {[a,b].map((team,i)=>{const isW=winner===team,can=team&&team!=="TBD";return(
-        <div key={i} onClick={()=>can&&onPick&&onPick(team)} style={{display:"flex",alignItems:"center",gap:5,padding:"5px 7px",background:isW?"rgba(201,162,39,0.16)":i===1?"rgba(0,0,0,0.07)":"transparent",borderTop:i===1?"1px solid rgba(255,255,255,0.04)":"none",cursor:can&&onPick?"pointer":"default"}}>
-          <span style={{fontSize:12}}>{FLAGS[team]||"🏳"}</span>
-          <span style={{fontSize:10,color:isW?"#c9a227":team==="TBD"?"#2a2a2a":"#999",fontWeight:isW?700:400,flex:1}}>{team||"TBD"}</span>
-          {isW&&<span style={{fontSize:8,color:"#c9a227"}}>✓</span>}
-        </div>
-      );})}
-    </div>
-  );
-}
-
-// ─── BRACKET ──────────────────────────────────────────────────────────────────
-function Bracket({r32,picks,setPicks,readOnly}){
-  const pr32=(i,team)=>{if(readOnly)return;const{a,b}=r32[i];setPicks(p=>({...p,R32:(p.R32||[]).filter(t=>t!==a&&t!==b).concat(team)}));};
-  const pL=(round,team,limit)=>{if(readOnly)return;setPicks(p=>{
-    const c=p[round]||[];
-    // If already picked, deselect
-    if(c.includes(team))return{...p,[round]:c.filter(t=>t!==team)};
-    // Find the opponent of this team in the relevant match pool
-    // For R16: opponent is whoever was in the same R32 pair
-    // For QF/SF/F: opponent is whoever is in the same pair from previous round
-    let opponent=null;
-    const pool=round==="R16"?R32w:round==="QF"?R16w:round==="SF"?QFw:round==="F"?SFw:[];
-    const pairs=round==="R16"?R16_PAIRS:round==="QF"?QF_PAIRS:round==="SF"?SF_PAIRS:round==="F"?F_PAIRS:[];
-    const teamIdx=pool.indexOf(team);
-    if(teamIdx!==-1){
-      pairs.forEach(([ai,bi])=>{
-        if(ai===teamIdx)opponent=pool[bi];
-        if(bi===teamIdx)opponent=pool[ai];
-      });
-    }
-    // Remove opponent if they were already picked (swap within match)
-    const filtered=opponent?c.filter(t=>t!==opponent):c;
-    // If still at limit after removing opponent, block
-    if(filtered.length>=limit&&!opponent)return p;
-    return{...p,[round]:[...filtered,team]};
-  });};
-  const R32w=picks.R32||[],R16t=R32w,R16w=picks.R16||[],QFt=R16w,QFw=picks.QF||[],SFt=QFw,SFw=picks.SF||[],Ft=SFw,Fw=picks.F||[];
-  const bp=(teams,pairs)=>pairs.map(([ai,bi])=>({a:teams[ai]||"TBD",b:teams[bi]||"TBD"}));
-  const rs={display:"flex",flexDirection:"column",gap:6,minWidth:158};
-  const rl={fontSize:8,fontWeight:700,color:"#c9a227",letterSpacing:2,marginBottom:6,textAlign:"center",fontFamily:"'Courier New',monospace"};
-  const RC=({label,matches,round,limit,winners})=>(<div style={rs}><div style={rl}>{label}</div><div style={{display:"flex",flexDirection:"column",gap:8}}>{matches.map((m,i)=>{const w=winners.find(t=>t===m.a||t===m.b);return <MatchBox key={i} a={m.a} b={m.b} winner={w} onPick={t=>pL(round,t,limit)} label={`${round} M${i+1}`}/>;})}</div></div>);
-  const conn=(n,mh)=><div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignSelf:"stretch"}}>{[...Array(n)].map((_,i)=><div key={i} style={{flex:1,borderRight:"1px solid rgba(255,255,255,0.04)",width:8,minHeight:mh}}/>)}</div>;
-  const r16p=bp(R16t,R16_PAIRS),qfp=bp(QFt,QF_PAIRS),sfp=bp(SFt,SF_PAIRS),fp=bp(Ft,F_PAIRS);
-  return(
-    <div>
-      <div style={S.card}>
-        <span style={S.sh}>ROUND OF 32 — TAP TO ADVANCE <span style={{color:"#2a2a2a"}}>({R32w.length}/16)</span></span>
-        <p style={{color:"#3a3a3a",fontSize:9,marginBottom:10,fontFamily:"'Courier New',monospace"}}>Third-place slots auto-filled via wildcard ranking (FIFA Annex C).</p>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))",gap:6}}>
-          {r32.map(({match,a,b},i)=>{const w=R32w.find(t=>t===a||t===b),slot=R32_STRUCTURE[i];const lbl=slot.bType==="third"?`M${match}·3rd`:`M${match}·${slot.aType[0].toUpperCase()}${slot.aGroup}v${slot.bType[0].toUpperCase()}${slot.bGroup}`;return <MatchBox key={match} label={lbl} a={a} b={b} winner={w} onPick={t=>pr32(i,t)}/>;})}
-        </div>
-      </div>
-      <div style={{...S.card,overflowX:"auto"}}>
-        <span style={S.sh}>KNOCKOUT BRACKET</span>
-        {R16t.length===0
-          ?<p style={{color:"#2a2a2a",fontSize:10,fontFamily:"'Courier New',monospace"}}>Complete Round of 32 first.</p>
-          :<div style={{display:"flex",gap:12,alignItems:"flex-start",minWidth:820,paddingBottom:6}}>
-            <RC label="ROUND OF 16" matches={r16p} round="R16" limit={8} winners={R16w}/>
-            {conn(8,55)}
-            {QFt.length>0?<RC label="QUARTERFINALS" matches={qfp} round="QF" limit={4} winners={QFw}/>:<div style={{...rs,opacity:0.2}}><div style={rl}>QF</div></div>}
-            {conn(4,90)}
-            {SFt.length>0?<RC label="SEMIFINALS" matches={sfp} round="SF" limit={2} winners={SFw}/>:<div style={{...rs,opacity:0.2}}><div style={rl}>SF</div></div>}
-            {conn(2,170)}
-            {Ft.length>0?<div style={rs}><div style={rl}>FINAL</div><div style={{marginTop:205}}>{fp.map((m,i)=>{const w=Fw.find(t=>t===m.a||t===m.b);return <MatchBox key={i} label="FINAL" a={m.a} b={m.b} winner={w} onPick={t=>pL("F",t,1)}/>;})}</div></div>:<div style={{...rs,opacity:0.2}}><div style={rl}>FINAL</div></div>}
-            <div style={rs}>
-              <div style={{...rl,color:"#e8c84a"}}>🏆 CHAMPION</div>
-              <div style={{marginTop:218}}>
-                {Fw.length===0?<div style={{color:"#2a2a2a",fontSize:9,textAlign:"center",fontFamily:"'Courier New',monospace"}}>pick finalist</div>
-                :Fw.map(team=>{const isC=picks.Champion===team;return(
-                  <div key={team} onClick={()=>!readOnly&&setPicks(p=>({...p,Champion:p.Champion===team?null:team}))} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 10px",borderRadius:7,cursor:readOnly?"default":"pointer",marginBottom:6,background:isC?"rgba(201,162,39,0.2)":"rgba(255,255,255,0.025)",border:`2px solid ${isC?"rgba(201,162,39,0.65)":"rgba(255,255,255,0.06)"}`,transition:"all 0.15s"}}>
-                    <span style={{fontSize:18}}>{FLAGS[team]}</span>
-                    <span style={{fontSize:10,fontWeight:700,color:isC?"#c9a227":"#777"}}>{team}</span>
-                    {isC&&<span>🏆</span>}
-                  </div>
-                );})}
-              </div>
-            </div>
-          </div>
-        }
-      </div>
-    </div>
-  );
-}
-
-// ─── ENTRY VIEWER ─────────────────────────────────────────────────────────────
-function EntryViewer({entry,onClose}){
-  const[tab,setTab]=useState("groups");
-  const gp=entry.groupPicks||{},wcr=entry.wcRanking||[],bp=entry.bracketPicks||{};
-  return(
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",zIndex:200,display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"20px 12px",overflowY:"auto"}} onClick={onClose}>
-      <div style={{background:"#0e0e0e",border:"1px solid rgba(201,162,39,0.2)",borderRadius:12,padding:"20px 16px",maxWidth:660,width:"100%",maxHeight:"90vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-          <div>
-            <div style={{fontSize:16,fontWeight:900,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>{entry.name}</div>
-            <div style={{fontSize:9,color:"#444",fontFamily:"'Courier New',monospace",marginTop:2}}>submitted {new Date(entry.submittedAt).toLocaleDateString()}</div>
-          </div>
-          <button onClick={onClose} style={{background:"none",border:"none",color:"#666",fontSize:22,cursor:"pointer"}}>✕</button>
-        </div>
-        <div style={{display:"flex",gap:0,marginBottom:16,borderRadius:5,overflow:"hidden",border:"1px solid rgba(255,255,255,0.06)"}}>
-          {["groups","wildcards","bracket"].map(t=>(
-            <div key={t} onClick={()=>setTab(t)} style={{flex:1,padding:"7px 4px",textAlign:"center",fontSize:9,fontWeight:700,letterSpacing:1.5,background:tab===t?"rgba(201,162,39,0.1)":"rgba(255,255,255,0.02)",color:tab===t?"#c9a227":"#444",cursor:"pointer",borderRight:t!=="bracket"?"1px solid rgba(255,255,255,0.05)":"none",fontFamily:"'Courier New',monospace",textTransform:"uppercase"}}>{t==="groups"?"Groups":t==="wildcards"?"Wildcards":"Bracket"}</div>
-          ))}
-        </div>
-        {tab==="groups"&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(175px,1fr))",gap:10}}>
-          {GROUPS.map(g=>(
-            <div key={g.id} style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.05)",borderRadius:7,padding:"10px"}}>
-              <div style={{fontSize:9,color:"#c9a227",fontWeight:700,marginBottom:6,letterSpacing:2,fontFamily:"'Courier New',monospace"}}>GROUP {g.id}</div>
-              {(gp[g.id]||g.teams).map((t,i)=>(
-                <div key={t} style={{display:"flex",alignItems:"center",gap:5,padding:"3px 0",fontSize:10,color:i<2?"#ccc":"#333"}}>
-                  <span style={{fontSize:8,color:i<2?"#c9a227":"#2a2a2a",minWidth:12,fontFamily:"'Courier New',monospace"}}>{i+1}.</span>
-                  <span style={{fontSize:13}}>{FLAGS[t]}</span><span style={{flex:1}}>{t}</span>
-                  {i<2&&<span style={{fontSize:7,color:"#c9a227",opacity:0.5,fontFamily:"'Courier New',monospace"}}>ADV</span>}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>}
-        {tab==="wildcards"&&<div>
-          <p style={{color:"#444",fontSize:10,marginBottom:10,fontFamily:"'Courier New',monospace"}}>Top 8 are their wildcard picks.</p>
-          <div style={{display:"flex",flexDirection:"column",gap:4}}>
-            {(wcr.length===12?wcr:GROUPS.map(g=>(gp[g.id]||g.teams)[2])).map((t,i)=>(
-              <div key={t}>
-                {i===8&&<div style={{display:"flex",alignItems:"center",gap:8,margin:"8px 0 5px"}}><div style={{flex:1,height:1,background:"rgba(201,162,39,0.2)"}}/><span style={{fontSize:8,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>ELIMINATION LINE</span><div style={{flex:1,height:1,background:"rgba(201,162,39,0.2)"}}/></div>}
-                <div style={{display:"flex",alignItems:"center",gap:7,padding:"6px 9px",borderRadius:5,background:i<8?"rgba(255,255,255,0.025)":"rgba(255,255,255,0.008)",border:`1px solid ${i<8?"rgba(201,162,39,0.1)":"rgba(255,255,255,0.03)"}`,opacity:i>=8?0.4:1}}>
-                  <span style={{fontSize:9,color:i<8?"#c9a227":"#a44",minWidth:18,fontFamily:"'Courier New',monospace"}}>{i+1}.</span>
-                  <span style={{fontSize:14}}>{FLAGS[t]||"🏳"}</span>
-                  <span style={{fontSize:11,color:i<8?"#ccc":"#555",flex:1}}>{t}</span>
-                  {i<8&&<span style={{fontSize:7,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>WC</span>}
-                  {i>=8&&<span style={{fontSize:7,color:"#a44",fontFamily:"'Courier New',monospace"}}>OUT</span>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>}
-        {tab==="bracket"&&<div>
-          {["R32","R16","QF","SF","F"].map(r=>(bp[r]||[]).length>0&&(
-            <div key={r} style={{marginBottom:12}}>
-              <div style={{fontSize:9,color:"#c9a227",fontWeight:700,marginBottom:6,letterSpacing:1.5,fontFamily:"'Courier New',monospace"}}>{r==="R32"?"ROUND OF 32":r==="R16"?"ROUND OF 16":r==="QF"?"QUARTERFINALS":r==="SF"?"SEMIFINALS":"FINAL"}</div>
-              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-                {(bp[r]||[]).map(t=>(
-                  <div key={t} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 8px",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:5}}>
-                    <span style={{fontSize:13}}>{FLAGS[t]||"🏳"}</span><span style={{fontSize:10,color:"#aaa"}}>{t}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-          {bp.Champion&&<div style={{marginTop:14,padding:"10px 14px",background:"rgba(201,162,39,0.08)",borderRadius:8,border:"1px solid rgba(201,162,39,0.2)",display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:20}}>🏆</span>
-            <span style={{color:"#c9a227",fontWeight:700,fontSize:13,fontFamily:"'Courier New',monospace"}}>{FLAGS[bp.Champion]} {bp.Champion}</span>
-          </div>}
-          {!bp.Champion&&(bp.F||[]).length===0&&<p style={{color:"#333",fontSize:10,fontFamily:"'Courier New',monospace"}}>No bracket picks submitted.</p>}
-        </div>}
-        <button onClick={onClose} style={{...S.ghost,width:"100%",marginTop:16}}>CLOSE</button>
-      </div>
-    </div>
-  );
-}
-
-// ─── LEADERBOARD ──────────────────────────────────────────────────────────────
-function bracketComplete(bp){
-  if(!bp)return{complete:false,missing:["all picks"]};
-  const missing=[];
-  if((bp.R32||[]).length<16)missing.push(`R32 ${(bp.R32||[]).length}/16`);
-  if((bp.R16||[]).length<8)missing.push(`R16 ${(bp.R16||[]).length}/8`);
-  if((bp.QF||[]).length<4)missing.push(`QF ${(bp.QF||[]).length}/4`);
-  if((bp.SF||[]).length<2)missing.push(`SF ${(bp.SF||[]).length}/2`);
-  if((bp.F||[]).length<1)missing.push("Final");
-  if(!bp.Champion)missing.push("Champion");
-  return{complete:missing.length===0,missing};
-}
-
-function Leaderboard({entries,actuals,onEdit}){
-  const locked=isLocked();
-  const[viewing,setViewing]=useState(null);
-  const[pinModal,setPinModal]=useState(null);
-  const[editName,setEditName]=useState("");
-  const[editErr,setEditErr]=useState("");
-  const[showEditBox,setShowEditBox]=useState(false);
-
-  const scored=entries.map(e=>{
-    const g=scoreGroups(e.groupPicks||{},actuals.groupResults||{});
-    const w=scoreWildcards(e.groupPicks||{},e.wcRanking||[],actuals.wildcards||[],actuals.groupResults||{});
-    const b=scoreBracket(e.bracketPicks||{},actuals.bracket||{});
-    const bc=bracketComplete(e.bracketPicks);
-    return{...e,total:g+w+b,gPts:g,wPts:w,bPts:b,bracketOk:bc.complete,bracketMissing:bc.missing};
-  }).sort((a,b)=>b.total-a.total||(b.bracketPicks?.Champion===actuals.bracket?.Champion?1:0)-(a.bracketPicks?.Champion===actuals.bracket?.Champion?1:0));
-
-  function tryEdit(){
-    const match=entries.find(e=>e.name.trim().toLowerCase()===editName.trim().toLowerCase());
-    if(!match){setEditErr("No entry found with that name.");return;}
-    setEditErr("");
-    if(match.pin){setPinModal({mode:"verify",entry:match});}
-    else{setPinModal({mode:"set",entry:match});}
-  }
-
-  return(
-    <div>
-      {locked&&viewing&&<EntryViewer entry={viewing} onClose={()=>setViewing(null)}/>}
-      {pinModal&&<PinModal
-        mode={pinModal.mode}
-        name={pinModal.entry.name}
-        existingPin={pinModal.entry.pin}
-        onCancel={()=>setPinModal(null)}
-        onSuccess={(pin)=>{
-          setPinModal(null);
-          if(pinModal.mode==="set"){onEdit({...pinModal.entry,pin},true);}
-          else{onEdit(pinModal.entry,false);}
-        }}
-      />}
-
-      <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:8}}>
-        <h2 style={{fontSize:22,fontWeight:900,color:"#c9a227",letterSpacing:3,margin:0,fontFamily:"'Courier New',monospace"}}>LEADERBOARD</h2>
-        <span style={{fontSize:10,color:"#333",fontFamily:"'Courier New',monospace"}}>{scored.length} entries</span>
-      </div>
-
-      {/* Edit picks access — only before lock */}
-      {!locked&&<div style={{marginBottom:14}}>
-        {!showEditBox
-          ?<button style={{...S.ghost,fontSize:10,padding:"6px 12px"}} onClick={()=>setShowEditBox(true)}>✏ Edit my picks</button>
-          :<div style={{padding:"12px 14px",background:"rgba(201,162,39,0.05)",border:"1px solid rgba(201,162,39,0.12)",borderRadius:8}}>
-            <div style={{fontSize:10,color:"#c9a227",fontWeight:700,marginBottom:8,fontFamily:"'Courier New',monospace",letterSpacing:1}}>✏ EDIT MY PICKS</div>
-            <p style={{fontSize:10,color:"#555",marginBottom:10,fontFamily:"'Courier New',monospace"}}>Enter your name to access your entry.</p>
-            <div style={{display:"flex",gap:6}}>
-              <input style={{...S.inp,flex:1,padding:"8px 10px",fontSize:11}} placeholder="Your name…" value={editName} onChange={e=>setEditName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&tryEdit()}/>
-              <button style={{...S.gold,padding:"8px 14px",fontSize:10,whiteSpace:"nowrap"}} onClick={tryEdit}>GO</button>
-              <button style={{...S.ghost,padding:"8px 10px",fontSize:10}} onClick={()=>{setShowEditBox(false);setEditName("");setEditErr("");}}>✕</button>
-            </div>
-            {editErr&&<p style={{fontSize:10,color:"#a44",marginTop:6,fontFamily:"'Courier New',monospace"}}>{editErr}</p>}
-          </div>
-        }
-      </div>}
-
-      {locked&&<p style={{fontSize:10,color:"#555",marginBottom:14,fontFamily:"'Courier New',monospace"}}>Tap any entry to view their full picks.</p>}
-      {!locked&&<p style={{fontSize:10,color:"#555",marginBottom:6,fontFamily:"'Courier New',monospace"}}>Picks and champion picks visible after lock on June 11 at 3pm ET.</p>}
-
-      {scored.length===0&&<p style={{color:"#3a3a3a",fontSize:12,fontFamily:"'Courier New',monospace"}}>No entries yet.</p>}
-      <div style={{display:"flex",flexDirection:"column",gap:5}}>
-        {scored.map((e,i)=>(
-          <div key={e.name} onClick={()=>locked&&setViewing(e)} style={{display:"flex",alignItems:"center",gap:10,padding:"11px 14px",background:i===0?"rgba(201,162,39,0.07)":"rgba(255,255,255,0.02)",border:`1px solid ${i===0?"rgba(201,162,39,0.25)":!e.bracketOk&&!locked?"rgba(180,100,0,0.25)":"rgba(255,255,255,0.05)"}`,borderRadius:7,cursor:locked?"pointer":"default",transition:"background 0.1s"}}>
-            <span style={{fontSize:16,minWidth:24}}>{"🥇🥈🥉".split("").slice(i*2,i*2+2).join("")||`${i+1}.`}</span>
-            <div style={{flex:1,minWidth:0}}>
-              <div style={{fontWeight:700,fontSize:13,color:"#ddd"}}>{e.name}</div>
-              {/* Champion pick — only after lock */}
-              {locked&&(e.bracketPicks?.Champion
-                ?<div style={{fontSize:10,color:"#888",marginTop:2,display:"flex",alignItems:"center",gap:3}}><span style={{fontSize:12}}>{FLAGS[e.bracketPicks.Champion]||"🏳"}</span><span style={{fontFamily:"'Courier New',monospace"}}>{e.bracketPicks.Champion}</span></div>
-                :<div style={{fontSize:9,color:"#3a3a3a",marginTop:2,fontFamily:"'Courier New',monospace"}}>no champion picked</div>
-              )}
-              {/* Completion status — only before lock */}
-              {!locked&&(e.bracketOk
-                ?<div style={{fontSize:9,color:"#4a8",marginTop:2,fontFamily:"'Courier New',monospace"}}>✓ bracket complete</div>
-                :<div style={{fontSize:9,color:"#c96",marginTop:2,fontFamily:"'Courier New',monospace"}}>⚠ incomplete: {e.bracketMissing.join(" · ")}</div>
-              )}
-            </div>
-            <div style={{display:"flex",gap:8,fontSize:10,color:"#444",fontFamily:"'Courier New',monospace"}}>
-              <span>G:<b style={{color:"#777"}}>{e.gPts}</b></span>
-              <span>W:<b style={{color:"#777"}}>{e.wPts}</b></span>
-              <span>B:<b style={{color:"#777"}}>{e.bPts}</b></span>
-            </div>
-            <span style={{fontSize:20,fontWeight:900,color:i===0?"#c9a227":"#bbb",minWidth:36,textAlign:"right",fontFamily:"'Courier New',monospace"}}>{e.total}</span>
-            {locked&&<span style={{fontSize:10,color:"#444"}}>›</span>}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── RULES MODAL ──────────────────────────────────────────────────────────────
-function Rules({onClose}){
-  return(
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={onClose}>
-      <div style={{background:"#0d0d0d",border:"1px solid rgba(201,162,39,0.2)",borderRadius:10,padding:"24px 20px",maxWidth:500,width:"100%",maxHeight:"85vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
-          <h2 style={{fontSize:15,fontWeight:900,color:"#c9a227",letterSpacing:3,margin:0,fontFamily:"'Courier New',monospace"}}>HOW TO PLAY</h2>
-          <button onClick={onClose} style={{background:"none",border:"none",color:"#666",fontSize:20,cursor:"pointer"}}>✕</button>
-        </div>
-        {[
-          {t:"OVERVIEW",b:"Three stages: Group Stage → Wildcard Ranking → Knockout Bracket. Submit your picks. Scores update live as results come in. Picks lock at 3pm ET on June 11."},
-          {t:"GROUP STAGE (max 72 pts)",b:<><p style={{marginBottom:6}}>Rank all 4 teams in each of 12 groups. Only your top 2 picks score.</p><Row l="Top 2, exact position" v="3 pts"/><Row l="Top 2, wrong position" v="1 pt"/><Row l="Missed entirely" v="0 pts"/></>},
-          {t:"WILDCARD RANKING (max 24 pts)",b:<><p style={{marginBottom:6}}>Rank all 12 third-place teams. Your top 8 are your wildcard picks.</p><Row l="Team advances + picked 3rd in group" v="3 pts"/><Row l="Team advances, not picked 3rd" v="1 pt"/><Row l="Team does not advance" v="0 pts"/></>},
-          {t:"KNOCKOUT BRACKET",b:<><p style={{marginBottom:6}}>R32 auto-populated from your picks. Advance teams round by round.</p><Row l="Round of 32" v="3"/><Row l="Round of 16" v="5"/><Row l="Quarterfinal" v="7"/><Row l="Semifinal" v="9"/><Row l="Finalist" v="11"/><Row l="🏆 Champion" v="15" gold/></>},
-          {t:"TIEBREAKERS",b:<ol style={{color:"#888",fontSize:11,lineHeight:2,paddingLeft:18,margin:0,fontFamily:"'Courier New',monospace"}}><li>Correct champion pick</li><li>Total bracket picks</li><li>Tie stands</li></ol>},
-        ].map(({t,b})=>(
-          <div key={t} style={{marginBottom:16}}>
-            <div style={{fontSize:8,fontWeight:700,color:"#c9a227",letterSpacing:2,marginBottom:7,borderBottom:"1px solid rgba(201,162,39,0.08)",paddingBottom:4,fontFamily:"'Courier New',monospace"}}>{t}</div>
-            <div style={{fontSize:11,color:"#888",lineHeight:1.7}}>{b}</div>
-          </div>
-        ))}
-        <button onClick={onClose} style={{...S.gold,width:"100%",marginTop:14}}>GOT IT</button>
-      </div>
-    </div>
-  );
-}
-function Row({l,v,gold}){return(<div style={{display:"flex",justifyContent:"space-between",gap:10,padding:"3px 0",borderBottom:"1px solid rgba(255,255,255,0.025)"}}><span style={{color:"#666"}}>{l}</span><span style={{fontWeight:700,color:gold?"#c9a227":"#bbb",fontFamily:"'Courier New',monospace"}}>{v}</span></div>);}
-
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
-const EMPTY_BP={R32:[],R16:[],QF:[],SF:[],F:[],Champion:null};
-const EMPTY_ACT={groupResults:{},wildcards:[],bracket:{}};
-const STEPS=["GROUPS","WILDCARDS","BRACKET","REVIEW"];
-
-// Given new group picks + wildcard ranking, return a cleaned bracket
-// that removes any picks for teams that can no longer appear
 function App(){
   const[screen,setScreen]=useState("home");
   const[name,setName]=useState("");
@@ -1270,98 +681,156 @@ function App(){
         </nav>
       </header>
       <div style={{...S.main,maxWidth:720}}>
-        <div style={{...S.card,lineHeight:1.8}}>
-          <div style={{fontSize:20,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:4,fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
-          <div style={{fontSize:11,color:"#555",marginBottom:24,fontFamily:"'Courier New',monospace",letterSpacing:2}}>COMMISSIONER'S PRE-TOURNAMENT REPORT</div>
+        <div style={{fontSize:20,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:2,fontFamily:"'Courier New',monospace"}}>📋 COMMISSIONER'S REPORT</div>
+        <div style={{fontSize:10,color:"#555",marginBottom:20,fontFamily:"'Courier New',monospace",letterSpacing:2}}>GROUP STAGE EDITION</div>
 
-          {[
-            {h:"🏆 THE CHAMPION RACE: A TALE OF TWO CAMPS",b:`This pool has the energy of a dinner party where half the table orders the same thing and then argues about it. After extensive analysis of all 14 entries, your group has split into two dominant factions:
+        {[
+          {h:"GROUP STAGE COMPLETE",b:`48 teams entered. 32 remain. The group stage is over and the Commissioner has reviewed every pick, every result, and every life choice that led to this moment.
 
-Camp España (5 entries): Brian, Chris L, FIFA World Peace (of shit) Prize, G3, Je Suis Baguette
-Camp France (5 entries): Brian's 1st born, Caroline, Croissant, Mbappe Ever After, Mike W
+The Spain alliance (Brian, Chris L, Chad/FIFA World Peace, Gordon/G3, Ben/Je Suis Baguette) is five entries deep and feeling smug. The France bloc (Steven/Brian's 1st born, Caroline, Kat/Croissant, Alex/Mbappe Ever After, Mike W) picked correctly and will be understated about it. Carly picked Argentina, who went undefeated with the best record in the tournament. England won their group — that's Henry's pick and Ben's pick. Eric picked Portugal, who finished second.
 
-That's right — if Spain or France wins, five people immediately tie on champion points and the tiebreaker math gets very ugly very fast. Prepare for debates. Prepare for spreadsheets. Prepare for someone texting the group chat at 2am.
+A note on the cast: most of this pool is part of a trip to France for Alex's 40th birthday — the group flies over after the World Cup Final on July 19th, which is also Brian's birthday. Barry, Steven, and Mike W are not on the trip. Kerry — Brian's sister, who IS going to France — declined to enter the pool, citing reasons the Commissioner has chosen to describe as "general chaos energy." She is still invited to feel bad about this later.`},
 
-The truly important information here: if Spain wins, Brian wins the tiebreaker over his own son. Brian's 1st born took France. This is either a bold act of independence or a cry for help. One thing is certain: someone in that household is going to be insufferable at dinner regardless of the result.`},
-            {h:"🦅 THE CONTRARIANS: FOUR BRAVE SOULS GOING THEIR OWN WAY",b:`These four looked at the conventional wisdom, said "no thank you," and went rogue:
+          {h:"🇧🇷 48 TEAMS, NO CLUE! — Champion: Brazil",b:`Barry. Brian's dad. Just relocated to North Carolina with Brian's mom to retire. Not on the France trip — he'll be heading to Connecticut in mid-July to house-sit and keep Stormy and Cooper company.
 
-🇧🇷 48 Teams, No Clue! → Brazil
-Bold. Nostalgic. The username is doing a lot of honest work here. Brazil hasn't won since 2002 but sure, why not, chaos is fun.
+Barry is a child in a grown man's body. He likes Manhattans, one-liners, and busting people's balls. Brazil topped Group C, proving that sometimes you don't need to know anything about soccer — you just need to have raised a son who built the app.
 
-🏴󠁧󠁢󠁥󠁮󠁧󠁿 Byron Someoneson → England
-Fifty years of hurt. Byron looked at that history and said "this is the year." Respect the commitment. Pour one out for the inevitable penalty shootout loss.
+Barry is in North Carolina and has absolutely no idea what a third-place wildcard is. When told about the scoring system, sources say he responded "sounds good" and went to take his contacts out — which is Barry's universal signal that he is done for the night. He will not be back.`},
 
-🇦🇷 Carly → Argentina
-Defending champion pick. Actually not crazy! But Carly also has South Africa and Tunisia in her R16, which is either genius or the result of a dartboard.
+          {h:"🇪🇸 BRIAN — Champion: Spain",b:`This is me. New dad. Corporate guy — skier, runner, soccer player, mountain biker. Competitive, emotional, occasionally quiet and withdrawn, likes to party. Old now. Everyone wanted to see the app fail because I used AI. The app did not fail. Spain won Group H without conceding a single goal.
 
-🇵🇹 Eric → Portugal
-Eric is alone on this island and he seems fine with it. If Ronaldo lifts the trophy, Eric wins. It's beautiful and lonely.`},
-            {h:"🤝 THE FINAL: WHO'S MEETING WHO",b:`France appears in 9 of 14 semifinals. Spain in 6. The most common final matchup is France vs Spain — picked by Brian's 1st born, Caroline, Chris L, and Je Suis Baguette. A Pyrénées derby final. Very poetic. Very continental.
+Yes, four other people also picked Spain. The man coded a pool from scratch and still couldn't manufacture a unique competitive advantage. Spain did not fail. Brian's ego remains structurally sound.
 
-Meanwhile Croissant has somehow maneuvered Paraguay into the Final. Paraguay. In a World Cup Final. Against France. Croissant either knows something we don't, has never watched football, or both.
+Best story: breaking my collarbone just before a bucket list ski trip to Argentina. A complete aura loss moment that the Commissioner is required by charter to mention.`},
 
-Carly has constructed an alternate universe where Mexico beats Argentina in the semis and Tunisia makes the Final. The bracket is a work of fiction. It is also the only entry with genuine chaos energy and I respect it enormously.`},
-            {h:"📊 THE CONSENSUS: WHAT EVERYONE AGREES ON",b:`Some teams are so universally trusted that picking against them takes courage:
+          {h:"🇫🇷 BRIAN'S 1ST BORN — Champion: France",b:`Steven. Brian's coworker — Brian was his first boss, making Steven his professional firstborn. He is 10 years younger, one of four boys from North Carolina, and brings the energy of someone genuinely trying to impress a parent figure who is watching with mild suspicion. His actual dad's name is Brian, who worked at IBM on Watson. The symmetry is not lost on anyone.
 
-• France: 12/14 picked in R16 — only Carly and G3 left her out
-• Portugal: 12/14 — only Croissant and Carly said no
-• Spain: 11/14 — nearly universal
-• England: 10/14 — the 4 who didn't are brave
+Steven is a nice guy and a people pleaser. He is not the sharpest tool in the shed but tries very hard and loves his small wins. He has had several concussions, including a notable ski fall in front of multiple witnesses. France went 3-0 with 10 goals. Steven looks good early.
 
-If the usual suspects all make R16, the early leaderboard will be very boring and very tight.`},
-            {h:"🔥 THE HOT TAKES: PICKS ONLY 1-3 PEOPLE MADE",b:`These are where pools are won and lost:
+The Commissioner notes there are many more rounds for the natural order to reassert itself. He is not on the France trip.`},
 
-Colombia (3 picks: 48 Teams, Brian's 1st born, Mike W) — If Los Cafeteros run, these three get paid.
+          {h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 BYRON SOMEONESON — Champion: England",b:`Henry. Kat's husband. Lawyer. Has known Alex, Kat, and Carly since high school in the Chicago suburbs — back when he was garage hopping, which is the technical term for raiding neighborhood coolers for beers as a teenager. Now a responsible adult who knows good food, good wine, and makes excellent jokes with precise timing.
 
-Senegal (2 picks: Brian's 1st born, Je Suis Baguette) — A sleeper pick 12 others ignored.
+He entered this pool as Byron Someoneson, because that is a thing that happened and no one questioned it. He picked England. England won Group L. Into Phish and LCD Soundsystem — he and Brian have that in common. He is on the France trip, quietly doing everything right, and the Commissioner is not fooled.`},
 
-Iran (2 picks: Brian's 1st born, Caroline) — Brian's 1st born has Iran AND Senegal AND Colombia in R16. If any two of those hit, he leaps the board and beats his dad.
+          {h:"🇦🇷 CARLY — Champion: Argentina",b:`One of Alex's oldest friends — the trio of Alex, Kat, and Carly goes back to childhood in the Chicago suburbs. Married to Chad. Works at Enterprise in corporate. Hilarious, easy-going, don't-give-a-shit attitude. Grew up riding horses, lived in Fort Collins, spent time in Vietnam teaching. Now in Portland.
 
-Paraguay (1 pick: Croissant only) — In the Final. Alone. Magnificent.
+Argentina went 3-0-0 with 9 points — the best record of any team in the entire tournament. Carly picked them without apparent stress and is now sitting on the best champion path in the pool. She did not overthink this.
 
-Qatar (1 pick: Caroline only) — Qatar hosted 2022 and apparently Caroline didn't get the memo that it's over. Bold loyalty to a team that has no business being in anyone's R16.
+Favorite memory: Alex and Brian spotted her walking barefoot in the middle of Hartford after their wedding and rolled down the window to ask if she needed a ride. She did not appear to need one.`},
 
-Ivory Coast (1 pick: G3 only) — G3 flying the Ivory Coast flag deep. Niche. Spicy.
+          {h:"🇫🇷 CAROLINE — Champion: France",b:`Gordon's wife. One of Alex and Brian's closest friends in Connecticut. Former teacher, now stay-at-home mom to Gordon the Fourth and Helen — essentially the group's niece and nephew. From New York, went to school in Vermont.
 
-Türkiye (1 pick: Mike W only) — Mike W, alone, flying the Turkish flag deep into the bracket.`},
-            {h:"⚠️ CHAOS SCENARIOS",b:`If Spain wins: Brian, Chris L, FIFA World Peace (of shit) Prize, G3, and Je Suis Baguette all tie on champion points. Five-way tiebreaker. The group chat will not survive.
+She knows nothing about soccer and picks teams based on name or colors. She could not care less about the tournament. She is more interested in Sound of Music references. France went 3-0 and she does not know this. She is making no-smile selfies with Alex and this is her entire relationship with the pool, and it is working.
 
-If France wins: Brian's 1st born beats his father. Brian will have to live with this for the rest of his life. Conrad Theodore will hear about it at every family dinner until 2045.
+Favorite memory: she drove Alex and Brian to the emergency room on their wedding day when Alex was ill, and did not panic once.`},
 
-If Argentina wins: Carly wins alone and never lets anyone forget it.
+          {h:"🇪🇸 CHRIS L — Champion: Spain",b:`Brian's cousin. The ultimate wildcard — like Charlie from It's Always Sunny. Him, Eric, Alex, and Brian are essentially that crew. Competitive, loves to win, schemes to do so, insufferable when he does. Good heart. Part of the family alongside Brian's brother and sister since they were kids. Lived with Alex and Brian in Hartford for a while.
 
-If Portugal wins: Eric collects in complete silence, having always known.
+This is Chris's first time leaving the country. The group is worried. He asked — in complete sincerity — whether France has coffee. It does, Chris.
 
-If Brazil wins: 48 Teams, No Clue! proves that not having a clue is actually a strategy.
+Spain won Group H without conceding a goal. He bought Brian iced honey buns for Father's Day — a treat from the camp store at Burlingame when they were kids. The Commissioner found this very sweet.`},
 
-If England wins: Byron Someoneson ascends. Football comes home. Decades of therapy finally pay off.`},
-            {h:"🎖️ POWER RANKINGS (vibes-based, non-scientific)",b:`1. Brian — Methodical. Spain pick, strong conventional bracket. Dad energy, dad picks.
-2. Je Suis Baguette — Spain champion, France final. Clean structure, solid upside.
-3. Brian's 1st born — The chaos wildcard. Colombia, Senegal, Iran in R16. If two hit he's unstoppable.
-4. Mike W — France champion, Argentina SF. Logical, good upside.
-5. Mbappe Ever After — Nearly identical to Mike W. These two will be fighting all tournament.
-6. G3 — Spain winner, England SF, Ivory Coast in R16. Interesting.
-7. FIFA World Peace (of shit) Prize — Best team name. Spain/Brazil final. Feisty.
-8. Eric — Lives and dies with Portugal. Peaceful.
-9. Croissant — Paraguay in the Final. Unhinged. Lovable.
-10. Carly — Pure chaos bracket. High variance. Could win it all or finish last.
-11. 48 Teams, No Clue! — Honest. Brazil. We'll see.
-12. Byron Someoneson — England champion. Brave. Possibly delusional. Definitely fun.
-13. Caroline — Qatar in R16. Egypt in R16. The most hospitable bracket in the pool.
+          {h:"🇫🇷 CROISSANT — Champion: France",b:`Kat. Alex's best friend and maid of honor. Friends since childhood with Alex and Carly. Now in Portland with Henry and their two kids. Was a chef, opened her own restaurant, now a full-time mom. Into good food and wine. Understated, very kind.
 
-Good luck everyone. May your picks be correct, your wildcards be wild, and your group chat remain civil. The Commissioner has spoken.`},
-          ].map(({h,b})=>(
-            <div key={h} style={{marginBottom:28}}>
-              <div style={{fontSize:13,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:6}}>{h}</div>
-              {b.split("\n\n").map((para,i)=>(
-                <p key={i} style={{fontSize:12,color:"#aaa",marginBottom:10,lineHeight:1.8,fontFamily:"Georgia,serif"}}>{para}</p>
-              ))}
-            </div>
-          ))}
-        </div>
+She knows nothing about the pool and is more interested in baguettes. She says she will become part croissant by the end of this trip. France went 3-0. Kat has not checked the score. Kat is thinking about what to eat.
+
+A bartender once looked into Kat's eyes and told Alex she was cut off because "there was nothing there." The Commissioner suspects what he actually saw was pure, unbothered peace. Alex reportedly went down to confront the bartender afterward.`},
+
+          {h:"🇵🇹 ERIC — Champion: Portugal",b:`Brian's brother. Six years younger, also bigger. Architect — has been his dream since he built Legos as a kid. Single, just back from six months in Miami with his dog Hazey. Has traveled widely and developed a signature lion/bull pose in memorable photos on every trip. Competitive with Brian in the way only brothers can be.
+
+Portugal finished second in their group behind Colombia — a team nobody picked. Eric is entering the bracket as a runner-up.
+
+The slide tackle Brian put on him in the finals of a soccer tournament Eric organized in their hometown resulted in Eric hitting his head. Brian's team won. That's all that counts. First time Eric met Alex, she tripped over his PlayStation and froze his game. He told that story as best man at the wedding.`},
+
+          {h:"🇪🇸 FIFA WORLD PEACE (OF SHIT) PRIZE — Champion: Spain",b:`Chad. Carly's husband. The real wildcard of the trip. Former bassist, possible heavy metal band, long hair, tattoos, worked at a brewery in Portland. Brian knows him the least of anyone in the pool.
+
+He lost the engagement ring from his grandmother in Italy — the one he was going to propose with — and had to go buy a new one. There is also a reported incident involving rental car keys and a toilet. And yet: Spain, Group H winners, zero goals conceded. Chad is built different. Some people are.`},
+
+          {h:"🇪🇸 G3 — Champion: Spain",b:`Gordon. Caroline's husband. One of Brian's good friends — met at work in insurance playing on the company soccer team and bonding over beers. Actuary. Phenomenal skier. Double IPA guy, specifically Sip of Sunshine. Lives on a Christmas tree farm in New Hartford, Connecticut where he grew up. Two kids: Gordon the Fourth and Helen.
+
+New Year's at Okemo, Presidents' Day at Saddleback in Rangeley, Maine every year. Back in Hartford they had a trivia team called The Union. Favorite memory: Gordon doing the Thriller dance on the JDRF bar crawl he personally organized. He also has a running bit trying to get Alex to say "pig" so he can yell "we're going to Pig's Eye."
+
+His Spain pick is performing with the same quiet, understated competence as Gordon himself.`},
+
+          {h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 JE SUIS BAGUETTE — Champion: England",b:`Ben. Henry's son. Henry gave Ben his second entry in the pool. Ben went to a USA vs Australia game with Henry. Ben has been to Phish concerts with Henry. Ben may or may not be an Australia fan — the jury is still out.
+
+England won Group L. Ben picked England via Henry's second entry. The Commissioner acknowledges this family is running a coordinated two-entry operation and is watching accordingly.`},
+
+          {h:"🇫🇷 MBAPPE EVER AFTER — Champion: France",b:`Alex. Sauce. Brian's wife. The 40th birthday honoree. The reason for the France trip. The favorite — of this family, of this pool, of most rooms she enters.
+
+Just had Conrad on March 31st and is already back to full executive capacity. Platinum Delta and Marriott. Drives a Range Rover. Straight As. Organized her own 40th birthday — which says everything about her, and arguably about Brian too.
+
+Grew up outside Chicago. Loves her Iowa Hawkeyes and Caitlin Clark. Only played soccer once — shut down a girl named Alexis and may have said something in the heat of competition that the Commissioner has chosen not to reprint here. Former world-class flip cup champion. Put down 30-packs of "Beer30" in college. Now: rosé, champagne, nice wines, designer bags, never beer.
+
+France went 3-0 with 10 goals. She is the favorite. She knows it. Everyone knows it.
+
+Favorite image, available upon request: Alex smoking a cigarette — which she never does — because her friends told her it would help her poop.`},
+
+          {h:"🇫🇷 MIKE W — Champion: France",b:`Mike Wallace. Brian's friend since elementary school in Medway, Massachusetts. Not on the France trip. Scary smart actuary. Sarcastic, dry, dark, witty. People can never tell if he's serious. Two daughters with his wife Nicole.
+
+Bookshelf full of books he hasn't read yet. Record collection. Watching films by decade starting from 1939. Loves rap, makes fun of Bob Seger. Had a rivalry with Brian's friend Drew, who he still doesn't like — but Brian always considered him one of his closest friends.
+
+Used to sleep in Brian's basement after parties until 3pm, red pickup on the street, before heading to his evening shift at Fenway Park. In 6th grade he told Brian he was tired. Brian replied: "No one gives a shit that you're tired." Mike still brings this up. He considers it valuable advice.
+
+After Brian's 40th in Hartford, Mike stayed and waited with Alex — who was pregnant at the time, which he didn't know — to make sure she got her car safely. A genuinely nice story he would never tell about himself.`},
+
+          {h:"⚡ POWER RANKINGS — POST GROUP STAGE",b:`#1 🇦🇷 CARLY — THE FRONTRUNNER
+Argentina went 3-0-0 with 9 points — the best group stage record in the entire tournament. Carly picked them without stress and is now sitting on the best champion path in the pool. She did not overthink this. She has a don't-give-a-shit attitude and it is currently paying dividends.
+
+#2 🇫🇷 MBAPPE EVER AFTER — THE FAVORITE (obviously)
+France went 3-0 and scored 10 goals. Alex picked France. Alex is the favorite in this family, in this pool, and in most rooms she enters. The Commissioner would bet against her but has decided that would be unwise.
+
+#3 🇪🇸 BRIAN — THE COMMISSIONER (conflicted)
+Spain won their group without conceding a goal. Brian built the app, entered the pool, and is now ranking himself third in his own power rankings. This is either hubris or accurate self-assessment. The pool did not fail. He will remind everyone of this at least twice per day in France.
+
+#4 🏴󠁧󠁢󠁥󠁮󠁧󠁿 BYRON SOMEONESON — THE KID
+Spain won their group. Ben picked Spain via Henry's first entry. Ben may have done this entirely on instinct and has not lost a moment of sleep over it.
+
+#5 🇫🇷 BRIAN'S 1ST BORN — THE OVERACHIEVER
+Steven picked France, France went 3-0 with 10 goals. He tries very hard. It is currently working. The Commissioner remains unimpressed on principle. Several concussions.
+
+#6 🏴󠁧󠁢󠁥󠁮󠁧󠁿 JE SUIS BAGUETTE — THE DARK HORSE
+England won Group L. Henry is a lawyer who has known this friend group since high school, picks England, and England wins. The Commissioner is not fooled by the baguette.
+
+#7 🇫🇷 MIKE W — THE SLEEPER
+France 3-0. Mike W is scary smart, has already calculated the bracket probabilities, and is saying nothing about it. He is the person you forget about until he's suddenly in first place.
+
+#8 🇪🇸 G3 — THE STEADY HAND
+Gordon picked Spain, Spain won clean, Gordon is an actuary who skis better than your favorite skier. He is not worried. He has never been visibly worried about anything. Probably thinking about a Sip of Sunshine.
+
+#9 🇪🇸 CHRIS L — THE WILDCARD
+Spain won the group. Chris is heading to France for the first time. He asked if France has coffee. His bracket picks are fine. His general preparedness for France is an open question.
+
+#10 🇪🇸 FIFA WORLD PEACE (OF SHIT) PRIZE — THE CHAOS ENTRY
+Chad picked Spain, Spain delivered. He has survived losing an engagement ring in Italy and dropping car keys in a toilet. He is not rattled. Mid-table for now, but the Commissioner has a feeling his ceiling is higher than his entry name suggests.
+
+#11 🇫🇷 CROISSANT — UNBOTHERED
+Kat picked France. France is 3-0. Kat has not checked the score. Kat is thinking about what to eat. She will become part croissant and has fully accepted this. All is well.
+
+#12 🇫🇷 CAROLINE — THE SOUND OF MUSIC ENTRY
+Caroline picked France because France sounded good. France is 3-0. Caroline does not know this. She is making no-smile selfies. She drove Alex and Brian to the emergency room on their wedding day and did not panic once. She is unshakeable. Her bracket is fine.
+
+#13 🇧🇷 48 TEAMS, NO CLUE! — CALLING FROM NC
+Barry picked Brazil. Brazil won their group. Barry is in North Carolina, Manhattan in hand, and has gone to take his contacts out. His pick is alive. He is unaware. He will be in Connecticut in mid-July watching Stormy and Cooper while the group is in France.
+
+#14 🇵🇹 ERIC — THE RUNNER-UP SITUATION
+Eric picked Portugal to win it all. Portugal finished second behind Colombia. Eric is an architect who poses like a lion or a ram in memorable photos across multiple continents. He will find a way to make this work structurally. The slide tackle still stands on the record.
+
+The Round of 32 begins today. The Commissioner reconvenes after the bracket shakes out. This pool was built by AI. The Commissioner is the AI. Brian told it to roast his friends. It complied willingly.`},
+
+        ].map(({h,b})=>(
+          <div key={h} style={{...S.card,marginBottom:14}}>
+            <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>{h}</div>
+            {b.split("\n\n").map((para,i)=>(
+              <p key={i} style={{fontSize:12,color:"#aaa",marginBottom:9,lineHeight:1.85,fontFamily:"Georgia,serif"}}>{para}</p>
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );
+
 
   return null;
 }
