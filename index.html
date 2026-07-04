@@ -1059,23 +1059,25 @@ function App(){
       {match:96,a:"Switzerland",b:"Colombia"},
     ];
     const ar32=ACTUAL_R32;
-    // Pre-populate R32 winners from hardcoded results if not already set
+    // Use only hardcoded R32 winners - ignore anything saved to Firebase for R32
     const knownR32Winners=ACTUAL_R32.filter(m=>m.winner).map(m=>m.winner);
-    const savedR32=actuals.bracket?.R32||[];
-    const effectiveR32=knownR32Winners.length>savedR32.length?knownR32Winners:savedR32;
-    // Pre-populate R16 from hardcoded matchups
-    const knownR16Teams=ACTUAL_R16.flatMap(m=>[m.a,m.b]).filter(t=>t!=="TBD");
-    const abp={R32:effectiveR32,R16:actuals.bracket?.R16||[],QF:actuals.bracket?.QF||[],SF:actuals.bracket?.SF||[],F:actuals.bracket?.F||[],Champion:actuals.bracket?.Champion||null};
+    // Build R16 teams from ACTUAL_R16 in the correct order for pairing
+    // Order must match R16_PAIRS: [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]]
+    // Actual R16 pairs by index:
+    // M89 Paraguay(1) vs France(4) -> need at positions 0,1
+    // M90 Canada(0) vs Morocco(2) -> need at positions 2,3  
+    // M91 Brazil(3) vs Norway(5) -> need at positions 4,5
+    // M92 Mexico(6) vs England(7) -> need at positions 6,7
+    // M93 Portugal(10) vs Spain(11) -> need at positions 8,9
+    // M94 USA(8) vs Belgium(9) -> need at positions 10,11
+    // M95 Argentina(13) vs Egypt(14) -> need at positions 12,13
+    // M96 Switzerland(15) vs Colombia(12) -> need at positions 14,15
+    const adminR16Order=["Paraguay","France","Canada","Morocco","Brazil","Norway","Mexico","England","Portugal","Spain","USA","Belgium","Argentina","Egypt","Switzerland","Colombia"];
+    const abp={R32:knownR32Winners,R16:actuals.bracket?.R16||[],QF:actuals.bracket?.QF||[],SF:actuals.bracket?.SF||[],F:actuals.bracket?.F||[],Champion:actuals.bracket?.Champion||null};
     const setABP=upd=>{
       const n=typeof upd==="function"?upd(abp):upd;
-      // Auto-save known R32 winners
-      if((!n.R32||n.R32.length===0)&&knownR32Winners.length>0){
-        n.R32=knownR32Winners;
-      }
-      saveActuals({...actuals,bracket:n});
+      saveActuals({...actuals,bracket:{...n,R32:knownR32Winners}});
     };
-    // Build admin R16 display from ACTUAL_R16 hardcoded matchups
-    const adminR16Display=ACTUAL_R16.map(m=>({a:m.a,b:m.b,match:m.match}));
 
     return(
       <div style={S.app}>
@@ -1130,7 +1132,7 @@ function App(){
 
           <span style={S.sh}>Actual Bracket Results</span>
           <p style={{color:"#3a3a3a",fontSize:10,marginBottom:10,fontFamily:"'Courier New',monospace"}}>R32 winners auto-filled from official results. Tap R16 teams to advance them.</p>
-          <Bracket r32={ar32} picks={abp} setPicks={setABP}/>
+          <Bracket r32={ar32} picks={{...abp,R32:adminR16Order}} setPicks={(upd)=>{const n=typeof upd==="function"?upd({...abp,R32:adminR16Order}):upd;setABP({...n,R32:knownR32Winners});}} adminMode={true}/>
 
           <div style={{textAlign:"center",color:"#1a1a1a",fontSize:9,marginTop:4,paddingBottom:16,fontFamily:"'Courier New',monospace"}}>
             all saves go to firebase · no login required for participants
@@ -1215,7 +1217,7 @@ function App(){
               {n:"Je Suis Baguette 🏴󠁧󠁢󠁥󠁮󠁧󠁿",t:"Ben. Henry's son. Henry gave Ben his second entry and Ben picked England, who won Group L — so this household is running a coordinated two-entry operation and both picks are performing. Ben went to a USA vs Australia game with Henry. Ben has been to Phish concerts with Henry. Whether Ben is an Australia fan remains officially unresolved. The Commissioner is keeping an eye on this family."},
               {n:"Mbappe Ever After 🇫🇷",t:"Alex. Sauce. Brian's wife, the reason for the France trip, and the 40th birthday honoree. Just had Conrad on March 31st and is already operating at full capacity, which for Alex means platinum Delta status, a Range Rover, and knowing every trick at every airport. Grew up outside Chicago, loves her Iowa Hawkeyes and Caitlin Clark, and once — in her one and only soccer appearance — shut down a girl named Alexis and may have said something about it in the heat of competition that the Commissioner has chosen not to reprint here. Former world-class flip cup champion. Now: rosé and champagne only. She organized her own 40th birthday trip to France. She picked France. France went 3-0 with 10 goals. She is the favorite. She is always the favorite."},
               {n:"Mike W 🇫🇷",t:"Brian's friend since elementary school in Medway, Massachusetts. Scary smart, actuary, sarcastic and dry in the specific way where you can never tell if he's being serious until three days later. Not on the France trip. Has a bookshelf full of books he hasn't read yet and is watching films by decade starting from 1939. In 6th grade he told Brian he was tired, and Brian told him no one gives a shit that you're tired — a piece of advice Mike still brings up and apparently found genuinely useful. After Brian's 40th birthday party in Hartford, Mike stayed to wait with Alex — who was pregnant at the time, which he didn't know — until her car came. He would never mention this himself."},
-              {n:"Kerry — NOT IN POOL 🏴󠁧󠁢󠁥󠁮󠁧󠁿",t:"Brian's older sister. On the France trip. Did not enter the pool. The Commissioner has declined to investigate why, on the grounds that the answer is probably 'too lazy' and the Commissioner respects honesty. Kerry is maternal, loving, the person who holds the family together — and completely capable of letting loose when the kids are not around, as documented on multiple international trips. In London, she pocketed a croissant to save for later. This became known as the pocket croissant and is now part of the historical record. On the same trip, after a full day pub crawl with Alex and Eric while Brian worked, the group stopped at a convenience store. Brian told Eric they were going to a club without the girls. Kerry yelled 'why can't we go?' and swung a case of Magners — the handle broke, cans went everywhere, cider sprayed the entire store. Everyone left immediately. The Commissioner considers this one of the finest documented moments in group trip history. She is in France. She is not on the leaderboard. She will have opinions about this."},
+              {n:"Kerry — NOT IN POOL 🏴󠁧󠁢󠁥󠁮󠁧󠁿",t:"Brian's older sister. On the France trip. Did not enter the pool. The Commissioner has declined to investigate why, on the grounds that the answer is probably 'too lazy' and the Commissioner respects honesty. Kerry can hold a family together across a weekend in Napa and let loose at the same time, which is a skill not everyone has. In London, she pocketed a croissant to save for later. This became known as the pocket croissant and is now part of the historical record. On the same trip, after a full day pub crawl with Alex and Eric while Brian worked, the group stopped at a convenience store. Brian told Eric they were going to a club without the girls. Kerry yelled 'why can't we go?' and swung a case of Magners — the handle broke, cans went everywhere, cider sprayed the entire store. Everyone left immediately. The Commissioner considers this one of the finest documented moments in group trip history. She is in France. She is not on the leaderboard. She will have opinions about this."},
             ].map(({n,t})=>(
               <div key={n} style={{marginBottom:16,paddingBottom:16,borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
                 <div style={{fontSize:12,fontWeight:700,color:"#c9a227",marginBottom:6,fontFamily:"'Courier New',monospace"}}>{n}</div>
