@@ -425,6 +425,34 @@ function EntryViewer({entry,onClose}){
 }
 
 // ─── LEADERBOARD ──────────────────────────────────────────────────────────────
+// ─── MAX POSSIBLE POINTS ──────────────────────────────────────────────────────
+function maxPossible(e, actuals){
+  const g=scoreGroups(e.groupPicks||{},actuals.groupResults||{});
+  const w=scoreWildcards(e.groupPicks||{},e.wcRanking||[],actuals.wildcards||[],actuals.groupResults||{});
+  const b=scoreBracket(e.bracketPicks||{},actuals.bracket||{});
+  const current=g+w+b;
+  const ab=actuals.bracket||{};
+  const bp=e.bracketPicks||{};
+  let remaining=0;
+  const r32done=(ab.R32||[]).length>=12;
+  const r16done=(ab.R16||[]).length>=4;
+  const qfDone=(ab.QF||[]).length>=2;
+  const sfDone=(ab.SF||[]).length>=1;
+  const fDone=(ab.F||[]).length>=1;
+  const aliveAfterR32=r32done?(ab.R32||[]):(bp.R32||[]);
+  const aliveAfterR16=r16done?(ab.R16||[]):(bp.R16||[]).filter(t=>aliveAfterR32.includes(t));
+  const aliveAfterQF=qfDone?(ab.QF||[]):(bp.QF||[]).filter(t=>aliveAfterR16.includes(t));
+  const aliveAfterSF=sfDone?(ab.SF||[]):(bp.SF||[]).filter(t=>aliveAfterQF.includes(t));
+  const aliveAfterF=fDone?(ab.F||[]):(bp.F||[]).filter(t=>aliveAfterSF.includes(t));
+  if(!r32done)(bp.R32||[]).forEach(t=>{if(!(ab.R32||[]).includes(t))remaining+=3;});
+  if(!r16done)(bp.R16||[]).filter(t=>aliveAfterR32.includes(t)).forEach(t=>{if(!(ab.R16||[]).includes(t))remaining+=5;});
+  if(!qfDone)(bp.QF||[]).filter(t=>aliveAfterR16.includes(t)).forEach(t=>{if(!(ab.QF||[]).includes(t))remaining+=7;});
+  if(!sfDone)(bp.SF||[]).filter(t=>aliveAfterQF.includes(t)).forEach(t=>{if(!(ab.SF||[]).includes(t))remaining+=9;});
+  if(!fDone)(bp.F||[]).filter(t=>aliveAfterSF.includes(t)).forEach(t=>{if(!(ab.F||[]).includes(t))remaining+=11;});
+  if(!ab.Champion&&bp.Champion&&aliveAfterF.includes(bp.Champion))remaining+=15;
+  return current+remaining;
+}
+
 function bracketComplete(bp){
   if(!bp)return{complete:false,missing:["all picks"]};
   const missing=[];
@@ -446,38 +474,7 @@ function Leaderboard({entries,actuals,onEdit}){
   const[showEditBox,setShowEditBox]=useState(false);
 
   // Calculate max possible points remaining for each entry
-  function maxPossible(e, actuals){
-    const g=scoreGroups(e.groupPicks||{},actuals.groupResults||{});
-    const w=scoreWildcards(e.groupPicks||{},e.wcRanking||[],actuals.wildcards||[],actuals.groupResults||{});
-    const b=scoreBracket(e.bracketPicks||{},actuals.bracket||{});
-    const current=g+w+b;
-    const ab=actuals.bracket||{};
-    const bp=e.bracketPicks||{};
-    const roundPts={R32:3,R16:5,QF:7,SF:9,F:11};
-    let remaining=0;
-    // For each round: if actuals for that round exist, scoring is done
-    // If not yet decided, count picks that are still alive (in prior round's actuals)
-    // R32 - if no actuals.R32, all picks are potential
-    const r32done=(ab.R32||[]).length>=12;
-    const r16done=(ab.R16||[]).length>=4;
-    const qfDone=(ab.QF||[]).length>=2;
-    const sfDone=(ab.SF||[]).length>=1;
-    const fDone=(ab.F||[]).length>=1;
-    // Alive teams = teams that could still win
-    const aliveAfterR32=r32done?(ab.R32||[]):(bp.R32||[]);
-    const aliveAfterR16=r16done?(ab.R16||[]):(bp.R16||[]).filter(t=>aliveAfterR32.includes(t));
-    const aliveAfterQF=qfDone?(ab.QF||[]):(bp.QF||[]).filter(t=>aliveAfterR16.includes(t));
-    const aliveAfterSF=sfDone?(ab.SF||[]):(bp.SF||[]).filter(t=>aliveAfterQF.includes(t));
-    const aliveAfterF=fDone?(ab.F||[]):(bp.F||[]).filter(t=>aliveAfterSF.includes(t));
-    if(!r32done)(bp.R32||[]).forEach(t=>{if(!(ab.R32||[]).includes(t))remaining+=3;});
-    if(!r16done)(bp.R16||[]).filter(t=>aliveAfterR32.includes(t)).forEach(t=>{if(!(ab.R16||[]).includes(t))remaining+=5;});
-    if(!qfDone)(bp.QF||[]).filter(t=>aliveAfterR16.includes(t)).forEach(t=>{if(!(ab.QF||[]).includes(t))remaining+=7;});
-    if(!sfDone)(bp.SF||[]).filter(t=>aliveAfterQF.includes(t)).forEach(t=>{if(!(ab.SF||[]).includes(t))remaining+=9;});
-    if(!fDone)(bp.F||[]).filter(t=>aliveAfterSF.includes(t)).forEach(t=>{if(!(ab.F||[]).includes(t))remaining+=11;});
-    if(!ab.Champion&&bp.Champion&&aliveAfterF.includes(bp.Champion))remaining+=15;
-    return current+remaining;
-  }
-
+  
   const scored=entries.map(e=>{
     const g=scoreGroups(e.groupPicks||{},actuals.groupResults||{});
     const w=scoreWildcards(e.groupPicks||{},e.wcRanking||[],actuals.wildcards||[],actuals.groupResults||{});
