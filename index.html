@@ -1059,21 +1059,16 @@ function App(){
       {match:96,a:"Switzerland",b:"Colombia"},
     ];
     const ar32=ACTUAL_R32;
-    // Use only hardcoded R32 winners - ignore anything saved to Firebase for R32
     const knownR32Winners=ACTUAL_R32.filter(m=>m.winner).map(m=>m.winner);
-    // Build R16 teams from ACTUAL_R16 in the correct order for pairing
-    // Order must match R16_PAIRS: [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]]
-    // Actual R16 pairs by index:
-    // M89 Paraguay(1) vs France(4) -> need at positions 0,1
-    // M90 Canada(0) vs Morocco(2) -> need at positions 2,3  
-    // M91 Brazil(3) vs Norway(5) -> need at positions 4,5
-    // M92 Mexico(6) vs England(7) -> need at positions 6,7
-    // M93 Portugal(10) vs Spain(11) -> need at positions 8,9
-    // M94 USA(8) vs Belgium(9) -> need at positions 10,11
-    // M95 Argentina(13) vs Egypt(14) -> need at positions 12,13
-    // M96 Switzerland(15) vs Colombia(12) -> need at positions 14,15
     const adminR16Order=["Paraguay","France","Canada","Morocco","Brazil","Norway","Mexico","England","Portugal","Spain","USA","Belgium","Argentina","Egypt","Switzerland","Colombia"];
-    const abp={R32:knownR32Winners,R16:actuals.bracket?.R16||[],QF:actuals.bracket?.QF||[],SF:actuals.bracket?.SF||[],F:actuals.bracket?.F||[],Champion:actuals.bracket?.Champion||null};
+    const validR16Set=new Set(adminR16Order);
+    // Cascade filter: each round's picks must come from prior round's picks
+    const savedR16=(actuals.bracket?.R16||[]).filter(t=>validR16Set.has(t));
+    const savedQF=(actuals.bracket?.QF||[]).filter(t=>savedR16.includes(t));
+    const savedSF=(actuals.bracket?.SF||[]).filter(t=>savedQF.includes(t));
+    const savedF=(actuals.bracket?.F||[]).filter(t=>savedSF.includes(t));
+    const savedChamp=savedF.includes(actuals.bracket?.Champion)?actuals.bracket.Champion:null;
+    const abp={R32:knownR32Winners,R16:savedR16,QF:savedQF,SF:savedSF,F:savedF,Champion:savedChamp};
     const setABP=upd=>{
       const n=typeof upd==="function"?upd(abp):upd;
       saveActuals({...actuals,bracket:{...n,R32:knownR32Winners}});
