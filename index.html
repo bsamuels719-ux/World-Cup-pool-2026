@@ -1,1 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>⚽ World Cup 2026 Prediction Pool</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#080808;color:#fff;font-family:Georgia,'Times New Roman',serif;}
+  input:focus{outline:2px solid rgba(201,162,39,0.5);}
+  button:focus{outline:none;}
+  ::-webkit-scrollbar{width:6px;height:6px;}
+  ::-webkit-scrollbar-track{background:#111;}
+  ::-webkit-scrollbar-thumb{background:#333;border-radius:3px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useCallback } = React;
 
+const FB_URL = "https://world-cup-pool-2026-1b598-default-rtdb.firebaseio.com";
+const SUBMITTED_KEY = "wc26_submitted_name";
+const LOCK_TIME = new Date("2026-06-11T19:00:00Z"); // 3pm ET June 11 = 19:00 UTC
+
+function isLocked() { return new Date() >= LOCK_TIME; }
+function timeUntilLock() {
+  const ms = LOCK_TIME - new Date();
+  if (ms <= 0) return null;
+  const d = Math.floor(ms/86400000), h = Math.floor((ms%86400000)/3600000), m = Math.floor((ms%3600000)/60000);
+  if (d > 0) return `${d}d ${h}h until lock`;
+  if (h > 0) return `${h}h ${m}m until lock`;
+  return `${m}m until lock`;
+}
+
+async function fbGet(path) {
+  try { const r = await fetch(`${FB_URL}/${path}.json`); if(!r.ok) return null; return await r.json(); }
+  catch(e) { return null; }
+}
+async function fbSet(path, value) {
+  try { const r = await fetch(`${FB_URL}/${path}.json`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(value)}); return r.ok; }
+  catch(e) { return false; }
+}
+async function fbDelete(path) {
+  try { const r = await fetch(`${FB_URL}/${path}.json`,{method:"DELETE"}); return r.ok; }
+  catch(e) { return false; }
+}
+
+const GROUPS = [
+  {id:"A",teams:["Mexico","South Korea","South Africa","Czechia"]},
+  {id:"B",teams:["Canada","Switzerland","Qatar","Bosnia-Herzegovina"]},
+  {id:"C",teams:["Brazil","Morocco","Haiti","Scotland"]},
+  {id:"D",teams:["USA","Paraguay","Australia","Türkiye"]},
+  {id:"E",teams:["Germany","Curaçao","Ivory Coast","Ecuador"]},
+  {id:"F",teams:["Netherlands","Japan","Sweden","Tunisia"]},
+  {id:"G",teams:["Belgium","Egypt","Iran","New Zealand"]},
+  {id:"H",teams:["Spain","Cape Verde","Saudi Arabia","Uruguay"]},
+  {id:"I",teams:["France","Senegal","Norway","Iraq"]},
+  {id:"J",teams:["Argentina","Algeria","Austria","Jordan"]},
+  {id:"K",teams:["Portugal","DR Congo","Uzbekistan","Colombia"]},
+  {id:"L",teams:["England","Croatia","Ghana","Panama"]},
+];
+
+const FLAGS = {
+  "Mexico":"🇲🇽","South Korea":"🇰🇷","South Africa":"🇿🇦","Czechia":"🇨🇿",
+  "Canada":"🇨🇦","Switzerland":"🇨🇭","Qatar":"🇶🇦","Bosnia-Herzegovina":"🇧🇦",
+  "Brazil":"🇧🇷","Morocco":"🇲🇦","Haiti":"🇭🇹","Scotland":"🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+  "USA":"🇺🇸","Paraguay":"🇵🇾","Australia":"🇦🇺","Türkiye":"🇹🇷",
+  "Germany":"🇩🇪","Curaçao":"🇨🇼","Ivory Coast":"🇨🇮","Ecuador":"🇪🇨",
+  "Netherlands":"🇳🇱","Japan":"🇯🇵","Sweden":"🇸🇪","Tunisia":"🇹🇳",
+  "Belgium":"🇧🇪","Egypt":"🇪🇬","Iran":"🇮🇷","New Zealand":"🇳🇿",
+  "Spain":"🇪🇸","Cape Verde":"🇨🇻","Saudi Arabia":"🇸🇦","Uruguay":"🇺🇾",
+  "France":"🇫🇷","Senegal":"🇸🇳","Norway":"🇳🇴","Iraq":"🇮🇶",
+  "Argentina":"🇦🇷","Algeria":"🇩🇿","Austria":"🇦🇹","Jordan":"🇯🇴",
+  "Portugal":"🇵🇹","DR Congo":"🇨🇩","Uzbekistan":"🇺🇿","Colombia":"🇨🇴",
+  "England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croatia":"🇭🇷","Ghana":"🇬🇭","Panama":"🇵🇦",
+  "TBD":"🏳️",
+};
+
+const R32_STRUCTURE = [
+  {match:73,aType:"runner",aGroup:"A",bType:"runner",bGroup:"B"},
+  {match:74,aType:"winner",aGroup:"E",bType:"third",bGroups:["A","B","C","D","F"]},
+  {match:75,aType:"winner",aGroup:"F",bType:"runner",bGroup:"C"},
+  {match:76,aType:"winner",aGroup:"C",bType:"runner",bGroup:"F"},
+  {match:77,aType:"winner",aGroup:"I",bType:"third",bGroups:["C","D","F","G","H"]},
+  {match:78,aType:"runner",aGroup:"E",bType:"runner",bGroup:"I"},
+  {match:79,aType:"winner",aGroup:"A",bType:"third",bGroups:["C","E","F","H","I"]},
+  {match:80,aType:"winner",aGroup:"L",bType:"third",bGroups:["E","H","I","J","K"]},
+  {match:81,aType:"winner",aGroup:"D",bType:"third",bGroups:["B","E","F","I","J"]},
+  {match:82,aType:"winner",aGroup:"G",bType:"third",bGroups:["A","E","H","I","J"]},
+  {match:83,aType:"runner",aGroup:"K",bType:"runner",bGroup:"L"},
+  {match:84,aType:"winner",aGroup:"H",bType:"runner",bGroup:"J"},
+  {match:85,aType:"winner",aGroup:"B",bType:"third",bGroups:["E","F","G","I","J"]},
+  {match:86,aType:"winner",aGroup:"J",bType:"runner",bGroup:"H"},
+  {match:87,aType:"winner",aGroup:"K",bType:"third",bGroups:["D","E","I","J","L"]},
+  {match:88,aType:"runner",aGroup:"D",bType:"runner",bGroup:"G"},
+];
+
+const R16_PAIRS=[[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]];
+const QF_PAIRS=[[0,1],[2,3],[4,5],[6,7]];
+const SF_PAIRS=[[0,1],[2,3]];
+const F_PAIRS=[[0,1]];
+const ROUND_PTS={R32:3,R16:5,QF:7,SF:9,F:11,Champion:15};
+const ADMIN_CODE="France2026";
+
+const FIFA_ANNEX_C={"EFGHIJKL":["E","J","I","F","H","G","L","K"],"DFGHIJKL":["H","G","I","D","J","F","L","K"],"DEGHIJKL":["E","J","I","D","H","G","L","K"],"DEFHIJKL":["E","J","I","D","H","F","L","K"],"DEFGIJKL":["E","G","I","D","J","F","L","K"],"DEFGHJKL":["E","G","J","D","H","F","L","K"],"DEFGHIKL":["E","G","I","D","H","F","L","K"],"DEFGHIJL":["E","G","J","D","H","F","L","I"],"DEFGHIJK":["E","G","J","D","H","F","I","K"],"CFGHIJKL":["H","G","I","C","J","F","L","K"],"CEGHIJKL":["E","J","I","C","H","G","L","K"],"CEFHIJKL":["E","J","I","C","H","F","L","K"],"CEFGIJKL":["E","G","I","C","J","F","L","K"],"CEFGHJKL":["E","G","J","C","H","F","L","K"],"CEFGHIKL":["E","G","I","C","H","F","L","K"],"CEFGHIJL":["E","G","J","C","H","F","L","I"],"CEFGHIJK":["E","G","J","C","H","F","I","K"],"CDGHIJKL":["H","G","I","C","J","D","L","K"],"CDFHIJKL":["C","J","I","D","H","F","L","K"],"CDFGIJKL":["C","G","I","D","J","F","L","K"],"CDFGHJKL":["C","G","J","D","H","F","L","K"],"CDFGHIKL":["C","G","I","D","H","F","L","K"],"CDFGHIJL":["C","G","J","D","H","F","L","I"],"CDFGHIJK":["C","G","J","D","H","F","I","K"],"CDEHIJKL":["E","J","I","C","H","D","L","K"],"CDEGIJKL":["E","G","I","C","J","D","L","K"],"CDEGHJKL":["E","G","J","C","H","D","L","K"],"CDEGHIKL":["E","G","I","C","H","D","L","K"],"CDEGHIJL":["E","G","J","C","H","D","L","I"],"CDEGHIJK":["E","G","J","C","H","D","I","K"],"CDEFIJKL":["C","J","E","D","I","F","L","K"],"CDEFHJKL":["C","J","E","D","H","F","L","K"],"CDEFHIKL":["C","E","I","D","H","F","L","K"],"CDEFHIJL":["C","J","E","D","H","F","L","I"],"CDEFHIJK":["C","J","E","D","H","F","I","K"],"CDEFGJKL":["C","G","E","D","J","F","L","K"],"CDEFGIKL":["C","G","E","D","I","F","L","K"],"CDEFGIJL":["C","G","E","D","J","F","L","I"],"CDEFGIJK":["C","G","E","D","J","F","I","K"],"CDEFGHKL":["C","G","E","D","H","F","L","K"],"CDEFGHJL":["C","G","J","D","H","F","L","E"],"CDEFGHJK":["C","G","J","D","H","F","E","K"],"CDEFGHIL":["C","G","E","D","H","F","L","I"],"CDEFGHIK":["C","G","E","D","H","F","I","K"],"CDEFGHIJ":["C","G","J","D","H","F","E","I"],"BFGHIJKL":["H","J","B","F","I","G","L","K"],"BEGHIJKL":["E","J","I","B","H","G","L","K"],"BEFHIJKL":["E","J","B","F","I","H","L","K"],"BEFGIJKL":["E","J","B","F","I","G","L","K"],"BEFGHJKL":["E","J","B","F","H","G","L","K"],"BEFGHIKL":["E","G","B","F","I","H","L","K"],"BEFGHIJL":["E","J","B","F","H","G","L","I"],"BEFGHIJK":["E","J","B","F","H","G","I","K"],"BDGHIJKL":["H","J","B","D","I","G","L","K"],"BDFHIJKL":["H","J","B","D","I","F","L","K"],"BDFGIJKL":["I","G","B","D","J","F","L","K"],"BDFGHJKL":["H","G","B","D","J","F","L","K"],"BDFGHIKL":["H","G","B","D","I","F","L","K"],"BDFGHIJL":["H","G","B","D","J","F","L","I"],"BDFGHIJK":["H","G","B","D","J","F","I","K"],"BDEHIJKL":["E","J","B","D","I","H","L","K"],"BDEGIJKL":["E","J","B","D","I","G","L","K"],"BDEGHJKL":["E","J","B","D","H","G","L","K"],"BDEGHIKL":["E","G","B","D","I","H","L","K"],"BDEGHIJL":["E","J","B","D","H","G","L","I"],"BDEGHIJK":["E","J","B","D","H","G","I","K"],"BDEFIJKL":["E","J","B","D","I","F","L","K"],"BDEFHJKL":["E","J","B","D","H","F","L","K"],"BDEFHIKL":["E","I","B","D","H","F","L","K"],"BDEFHIJL":["E","J","B","D","H","F","L","I"],"BDEFHIJK":["E","J","B","D","H","F","I","K"],"BDEFGJKL":["E","G","B","D","J","F","L","K"],"BDEFGIKL":["E","G","B","D","I","F","L","K"],"BDEFGIJL":["E","G","B","D","J","F","L","I"],"BDEFGIJK":["E","G","B","D","J","F","I","K"],"BDEFGHKL":["E","G","B","D","H","F","L","K"],"BDEFGHJL":["H","G","B","D","J","F","L","E"],"BDEFGHJK":["H","G","B","D","J","F","E","K"],"BDEFGHIL":["E","G","B","D","H","F","L","I"],"BDEFGHIK":["E","G","B","D","H","F","I","K"],"BDEFGHIJ":["H","G","B","D","J","F","E","I"],"BCGHIJKL":["H","J","B","C","I","G","L","K"],"BCFHIJKL":["H","J","B","C","I","F","L","K"],"BCFGIJKL":["I","G","B","C","J","F","L","K"],"BCFGHJKL":["H","G","B","C","J","F","L","K"],"BCFGHIKL":["H","G","B","C","I","F","L","K"],"BCFGHIJL":["H","G","B","C","J","F","L","I"],"BCFGHIJK":["H","G","B","C","J","F","I","K"],"BCEHIJKL":["E","J","B","C","I","H","L","K"],"BCEGIJKL":["E","J","B","C","I","G","L","K"],"BCEGHJKL":["E","J","B","C","H","G","L","K"],"BCEGHIKL":["E","G","B","C","I","H","L","K"],"BCEGHIJL":["E","J","B","C","H","G","L","I"],"BCEGHIJK":["E","J","B","C","H","G","I","K"],"BCEFIJKL":["E","J","B","C","I","F","L","K"],"BCEFHJKL":["E","J","B","C","H","F","L","K"],"BCEFHIKL":["E","I","B","C","H","F","L","K"],"BCEFHIJL":["E","J","B","C","H","F","L","I"],"BCEFHIJK":["E","J","B","C","H","F","I","K"],"BCEFGJKL":["E","G","B","C","J","F","L","K"],"BCEFGIKL":["E","G","B","C","I","F","L","K"],"BCEFGIJL":["E","G","B","C","J","F","L","I"],"BCEFGIJK":["E","G","B","C","J","F","I","K"],"BCEFGHKL":["E","G","B","C","H","F","L","K"],"BCEFGHJL":["H","G","B","C","J","F","L","E"],"BCEFGHJK":["H","G","B","C","J","F","E","K"],"BCEFGHIL":["E","G","B","C","H","F","L","I"],"BCEFGHIK":["E","G","B","C","H","F","I","K"],"BCEFGHIJ":["H","G","B","C","J","F","E","I"],"BCDHIJKL":["H","J","B","C","I","D","L","K"],"BCDGIJKL":["I","G","B","C","J","D","L","K"],"BCDGHJKL":["H","G","B","C","J","D","L","K"],"BCDGHIKL":["H","G","B","C","I","D","L","K"],"BCDGHIJL":["H","G","B","C","J","D","L","I"],"BCDGHIJK":["H","G","B","C","J","D","I","K"],"BCDFIJKL":["C","J","B","D","I","F","L","K"],"BCDFHJKL":["C","J","B","D","H","F","L","K"],"BCDFHIKL":["C","I","B","D","H","F","L","K"],"BCDFHIJL":["C","J","B","D","H","F","L","I"],"BCDFHIJK":["C","J","B","D","H","F","I","K"],"BCDFGJKL":["C","G","B","D","J","F","L","K"],"BCDFGIKL":["C","G","B","D","I","F","L","K"],"BCDFGIJL":["C","G","B","D","J","F","L","I"],"BCDFGIJK":["C","G","B","D","J","F","I","K"],"BCDFGHKL":["C","G","B","D","H","F","L","K"],"BCDFGHJL":["C","G","B","D","H","F","L","J"],"BCDFGHJK":["H","G","B","C","J","F","D","K"],"BCDFGHIL":["C","G","B","D","H","F","L","I"],"BCDFGHIK":["C","G","B","D","H","F","I","K"],"BCDFGHIJ":["H","G","B","C","J","F","D","I"],"BCDEIJKL":["E","J","B","C","I","D","L","K"],"BCDEHJKL":["E","J","B","C","H","D","L","K"],"BCDEHIKL":["E","I","B","C","H","D","L","K"],"BCDEHIJL":["E","J","B","C","H","D","L","I"],"BCDEHIJK":["E","J","B","C","H","D","I","K"],"BCDEGJKL":["E","G","B","C","J","D","L","K"],"BCDEGIKL":["E","G","B","C","I","D","L","K"],"BCDEGIJL":["E","G","B","C","J","D","L","I"],"BCDEGIJK":["E","G","B","C","J","D","I","K"],"BCDEGHKL":["E","G","B","C","H","D","L","K"],"BCDEGHJL":["H","G","B","C","J","D","L","E"],"BCDEGHJK":["H","G","B","C","J","D","E","K"],"BCDEGHIL":["E","G","B","C","H","D","L","I"],"BCDEGHIK":["E","G","B","C","H","D","I","K"],"BCDEGHIJ":["H","G","B","C","J","D","E","I"],"BCDEFJKL":["C","J","B","D","E","F","L","K"],"BCDEFIKL":["C","E","B","D","I","F","L","K"],"BCDEFIJL":["C","J","B","D","E","F","L","I"],"BCDEFIJK":["C","J","B","D","E","F","I","K"],"BCDEFHKL":["C","E","B","D","H","F","L","K"],"BCDEFHJL":["C","J","B","D","H","F","L","E"],"BCDEFHJK":["C","J","B","D","H","F","E","K"],"BCDEFHIL":["C","E","B","D","H","F","L","I"],"BCDEFHIK":["C","E","B","D","H","F","I","K"],"BCDEFHIJ":["C","J","B","D","H","F","E","I"],"BCDEFGKL":["C","G","B","D","E","F","L","K"],"BCDEFGJL":["C","G","B","D","J","F","L","E"],"BCDEFGJK":["C","G","B","D","J","F","E","K"],"BCDEFGIL":["C","G","B","D","E","F","L","I"],"BCDEFGIK":["C","G","B","D","E","F","I","K"],"BCDEFGIJ":["C","G","B","D","J","F","E","I"],"BCDEFGHL":["C","G","B","D","H","F","L","E"],"BCDEFGHK":["C","G","B","D","H","F","E","K"],"BCDEFGHJ":["H","G","B","C","J","F","D","E"],"BCDEFGHI":["C","G","B","D","H","F","E","I"],"AFGHIJKL":["H","J","I","F","A","G","L","K"],"AEGHIJKL":["E","J","I","A","H","G","L","K"],"AEFHIJKL":["E","J","I","F","A","H","L","K"],"AEFGIJKL":["E","J","I","F","A","G","L","K"],"AEFGHJKL":["E","G","J","F","A","H","L","K"],"AEFGHIKL":["E","G","I","F","A","H","L","K"],"AEFGHIJL":["E","G","J","F","A","H","L","I"],"AEFGHIJK":["E","G","J","F","A","H","I","K"],"ADGHIJKL":["H","J","I","D","A","G","L","K"],"ADFHIJKL":["H","J","I","D","A","F","L","K"],"ADFGIJKL":["I","G","J","D","A","F","L","K"],"ADFGHJKL":["H","G","J","D","A","F","L","K"],"ADFGHIKL":["H","G","I","D","A","F","L","K"],"ADFGHIJL":["H","G","J","D","A","F","L","I"],"ADFGHIJK":["H","G","J","D","A","F","I","K"],"ADEHIJKL":["E","J","I","D","A","H","L","K"],"ADEGIJKL":["E","J","I","D","A","G","L","K"],"ADEGHJKL":["E","G","J","D","A","H","L","K"],"ADEGHIKL":["E","G","I","D","A","H","L","K"],"ADEGHIJL":["E","G","J","D","A","H","L","I"],"ADEGHIJK":["E","G","J","D","A","H","I","K"],"ADEFIJKL":["E","J","I","D","A","F","L","K"],"ADEFHJKL":["H","J","E","D","A","F","L","K"],"ADEFHIKL":["H","E","I","D","A","F","L","K"],"ADEFHIJL":["H","J","E","D","A","F","L","I"],"ADEFHIJK":["H","J","E","D","A","F","I","K"],"ADEFGJKL":["E","G","J","D","A","F","L","K"],"ADEFGIKL":["E","G","I","D","A","F","L","K"],"ADEFGIJL":["E","G","J","D","A","F","L","I"],"ADEFGIJK":["E","G","J","D","A","F","I","K"],"ADEFGHKL":["H","G","E","D","A","F","L","K"],"ADEFGHJL":["H","G","J","D","A","F","L","E"],"ADEFGHJK":["H","G","J","D","A","F","E","K"],"ADEFGHIL":["H","G","E","D","A","F","L","I"],"ADEFGHIK":["H","G","E","D","A","F","I","K"],"ADEFGHIJ":["H","G","J","D","A","F","E","I"],"ACGHIJKL":["H","J","I","C","A","G","L","K"],"ACFHIJKL":["H","J","I","C","A","F","L","K"],"ACFGIJKL":["I","G","J","C","A","F","L","K"],"ACFGHJKL":["H","G","J","C","A","F","L","K"],"ACFGHIKL":["H","G","I","C","A","F","L","K"],"ACFGHIJL":["H","G","J","C","A","F","L","I"],"ACFGHIJK":["H","G","J","C","A","F","I","K"],"ACEHIJKL":["E","J","I","C","A","H","L","K"],"ACEGIJKL":["E","J","I","C","A","G","L","K"],"ACEGHJKL":["E","G","J","C","A","H","L","K"],"ACEGHIKL":["E","G","I","C","A","H","L","K"],"ACEGHIJL":["E","G","J","C","A","H","L","I"],"ACEGHIJK":["E","G","J","C","A","H","I","K"],"ACEFIJKL":["E","J","I","C","A","F","L","K"],"ACEFHJKL":["H","J","E","C","A","F","L","K"],"ACEFHIKL":["H","E","I","C","A","F","L","K"],"ACEFHIJL":["H","J","E","C","A","F","L","I"],"ACEFHIJK":["H","J","E","C","A","F","I","K"],"ACEFGJKL":["E","G","J","C","A","F","L","K"],"ACEFGIKL":["E","G","I","C","A","F","L","K"],"ACEFGIJL":["E","G","J","C","A","F","L","I"],"ACEFGIJK":["E","G","J","C","A","F","I","K"],"ACEFGHKL":["H","G","E","C","A","F","L","K"],"ACEFGHJL":["H","G","J","C","A","F","L","E"],"ACEFGHJK":["H","G","J","C","A","F","E","K"],"ACEFGHIL":["H","G","E","C","A","F","L","I"],"ACEFGHIK":["H","G","E","C","A","F","I","K"],"ACEFGHIJ":["H","G","J","C","A","F","E","I"],"ACDHIJKL":["H","J","I","C","A","D","L","K"],"ACDGIJKL":["I","G","J","C","A","D","L","K"],"ACDGHJKL":["H","G","J","C","A","D","L","K"],"ACDGHIKL":["H","G","I","C","A","D","L","K"],"ACDGHIJL":["H","G","J","C","A","D","L","I"],"ACDGHIJK":["H","G","J","C","A","D","I","K"],"ACDFIJKL":["C","J","I","D","A","F","L","K"],"ACDFHJKL":["H","J","F","C","A","D","L","K"],"ACDFHIKL":["H","F","I","C","A","D","L","K"],"ACDFHIJL":["H","J","F","C","A","D","L","I"],"ACDFHIJK":["H","J","F","C","A","D","I","K"],"ACDFGJKL":["C","G","J","D","A","F","L","K"],"ACDFGIKL":["C","G","I","D","A","F","L","K"],"ACDFGIJL":["C","G","J","D","A","F","L","I"],"ACDFGIJK":["C","G","J","D","A","F","I","K"],"ACDFGHKL":["H","G","F","C","A","D","L","K"],"ACDFGHJL":["C","G","J","D","A","F","L","H"],"ACDFGHJK":["H","G","J","C","A","F","D","K"],"ACDFGHIL":["H","G","F","C","A","D","L","I"],"ACDFGHIK":["H","G","F","C","A","D","I","K"],"ACDFGHIJ":["H","G","J","C","A","F","D","I"],"ACDEIJKL":["E","J","I","C","A","D","L","K"],"ACDEHJKL":["H","J","E","C","A","D","L","K"],"ACDEHIKL":["H","E","I","C","A","D","L","K"],"ACDEHIJL":["H","J","E","C","A","D","L","I"],"ACDEHIJK":["H","J","E","C","A","D","I","K"],"ACDEGJKL":["E","G","J","C","A","D","L","K"],"ACDEGIKL":["E","G","I","C","A","D","L","K"],"ACDEGIJL":["E","G","J","C","A","D","L","I"],"ACDEGIJK":["E","G","J","C","A","D","I","K"],"ACDEGHKL":["H","G","E","C","A","D","L","K"],"ACDEGHJL":["H","G","J","C","A","D","L","E"],"ACDEGHJK":["H","G","J","C","A","D","E","K"],"ACDEGHIL":["H","G","E","C","A","D","L","I"],"ACDEGHIK":["H","G","E","C","A","D","I","K"],"ACDEGHIJ":["H","G","J","C","A","D","E","I"],"ACDEFJKL":["C","J","E","D","A","F","L","K"],"ACDEFIKL":["C","E","I","D","A","F","L","K"],"ACDEFIJL":["C","J","E","D","A","F","L","I"],"ACDEFIJK":["C","J","E","D","A","F","I","K"],"ACDEFHKL":["H","E","F","C","A","D","L","K"],"ACDEFHJL":["H","J","F","C","A","D","L","E"],"ACDEFHJK":["H","J","E","C","A","F","D","K"],"ACDEFHIL":["H","E","F","C","A","D","L","I"],"ACDEFHIK":["H","E","F","C","A","D","I","K"],"ACDEFHIJ":["H","J","F","C","A","D","E","I"],"ACDEFGKL":["C","G","E","D","A","F","L","K"],"ACDEFGJL":["C","G","J","D","A","F","L","E"],"ACDEFGJK":["H","G","J","C","A","F","D","E"],"ACDEFGIL":["C","G","E","D","A","F","L","I"],"ACDEFGIK":["C","G","E","D","A","F","I","K"],"ACDEFGIJ":["C","G","J","D","A","F","E","I"],"ACDEFGHL":["H","G","E","C","A","F","L","D"],"ACDEFGHK":["H","G","E","C","A","F","D","K"],"ACDEFGHJ":["H","G","J","C","A","F","D","E"],"ACDEFGHI":["H","G","E","C","A","F","D","I"],"ABGHIJKL":["H","J","I","B","A","G","L","K"],"ABFHIJKL":["H","J","I","B","A","F","L","K"],"ABFGIJKL":["I","G","J","B","A","F","L","K"],"ABFGHJKL":["H","G","J","B","A","F","L","K"],"ABFGHIKL":["H","G","I","B","A","F","L","K"],"ABFGHIJL":["H","G","J","B","A","F","L","I"],"ABFGHIJK":["H","G","J","B","A","F","I","K"],"ABEHIJKL":["E","J","I","B","A","H","L","K"],"ABEGIJKL":["E","J","I","B","A","G","L","K"],"ABEGHJKL":["E","G","J","B","A","H","L","K"],"ABEGHIKL":["E","G","I","B","A","H","L","K"],"ABEGHIJL":["E","G","J","B","A","H","L","I"],"ABEGHIJK":["E","G","J","B","A","H","I","K"],"ABEFIJKL":["E","J","I","B","A","F","L","K"],"ABEFHJKL":["H","J","E","B","A","F","L","K"],"ABEFHIKL":["H","E","I","B","A","F","L","K"],"ABEFHIJL":["H","J","E","B","A","F","L","I"],"ABEFHIJK":["H","J","E","B","A","F","I","K"],"ABEFGJKL":["E","G","J","B","A","F","L","K"],"ABEFGIKL":["E","G","I","B","A","F","L","K"],"ABEFGIJL":["E","G","J","B","A","F","L","I"],"ABEFGIJK":["E","G","J","B","A","F","I","K"],"ABEFGHKL":["H","G","E","B","A","F","L","K"],"ABEFGHJL":["H","G","J","B","A","F","L","E"],"ABEFGHJK":["H","G","J","B","A","F","E","K"],"ABEFGHIL":["H","G","E","B","A","F","L","I"],"ABEFGHIK":["H","G","E","B","A","F","I","K"],"ABEFGHIJ":["H","G","J","B","A","F","E","I"],"ABDHIJKL":["H","J","I","B","A","D","L","K"],"ABDGIJKL":["I","G","J","B","A","D","L","K"],"ABDGHJKL":["H","G","J","B","A","D","L","K"],"ABDGHIKL":["H","G","I","B","A","D","L","K"],"ABDGHIJL":["H","G","J","B","A","D","L","I"],"ABDGHIJK":["H","G","J","B","A","D","I","K"],"ABDFIJKL":["I","J","B","D","A","F","L","K"],"ABDFHJKL":["H","J","B","D","A","F","L","K"],"ABDFHIKL":["H","I","B","D","A","F","L","K"],"ABDFHIJL":["H","J","B","D","A","F","L","I"],"ABDFHIJK":["H","J","B","D","A","F","I","K"],"ABDFGJKL":["I","G","B","D","A","F","L","K"],"ABDFGIKL":["I","G","B","D","A","F","L","K"],"ABDFGIJL":["I","G","B","D","A","F","L","J"],"ABDFGIJK":["I","G","B","D","A","F","J","K"],"ABDFGHKL":["H","G","B","D","A","F","L","K"],"ABDFGHJL":["H","G","J","B","A","F","L","D"],"ABDFGHJK":["H","G","J","B","A","F","D","K"],"ABDFGHIL":["H","G","B","D","A","F","L","I"],"ABDFGHIK":["H","G","B","D","A","F","I","K"],"ABDFGHIJ":["H","G","J","B","A","F","D","I"],"ABDEIJKL":["E","J","I","B","A","D","L","K"],"ABDEHJKL":["H","J","E","B","A","D","L","K"],"ABDEHIKL":["H","E","I","B","A","D","L","K"],"ABDEHIJL":["H","J","E","B","A","D","L","I"],"ABDEHIJK":["H","J","E","B","A","D","I","K"],"ABDEGJKL":["E","G","J","B","A","D","L","K"],"ABDEGIKL":["E","G","I","B","A","D","L","K"],"ABDEGIJL":["E","G","J","B","A","D","L","I"],"ABDEGIJK":["E","G","J","B","A","D","I","K"],"ABDEGHKL":["H","G","E","B","A","D","L","K"],"ABDEGHJL":["H","G","J","B","A","D","L","E"],"ABDEGHJK":["H","G","J","B","A","D","E","K"],"ABDEGHIL":["H","G","E","B","A","D","L","I"],"ABDEGHIK":["H","G","E","B","A","D","I","K"],"ABDEGHIJ":["H","G","J","B","A","D","E","I"],"ABDEFJKL":["E","J","B","D","A","F","L","K"],"ABDEFIKL":["E","I","B","D","A","F","L","K"],"ABDEFIJL":["E","J","B","D","A","F","L","I"],"ABDEFIJK":["E","J","B","D","A","F","I","K"],"ABDEFHKL":["H","E","B","D","A","F","L","K"],"ABDEFHJL":["H","J","B","D","A","F","L","E"],"ABDEFHJK":["H","J","B","D","A","F","E","K"],"ABDEFHIL":["H","E","B","D","A","F","L","I"],"ABDEFHIK":["H","E","B","D","A","F","I","K"],"ABDEFHIJ":["H","J","B","D","A","F","E","I"],"ABDEFGKL":["E","G","B","D","A","F","L","K"],"ABDEFGJL":["E","G","J","B","A","F","L","D"],"ABDEFGJK":["H","G","J","B","A","F","D","E"],"ABDEFGIL":["E","G","B","D","A","F","L","I"],"ABDEFGIK":["E","G","B","D","A","F","I","K"],"ABDEFGIJ":["E","G","J","B","A","F","D","I"],"ABDEFGHL":["H","G","B","D","A","F","L","E"],"ABDEFGHK":["H","G","B","D","A","F","E","K"],"ABDEFGHJ":["H","G","J","B","A","F","D","E"],"ABDEFGHI":["H","G","B","D","A","F","E","I"],"ABCHIJKL":["H","J","I","B","A","C","L","K"],"ABCGIJKL":["I","G","J","B","A","C","L","K"],"ABCGHJKL":["H","G","J","B","A","C","L","K"],"ABCGHIKL":["H","G","I","B","A","C","L","K"],"ABCGHIJL":["H","G","J","B","A","C","L","I"],"ABCGHIJK":["H","G","J","B","A","C","I","K"],"ABCFIJKL":["I","J","B","C","A","F","L","K"],"ABCFHJKL":["H","J","B","C","A","F","L","K"],"ABCFHIKL":["H","I","B","C","A","F","L","K"],"ABCFHIJL":["H","J","B","C","A","F","L","I"],"ABCFHIJK":["H","J","B","C","A","F","I","K"],"ABCFGJKL":["I","G","B","C","A","F","L","K"],"ABCFGIKL":["I","G","B","C","A","F","L","K"],"ABCFGIJL":["I","G","B","C","A","F","L","J"],"ABCFGIJK":["I","G","B","C","A","F","J","K"],"ABCFGHKL":["H","G","B","C","A","F","L","K"],"ABCFGHJL":["H","G","J","B","A","F","L","C"],"ABCFGHJK":["H","G","J","B","A","F","C","K"],"ABCFGHIL":["H","G","B","C","A","F","L","I"],"ABCFGHIK":["H","G","B","C","A","F","I","K"],"ABCFGHIJ":["H","G","J","B","A","F","C","I"],"ABCEIJKL":["E","J","I","B","A","C","L","K"],"ABCEHJKL":["H","J","E","B","A","C","L","K"],"ABCEHIKL":["H","E","I","B","A","C","L","K"],"ABCEHIJL":["H","J","E","B","A","C","L","I"],"ABCEHIJK":["H","J","E","B","A","C","I","K"],"ABCEGJKL":["E","G","J","B","A","C","L","K"],"ABCEGIKL":["E","G","I","B","A","C","L","K"],"ABCEGIJL":["E","G","J","B","A","C","L","I"],"ABCEGIJK":["E","G","J","B","A","C","I","K"],"ABCEGHKL":["H","G","E","B","A","C","L","K"],"ABCEGHJL":["H","G","J","B","A","C","L","E"],"ABCEGHJK":["H","G","J","B","A","C","E","K"],"ABCEGHIL":["H","G","E","B","A","C","L","I"],"ABCEGHIK":["H","G","E","B","A","C","I","K"],"ABCEGHIJ":["H","G","J","B","A","C","E","I"],"ABCEFJKL":["E","J","B","C","A","F","L","K"],"ABCEFIKL":["E","I","B","C","A","F","L","K"],"ABCEFIJL":["E","J","B","C","A","F","L","I"],"ABCEFIJK":["E","J","B","C","A","F","I","K"],"ABCEFHKL":["H","E","B","C","A","F","L","K"],"ABCEFHJL":["H","J","B","C","A","F","L","E"],"ABCEFHJK":["H","J","B","C","A","F","E","K"],"ABCEFHIL":["H","E","B","C","A","F","L","I"],"ABCEFHIK":["H","E","B","C","A","F","I","K"],"ABCEFHIJ":["H","J","B","C","A","F","E","I"],"ABCEFGKL":["E","G","B","C","A","F","L","K"],"ABCEFGJL":["E","G","J","B","A","F","L","C"],"ABCEFGJK":["H","G","J","B","A","F","C","E"],"ABCEFGIL":["E","G","B","C","A","F","L","I"],"ABCEFGIK":["E","G","B","C","A","F","I","K"],"ABCEFGIJ":["E","G","J","B","A","F","C","I"],"ABCEFGHL":["H","G","B","C","A","F","L","E"],"ABCEFGHK":["H","G","B","C","A","F","E","K"],"ABCEFGHJ":["H","G","J","B","A","F","C","E"],"ABCEFGHI":["H","G","B","C","A","F","E","I"],"ABCDIJKL":["I","J","B","C","A","D","L","K"],"ABCDHJKL":["H","J","B","C","A","D","L","K"],"ABCDHIKL":["H","I","B","C","A","D","L","K"],"ABCDHIJL":["H","J","B","C","A","D","L","I"],"ABCDHIJK":["H","J","B","C","A","D","I","K"],"ABCDGJKL":["I","G","B","C","A","D","L","K"],"ABCDGIKL":["I","G","B","C","A","D","L","K"],"ABCDGIJL":["I","G","B","C","A","D","L","J"],"ABCDGIJK":["I","G","B","C","A","D","J","K"],"ABCDGHKL":["H","G","B","C","A","D","L","K"],"ABCDGHJL":["H","G","J","B","A","D","L","C"],"ABCDGHJK":["H","G","J","B","A","D","C","K"],"ABCDGHIL":["H","G","B","C","A","D","L","I"],"ABCDGHIK":["H","G","B","C","A","D","I","K"],"ABCDGHIJ":["H","G","J","B","A","D","C","I"],"ABCDFJKL":["C","J","B","D","A","F","L","K"],"ABCDFIKL":["C","I","B","D","A","F","L","K"],"ABCDFIJL":["C","J","B","D","A","F","L","I"],"ABCDFIJK":["C","J","B","D","A","F","I","K"],"ABCDFHKL":["H","F","B","C","A","D","L","K"],"ABCDFHJL":["H","J","B","C","A","D","L","F"],"ABCDFHJK":["H","J","B","C","A","D","F","K"],"ABCDFHIL":["H","F","B","C","A","D","L","I"],"ABCDFHIK":["H","F","B","C","A","D","I","K"],"ABCDFHIJ":["H","J","B","C","A","D","F","I"],"ABCDFGKL":["C","G","B","D","A","F","L","K"],"ABCDFGJL":["C","G","J","B","A","F","L","D"],"ABCDFGJK":["H","G","J","B","A","F","C","D"],"ABCDFGIL":["C","G","B","D","A","F","L","I"],"ABCDFGIK":["C","G","B","D","A","F","I","K"],"ABCDFGIJ":["C","G","J","B","A","F","D","I"],"ABCDFGHL":["H","G","B","C","A","F","L","D"],"ABCDFGHK":["H","G","B","C","A","F","D","K"],"ABCDFGHJ":["H","G","J","B","A","F","C","D"],"ABCDFGHI":["H","G","B","C","A","F","D","I"],"ABCDEJKL":["E","J","B","C","A","D","L","K"],"ABCDEIKL":["E","I","B","C","A","D","L","K"],"ABCDEIJL":["E","J","B","C","A","D","L","I"],"ABCDEIJK":["E","J","B","C","A","D","I","K"],"ABCDEHKL":["H","E","B","C","A","D","L","K"],"ABCDEHJL":["H","J","B","C","A","D","L","E"],"ABCDEHJK":["H","J","B","C","A","D","E","K"],"ABCDEHIL":["H","E","B","C","A","D","L","I"],"ABCDEHIK":["H","E","B","C","A","D","I","K"],"ABCDEHIJ":["H","J","B","C","A","D","E","I"],"ABCDEGKL":["E","G","B","C","A","D","L","K"],"ABCDEGJL":["E","G","J","B","A","D","L","C"],"ABCDEGJK":["H","G","J","B","A","D","C","E"],"ABCDEGIL":["E","G","B","C","A","D","L","I"],"ABCDEGIK":["E","G","B","C","A","D","I","K"],"ABCDEGIJ":["E","G","J","B","A","D","C","I"],"ABCDEGHL":["H","G","B","C","A","D","L","E"],"ABCDEGHK":["H","G","B","C","A","D","E","K"],"ABCDEGHJ":["H","G","J","B","A","D","C","E"],"ABCDEGHI":["H","G","B","C","A","D","E","I"],"ABCDEFKL":["C","E","B","D","A","F","L","K"],"ABCDEFJL":["C","J","B","D","A","F","L","E"],"ABCDEFJK":["H","J","B","C","A","F","D","E"],"ABCDEFIL":["C","E","B","D","A","F","L","I"],"ABCDEFIK":["C","E","B","D","A","F","I","K"],"ABCDEFIJ":["C","J","B","D","A","F","E","I"],"ABCDEFHL":["H","E","B","C","A","F","L","D"],"ABCDEFHK":["H","E","B","C","A","F","D","K"],"ABCDEFHJ":["H","J","B","C","A","F","D","E"],"ABCDEFHI":["H","E","B","C","A","F","D","I"],"ABCDEFGL":["C","G","B","D","A","F","L","E"],"ABCDEFGK":["C","G","B","D","A","F","E","K"],"ABCDEFGJ":["H","G","J","B","A","F","C","D"],"ABCDEFGI":["C","G","B","D","A","F","E","I"],"ABCDEFGH":["H","G","B","C","A","F","D","E"]};
+
+// ─── SCORING ──────────────────────────────────────────────────────────────────
+function scoreGroups(picks,act){let t=0;GROUPS.forEach(({id})=>{if(!picks[id]||!act[id])return;const p=picks[id],a=act[id];let s=0;if(p[0]&&p[0]===a[0])s+=3;else if(p[0]&&(p[0]===a[0]||p[0]===a[1]))s+=1;if(p[1]&&p[1]===a[1])s+=3;else if(p[1]&&(p[1]===a[0]||p[1]===a[1]))s+=1;t+=s;});return t;}
+function scoreWildcards(gp,wcr,aWC,aG){let t=0;const picks=(wcr||[]).slice(0,8);if(!picks.length||!aWC||!aWC.length)return 0;picks.forEach(team=>{if(!aWC.includes(team))return;let pp=null,ap=null;GROUPS.forEach(({id})=>{if(gp[id]){const i=gp[id].indexOf(team);if(i!==-1)pp=i;}if(aG[id]){const i=aG[id].indexOf(team);if(i!==-1)ap=i;}});t+=ap===2?(pp===2?3:1):1;});return t;}
+function scoreBracket(bp,ab){let t=0;if(!bp||!ab)return 0;["R32","R16","QF","SF","F"].forEach(r=>{if(!bp[r]||!ab[r])return;bp[r].forEach(x=>{if(ab[r].includes(x))t+=ROUND_PTS[r];});});if(bp.Champion&&ab.Champion&&bp.Champion===ab.Champion)t+=15;return t;}
+
+function resolveR32(gp,wcr){
+  const g=id=>(gp[id]||GROUPS.find(x=>x.id===id).teams);
+  const src={};GROUPS.forEach(x=>{src[g(x.id)[2]]=x.id;});
+  const wc=(wcr||[]).slice(0,8);
+  const row=FIFA_ANNEX_C[wc.map(t=>src[t]).filter(Boolean).sort().join("")]||null;
+  const tfg=grp=>{if(!grp)return"TBD";return wc.find(t=>src[t]===grp)||"TBD";};
+  const tmc={74:3,77:5,79:0,80:7,81:2,82:4,85:1,87:6};
+  return R32_STRUCTURE.map(slot=>{
+    const get=(type,grp,mn)=>{
+      if(type==="winner")return g(grp)[0]||"TBD";
+      if(type==="runner")return g(grp)[1]||"TBD";
+      if(type==="third"){if(row&&tmc[mn]!==undefined)return tfg(row[tmc[mn]]);return"TBD";}
+      return"TBD";
+    };
+    return{match:slot.match,a:get(slot.aType,slot.aGroup,slot.match),b:get(slot.bType,slot.bGroup,slot.match)};
+  });
+}
+
+// ─── STYLES ───────────────────────────────────────────────────────────────────
+const S={
+  app:{minHeight:"100vh",background:"#080808",color:"#fff",fontFamily:"Georgia,serif"},
+  hdr:{padding:"13px 20px",borderBottom:"1px solid rgba(201,162,39,0.12)",display:"flex",alignItems:"center",justifyContent:"space-between",background:"rgba(5,5,5,0.97)",position:"sticky",top:0,zIndex:100},
+  main:{maxWidth:940,margin:"0 auto",padding:"24px 14px"},
+  card:{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:10,padding:"16px",marginBottom:12},
+  sh:{fontSize:9,letterSpacing:2.5,color:"#c9a227",fontWeight:700,marginBottom:10,textTransform:"uppercase",fontFamily:"'Courier New',monospace",display:"block"},
+  gold:{padding:"10px 20px",borderRadius:6,fontSize:11,fontWeight:700,letterSpacing:1.5,cursor:"pointer",background:"linear-gradient(135deg,#c9a227,#a07e16)",border:"none",color:"#060606",fontFamily:"'Courier New',monospace"},
+  ghost:{padding:"8px 16px",borderRadius:6,fontSize:11,fontWeight:700,letterSpacing:1,cursor:"pointer",background:"transparent",border:"1px solid rgba(255,255,255,0.12)",color:"#777",fontFamily:"'Courier New',monospace"},
+  nav:a=>({padding:"6px 11px",borderRadius:5,fontSize:10,letterSpacing:1,fontWeight:700,cursor:"pointer",background:a?"rgba(201,162,39,0.14)":"transparent",border:`1px solid ${a?"rgba(201,162,39,0.35)":"rgba(255,255,255,0.08)"}`,color:a?"#c9a227":"#666",fontFamily:"'Courier New',monospace"}),
+  inp:{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:6,padding:"10px 12px",fontSize:13,color:"#e0e0e0",fontFamily:"Georgia,serif",width:"100%",boxSizing:"border-box"},
+  pinInp:{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:6,padding:"10px 12px",fontSize:18,color:"#e0e0e0",fontFamily:"'Courier New',monospace",width:"100%",boxSizing:"border-box",letterSpacing:6,textAlign:"center"},
+};
+
+// ─── LOCK BANNER ──────────────────────────────────────────────────────────────
+function LockBanner(){
+  const locked=isLocked();
+  const msg=timeUntilLock();
+  if(locked) return(
+    <div style={{background:"rgba(180,50,50,0.12)",border:"1px solid rgba(180,50,50,0.3)",borderRadius:7,padding:"10px 14px",marginBottom:14,display:"flex",alignItems:"center",gap:8}}>
+      <span style={{fontSize:14}}>🔒</span>
+      <span style={{fontSize:11,color:"#e07070",fontFamily:"'Courier New',monospace",fontWeight:700}}>PICKS ARE LOCKED — World Cup has started. No new entries or edits.</span>
+    </div>
+  );
+  if(msg) return(
+    <div style={{background:"rgba(201,162,39,0.07)",border:"1px solid rgba(201,162,39,0.15)",borderRadius:7,padding:"8px 14px",marginBottom:14,display:"flex",alignItems:"center",gap:8}}>
+      <span style={{fontSize:12}}>⏳</span>
+      <span style={{fontSize:10,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>{msg} · Picks lock June 11 at 3:00 PM ET</span>
+    </div>
+  );
+
+  return null;
+}
+
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+const EMPTY_BP={R32:[],R16:[],QF:[],SF:[],F:[],Champion:null};
+const EMPTY_ACT={groupResults:{},wildcards:[],bracket:{}};
+const STEPS=["GROUPS","WILDCARDS","BRACKET","REVIEW"];
+
+// ─── PIN MODAL ────────────────────────────────────────────────────────────────
+function PinModal({mode,name,existingPin,onSuccess,onCancel}){
+  const[pin,setPin]=useState("");
+  const[confirm,setConfirm]=useState("");
+  const[err,setErr]=useState("");
+  function submit(){
+    if(mode==="verify"){if(pin===existingPin){onSuccess();}else setErr("Incorrect PIN.");return;}
+    if(pin.length!==4||!/^\d{4}$/.test(pin)){setErr("PIN must be exactly 4 digits.");return;}
+    if(pin!==confirm){setErr("PINs don't match.");return;}
+    onSuccess(pin);
+  }
+  return(
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",zIndex:300,display:"flex",alignItems:"center",justifyContent:"center",padding:20}} onClick={onCancel}>
+      <div style={{background:"#0e0e0e",border:"1px solid rgba(201,162,39,0.25)",borderRadius:12,padding:"28px 24px",maxWidth:320,width:"100%"}} onClick={e=>e.stopPropagation()}>
+        <div style={{fontSize:30,textAlign:"center",marginBottom:10}}>🔐</div>
+        <h3 style={{color:"#c9a227",fontFamily:"'Courier New',monospace",letterSpacing:2,fontSize:13,textAlign:"center",marginBottom:6}}>{mode==="set"?"SET YOUR PIN":"ENTER YOUR PIN"}</h3>
+        <p style={{color:"#555",fontSize:10,textAlign:"center",marginBottom:18,fontFamily:"'Courier New',monospace"}}>{mode==="set"?`Choose a 4-digit PIN for ${name}. You will need it to edit your picks.`:`Enter the PIN for ${name} to continue.`}</p>
+        <input style={S.pinInp} type="password" inputMode="numeric" maxLength={4} placeholder="• • • •" value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,"").slice(0,4))} onKeyDown={e=>e.key==="Enter"&&submit()}/>
+        {mode==="set"&&<input style={{...S.pinInp,marginTop:8}} type="password" inputMode="numeric" maxLength={4} placeholder="confirm" value={confirm} onChange={e=>setConfirm(e.target.value.replace(/\D/g,"").slice(0,4))} onKeyDown={e=>e.key==="Enter"&&submit()}/>}
+        {err&&<p style={{color:"#a44",fontSize:10,textAlign:"center",marginTop:8,fontFamily:"'Courier New',monospace"}}>{err}</p>}
+        <div style={{display:"flex",gap:8,marginTop:16}}>
+          <button style={{...S.ghost,flex:1}} onClick={onCancel}>Cancel</button>
+          <button style={{...S.gold,flex:1}} onClick={submit}>{mode==="set"?"Set PIN":"Unlock"}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── RANK LIST ────────────────────────────────────────────────────────────────
+function RankList({teams,ranked,onChange,disabled}){
+  const[sel,setSel]=useState(null);
+  const d=ranked.length===teams.length?ranked:[...teams];
+  const move=(i,dir)=>{const n=i+dir;if(n<0||n>=d.length)return;const a=[...d];[a[i],a[n]]=[a[n],a[i]];onChange(a);setSel(null);};
+  const tap=i=>{if(disabled)return;if(sel===null){setSel(i);return;}if(sel===i){setSel(null);return;}const a=[...d];[a[sel],a[i]]=[a[i],a[sel]];onChange(a);setSel(null);};
+  const ab=(i,dir)=>({width:30,height:30,borderRadius:dir===-1?"4px 4px 0 0":"0 0 4px 4px",background:(dir===-1?i===0:i===d.length-1)?"rgba(255,255,255,0.01)":"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.07)",borderBottom:dir===-1?"none":undefined,borderTop:dir===1?"none":undefined,color:(dir===-1?i===0:i===d.length-1)?"#1a1a1a":"#888",fontSize:10,display:"flex",alignItems:"center",justifyContent:"center",cursor:(dir===-1?i===0:i===d.length-1)?"default":"pointer",flexShrink:0,WebkitTapHighlightColor:"transparent",touchAction:"manipulation"});
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:4}}>
+      <div style={{fontSize:9,textAlign:"center",marginBottom:2,color:sel!==null?"#c9a227":"#2a2a2a",fontFamily:"'Courier New',monospace"}}>{sel!==null?`swap ${d[sel]} with...`:"tap to select · ▲▼ to nudge"}</div>
+      {d.map((team,i)=>{const isSel=sel===i,isTop=i<2;return(
+        <div key={team} style={{display:"flex",alignItems:"center",gap:4}}>
+          {!disabled&&<div style={{display:"flex",flexDirection:"column",flexShrink:0}}>
+            <button onTouchEnd={e=>{e.preventDefault();move(i,-1);}} onClick={()=>move(i,-1)} disabled={i===0} style={ab(i,-1)}>▲</button>
+            <button onTouchEnd={e=>{e.preventDefault();move(i,1);}} onClick={()=>move(i,1)} disabled={i===d.length-1} style={ab(i,1)}>▼</button>
+          </div>}
+          <div onTouchEnd={e=>{e.preventDefault();tap(i);}} onClick={()=>tap(i)} style={{flex:1,display:"flex",alignItems:"center",gap:6,padding:"7px 9px",borderRadius:5,minHeight:40,background:isSel?"rgba(201,162,39,0.16)":isTop?"rgba(255,255,255,0.035)":"rgba(255,255,255,0.01)",border:`1px solid ${isSel?"rgba(201,162,39,0.55)":isTop?"rgba(201,162,39,0.18)":"rgba(255,255,255,0.05)"}`,cursor:disabled?"default":"pointer",userSelect:"none",WebkitTapHighlightColor:"transparent",touchAction:"manipulation"}}>
+            <span style={{width:16,height:16,borderRadius:"50%",background:isTop?"rgba(201,162,39,0.2)":"rgba(255,255,255,0.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:isTop?"#c9a227":"#444",flexShrink:0,fontFamily:"'Courier New',monospace"}}>{i+1}</span>
+            <span style={{fontSize:15}}>{FLAGS[team]||"🏳"}</span>
+            <span style={{fontSize:11,fontWeight:isTop?600:400,color:isSel?"#c9a227":isTop?"#ddd":"#666",flex:1}}>{team}</span>
+            {isTop&&!isSel&&<span style={{fontSize:7,color:"#c9a227",opacity:0.6,fontFamily:"'Courier New',monospace"}}>ADV</span>}
+            {isSel&&<span style={{fontSize:9,color:"#c9a227"}}>◉</span>}
+          </div>
+        </div>
+      );})}
+    </div>
+  );
+}
+
+// ─── WILDCARD RANKER ──────────────────────────────────────────────────────────
+function WildcardRanker({groupPicks,wcRanking,onChange}){
+  const[sel,setSel]=useState(null);
+  const thirds=GROUPS.map(g=>({group:g.id,team:(groupPicks[g.id]||g.teams)[2]||g.teams[2]}));
+  const currentThirds=thirds.map(t=>t.team);
+  let ranking;
+  if(wcRanking.length===12&&wcRanking.every(t=>currentThirds.includes(t))&&new Set(wcRanking).size===12){
+    ranking=wcRanking;
+  } else {
+    ranking=[...currentThirds];
+  }
+  const groupOf=t=>thirds.find(x=>x.team===t)?.group||"?";
+  const tap=i=>{if(sel===null){setSel(i);return;}if(sel===i){setSel(null);return;}const a=[...ranking];[a[sel],a[i]]=[a[i],a[sel]];onChange(a);setSel(null);};
+  const move=(i,dir)=>{const n=i+dir;if(n<0||n>=ranking.length)return;const a=[...ranking];[a[i],a[n]]=[a[n],a[i]];onChange(a);setSel(null);};
+  const ab=(i,dir)=>({width:30,height:30,borderRadius:dir===-1?"4px 4px 0 0":"0 0 4px 4px",background:(dir===-1?i===0:i===ranking.length-1)?"rgba(255,255,255,0.01)":"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.07)",borderBottom:dir===-1?"none":undefined,borderTop:dir===1?"none":undefined,color:(dir===-1?i===0:i===ranking.length-1)?"#1a1a1a":"#888",fontSize:10,display:"flex",alignItems:"center",justifyContent:"center",cursor:(dir===-1?i===0:i===ranking.length-1)?"default":"pointer",flexShrink:0,WebkitTapHighlightColor:"transparent",touchAction:"manipulation"});
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:4}}>
+      <div style={{fontSize:9,textAlign:"center",marginBottom:3,color:sel!==null?"#c9a227":"#2a2a2a",fontFamily:"'Courier New',monospace"}}>{sel!==null?`swap ${ranking[sel]} with...`:"tap to select · ▲▼ to nudge"}</div>
+      {ranking.map((team,i)=>{const isSel=sel===i,adv=i<8;return(
+        <div key={team}>
+          {i===8&&<div style={{display:"flex",alignItems:"center",gap:8,margin:"8px 0 5px"}}><div style={{flex:1,height:1,background:"rgba(201,162,39,0.25)"}}/><span style={{fontSize:8,color:"#c9a227",fontWeight:700,letterSpacing:2,fontFamily:"'Courier New',monospace"}}>ELIMINATION LINE</span><div style={{flex:1,height:1,background:"rgba(201,162,39,0.25)"}}/></div>}
+          <div style={{display:"flex",alignItems:"center",gap:4}}>
+            <div style={{display:"flex",flexDirection:"column",flexShrink:0}}>
+              <button onTouchEnd={e=>{e.preventDefault();move(i,-1);}} onClick={()=>move(i,-1)} disabled={i===0} style={ab(i,-1)}>▲</button>
+              <button onTouchEnd={e=>{e.preventDefault();move(i,1);}} onClick={()=>move(i,1)} disabled={i===ranking.length-1} style={ab(i,1)}>▼</button>
+            </div>
+            <div onTouchEnd={e=>{e.preventDefault();tap(i);}} onClick={()=>tap(i)} style={{flex:1,display:"flex",alignItems:"center",gap:6,padding:"7px 9px",borderRadius:5,minHeight:40,background:isSel?"rgba(201,162,39,0.16)":adv?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.008)",border:`1px solid ${isSel?"rgba(201,162,39,0.55)":adv?"rgba(201,162,39,0.12)":"rgba(255,255,255,0.03)"}`,cursor:"pointer",userSelect:"none",WebkitTapHighlightColor:"transparent",touchAction:"manipulation",opacity:!adv?0.4:1}}>
+              <span style={{width:16,height:16,borderRadius:"50%",background:adv?"rgba(201,162,39,0.18)":"rgba(180,50,50,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:adv?"#c9a227":"#a44",flexShrink:0,fontFamily:"'Courier New',monospace"}}>{i+1}</span>
+              <span style={{fontSize:7,color:"#444",minWidth:14,fontFamily:"'Courier New',monospace"}}>G{groupOf(team)}</span>
+              <span style={{fontSize:14}}>{FLAGS[team]||"🏳"}</span>
+              <span style={{fontSize:11,color:isSel?"#c9a227":adv?"#ccc":"#555",flex:1}}>{team}</span>
+              {adv&&!isSel&&<span style={{fontSize:7,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>WC</span>}
+              {!adv&&<span style={{fontSize:7,color:"#a44",fontFamily:"'Courier New',monospace"}}>OUT</span>}
+              {isSel&&<span style={{fontSize:9,color:"#c9a227"}}>◉</span>}
+            </div>
+          </div>
+        </div>
+      );})}
+    </div>
+  );
+}
+
+// ─── MATCH BOX ────────────────────────────────────────────────────────────────
+function MatchBox({label,a,b,winner,onPick}){
+  return(
+    <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:6,overflow:"hidden",minWidth:150}}>
+      {label&&<div style={{fontSize:7,color:"#333",padding:"2px 6px",borderBottom:"1px solid rgba(255,255,255,0.04)",fontFamily:"'Courier New',monospace"}}>{label}</div>}
+      {[a,b].map((team,i)=>{const isW=winner===team,can=team&&team!=="TBD";return(
+        <div key={i} onClick={()=>can&&onPick&&onPick(team)} style={{display:"flex",alignItems:"center",gap:5,padding:"5px 7px",background:isW?"rgba(201,162,39,0.16)":i===1?"rgba(0,0,0,0.07)":"transparent",borderTop:i===1?"1px solid rgba(255,255,255,0.04)":"none",cursor:can&&onPick?"pointer":"default"}}>
+          <span style={{fontSize:12}}>{FLAGS[team]||"🏳"}</span>
+          <span style={{fontSize:10,color:isW?"#c9a227":team==="TBD"?"#2a2a2a":"#999",fontWeight:isW?700:400,flex:1}}>{team||"TBD"}</span>
+          {isW&&<span style={{fontSize:8,color:"#c9a227"}}>✓</span>}
+        </div>
+      );})}
+    </div>
+  );
+}
+
+// ─── BRACKET ──────────────────────────────────────────────────────────────────
+function Bracket({r32,picks,setPicks,readOnly}){
+  const pr32=(i,team)=>{if(readOnly)return;const{a,b}=r32[i];setPicks(p=>{const cur=p.R32||[];if(cur.includes(team))return{...p,R32:cur.filter(t=>t!==team)};return{...p,R32:cur.filter(t=>t!==a&&t!==b).concat(team)};});};
+  const pL=(round,team,limit)=>{if(readOnly)return;setPicks(p=>{
+    const c=p[round]||[];
+    if(c.includes(team))return{...p,[round]:c.filter(t=>t!==team)};
+    let opponent=null;
+    const pool=round==="R16"?R32w:round==="QF"?R16w:round==="SF"?QFw:round==="F"?SFw:[];
+    const pairs=round==="R16"?R16_PAIRS:round==="QF"?QF_PAIRS:round==="SF"?SF_PAIRS:round==="F"?F_PAIRS:[];
+    const teamIdx=pool.indexOf(team);
+    if(teamIdx!==-1){pairs.forEach(([ai,bi])=>{if(ai===teamIdx)opponent=pool[bi];if(bi===teamIdx)opponent=pool[ai];});}
+    const filtered=opponent?c.filter(t=>t!==opponent):c;
+    if(filtered.length>=limit&&!opponent)return p;
+    return{...p,[round]:[...filtered,team]};
+  });};
+  const R32w=picks.R32||[],R16t=R32w,R16w=picks.R16||[],QFt=R16w,QFw=picks.QF||[],SFt=QFw,SFw=picks.SF||[],Ft=SFw,Fw=picks.F||[];
+  const bp=(teams,pairs)=>pairs.map(([ai,bi])=>({a:teams[ai]||"TBD",b:teams[bi]||"TBD"}));
+  const rs={display:"flex",flexDirection:"column",gap:6,minWidth:158};
+  const rl={fontSize:8,fontWeight:700,color:"#c9a227",letterSpacing:2,marginBottom:6,textAlign:"center",fontFamily:"'Courier New',monospace"};
+  const RC=({label,matches,round,limit,winners})=>(<div style={rs}><div style={rl}>{label}</div><div style={{display:"flex",flexDirection:"column",gap:8}}>{matches.map((m,i)=>{const w=winners.find(t=>t===m.a||t===m.b);return <MatchBox key={i} a={m.a} b={m.b} winner={w} onPick={t=>pL(round,t,limit)} label={`${round} M${i+1}`}/>;})}</div></div>);
+  const conn=(n,mh)=><div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignSelf:"stretch"}}>{[...Array(n)].map((_,i)=><div key={i} style={{flex:1,borderRight:"1px solid rgba(255,255,255,0.04)",width:8,minHeight:mh}}/>)}</div>;
+  const r16p=bp(R16t,R16_PAIRS),qfp=bp(QFt,QF_PAIRS),sfp=bp(SFt,SF_PAIRS),fp=bp(Ft,F_PAIRS);
+  return(
+    <div>
+      <div style={S.card}>
+        <span style={S.sh}>ROUND OF 32 — TAP TO ADVANCE <span style={{color:"#2a2a2a"}}>({R32w.length}/16)</span></span>
+        <p style={{color:"#3a3a3a",fontSize:9,marginBottom:10,fontFamily:"'Courier New',monospace"}}>Third-place slots auto-filled via wildcard ranking (FIFA Annex C).</p>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))",gap:6}}>
+          {r32.map(({match,a,b},i)=>{const w=R32w.find(t=>t===a||t===b),slot=R32_STRUCTURE[i];const lbl=slot.bType==="third"?`M${match}·3rd`:`M${match}·${slot.aType[0].toUpperCase()}${slot.aGroup}v${slot.bType[0].toUpperCase()}${slot.bGroup}`;return <MatchBox key={match} label={lbl} a={a} b={b} winner={w} onPick={t=>pr32(i,t)}/>;})}
+        </div>
+      </div>
+      <div style={{...S.card,overflowX:"auto"}}>
+        <span style={S.sh}>KNOCKOUT BRACKET</span>
+        {R16t.length===0
+          ?<p style={{color:"#2a2a2a",fontSize:10,fontFamily:"'Courier New',monospace"}}>Complete Round of 32 first.</p>
+          :<div style={{display:"flex",gap:12,alignItems:"flex-start",minWidth:820,paddingBottom:6}}>
+            <RC label="ROUND OF 16" matches={r16p} round="R16" limit={8} winners={R16w}/>
+            {conn(8,55)}
+            {QFt.length>0?<RC label="QUARTERFINALS" matches={qfp} round="QF" limit={4} winners={QFw}/>:<div style={{...rs,opacity:0.2}}><div style={rl}>QF</div></div>}
+            {conn(4,90)}
+            {SFt.length>0?<RC label="SEMIFINALS" matches={sfp} round="SF" limit={2} winners={SFw}/>:<div style={{...rs,opacity:0.2}}><div style={rl}>SF</div></div>}
+            {conn(2,170)}
+            {Ft.length>0?<div style={rs}><div style={rl}>FINAL</div><div style={{marginTop:205}}>{fp.map((m,i)=>{const w=Fw.find(t=>t===m.a||t===m.b);return <MatchBox key={i} label="FINAL" a={m.a} b={m.b} winner={w} onPick={t=>pL("F",t,1)}/>;})}</div></div>:<div style={{...rs,opacity:0.2}}><div style={rl}>FINAL</div></div>}
+            <div style={rs}>
+              <div style={{...rl,color:"#e8c84a"}}>🏆 CHAMPION</div>
+              <div style={{marginTop:218}}>
+                {Fw.length===0?<div style={{color:"#2a2a2a",fontSize:9,textAlign:"center",fontFamily:"'Courier New',monospace"}}>pick finalist</div>
+                :Fw.map(team=>{const isC=picks.Champion===team;return(
+                  <div key={team} onClick={()=>!readOnly&&setPicks(p=>({...p,Champion:p.Champion===team?null:team}))} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 10px",borderRadius:7,cursor:readOnly?"default":"pointer",marginBottom:6,background:isC?"rgba(201,162,39,0.2)":"rgba(255,255,255,0.025)",border:`2px solid ${isC?"rgba(201,162,39,0.65)":"rgba(255,255,255,0.06)"}`,transition:"all 0.15s"}}>
+                    <span style={{fontSize:18}}>{FLAGS[team]}</span>
+                    <span style={{fontSize:10,fontWeight:700,color:isC?"#c9a227":"#777"}}>{team}</span>
+                    {isC&&<span>🏆</span>}
+                  </div>
+                );})}
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  );
+}
+
+// ─── ENTRY VIEWER ─────────────────────────────────────────────────────────────
+function EntryViewer({entry,onClose}){
+  const[tab,setTab]=useState("groups");
+  const gp=entry.groupPicks||{},wcr=entry.wcRanking||[],bp=entry.bracketPicks||{};
+  return(
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",zIndex:200,display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"20px 12px",overflowY:"auto"}} onClick={onClose}>
+      <div style={{background:"#0e0e0e",border:"1px solid rgba(201,162,39,0.2)",borderRadius:12,padding:"20px 16px",maxWidth:660,width:"100%",maxHeight:"90vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+          <div>
+            <div style={{fontSize:16,fontWeight:900,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>{entry.name}</div>
+            <div style={{fontSize:9,color:"#444",fontFamily:"'Courier New',monospace",marginTop:2}}>submitted {new Date(entry.submittedAt).toLocaleDateString()}</div>
+          </div>
+          <button onClick={onClose} style={{background:"none",border:"none",color:"#666",fontSize:22,cursor:"pointer"}}>✕</button>
+        </div>
+        <div style={{display:"flex",gap:0,marginBottom:16,borderRadius:5,overflow:"hidden",border:"1px solid rgba(255,255,255,0.06)"}}>
+          {["groups","wildcards","bracket"].map(t=>(
+            <div key={t} onClick={()=>setTab(t)} style={{flex:1,padding:"7px 4px",textAlign:"center",fontSize:9,fontWeight:700,letterSpacing:1.5,background:tab===t?"rgba(201,162,39,0.1)":"rgba(255,255,255,0.02)",color:tab===t?"#c9a227":"#444",cursor:"pointer",borderRight:t!=="bracket"?"1px solid rgba(255,255,255,0.05)":"none",fontFamily:"'Courier New',monospace",textTransform:"uppercase"}}>{t==="groups"?"Groups":t==="wildcards"?"Wildcards":"Bracket"}</div>
+          ))}
+        </div>
+        {tab==="groups"&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(175px,1fr))",gap:10}}>
+          {GROUPS.map(g=>(
+            <div key={g.id} style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.05)",borderRadius:7,padding:"10px"}}>
+              <div style={{fontSize:9,color:"#c9a227",fontWeight:700,marginBottom:6,letterSpacing:2,fontFamily:"'Courier New',monospace"}}>GROUP {g.id}</div>
+              {(gp[g.id]||g.teams).map((t,i)=>(
+                <div key={t} style={{display:"flex",alignItems:"center",gap:5,padding:"3px 0",fontSize:10,color:i<2?"#ccc":"#333"}}>
+                  <span style={{fontSize:8,color:i<2?"#c9a227":"#2a2a2a",minWidth:12,fontFamily:"'Courier New',monospace"}}>{i+1}.</span>
+                  <span style={{fontSize:13}}>{FLAGS[t]}</span><span style={{flex:1}}>{t}</span>
+                  {i<2&&<span style={{fontSize:7,color:"#c9a227",opacity:0.5,fontFamily:"'Courier New',monospace"}}>ADV</span>}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>}
+        {tab==="wildcards"&&<div>
+          <p style={{color:"#444",fontSize:10,marginBottom:10,fontFamily:"'Courier New',monospace"}}>Top 8 are their wildcard picks.</p>
+          <div style={{display:"flex",flexDirection:"column",gap:4}}>
+            {(wcr.length===12?wcr:GROUPS.map(g=>(gp[g.id]||g.teams)[2])).map((t,i)=>(
+              <div key={t}>
+                {i===8&&<div style={{display:"flex",alignItems:"center",gap:8,margin:"8px 0 5px"}}><div style={{flex:1,height:1,background:"rgba(201,162,39,0.2)"}}/><span style={{fontSize:8,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>ELIMINATION LINE</span><div style={{flex:1,height:1,background:"rgba(201,162,39,0.2)"}}/></div>}
+                <div style={{display:"flex",alignItems:"center",gap:7,padding:"6px 9px",borderRadius:5,background:i<8?"rgba(255,255,255,0.025)":"rgba(255,255,255,0.008)",border:`1px solid ${i<8?"rgba(201,162,39,0.1)":"rgba(255,255,255,0.03)"}`,opacity:i>=8?0.4:1}}>
+                  <span style={{fontSize:9,color:i<8?"#c9a227":"#a44",minWidth:18,fontFamily:"'Courier New',monospace"}}>{i+1}.</span>
+                  <span style={{fontSize:14}}>{FLAGS[t]||"🏳"}</span>
+                  <span style={{fontSize:11,color:i<8?"#ccc":"#555",flex:1}}>{t}</span>
+                  {i<8&&<span style={{fontSize:7,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>WC</span>}
+                  {i>=8&&<span style={{fontSize:7,color:"#a44",fontFamily:"'Courier New',monospace"}}>OUT</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>}
+        {tab==="bracket"&&<div>
+          {["R32","R16","QF","SF","F"].map(r=>(bp[r]||[]).length>0&&(
+            <div key={r} style={{marginBottom:12}}>
+              <div style={{fontSize:9,color:"#c9a227",fontWeight:700,marginBottom:6,letterSpacing:1.5,fontFamily:"'Courier New',monospace"}}>{r==="R32"?"ROUND OF 32":r==="R16"?"ROUND OF 16":r==="QF"?"QUARTERFINALS":r==="SF"?"SEMIFINALS":"FINAL"}</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                {(bp[r]||[]).map(t=>(
+                  <div key={t} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 8px",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:5}}>
+                    <span style={{fontSize:13}}>{FLAGS[t]||"🏳"}</span><span style={{fontSize:10,color:"#aaa"}}>{t}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+          {bp.Champion&&<div style={{marginTop:14,padding:"10px 14px",background:"rgba(201,162,39,0.08)",borderRadius:8,border:"1px solid rgba(201,162,39,0.2)",display:"flex",alignItems:"center",gap:8}}>
+            <span style={{fontSize:20}}>🏆</span>
+            <span style={{color:"#c9a227",fontWeight:700,fontSize:13,fontFamily:"'Courier New',monospace"}}>{FLAGS[bp.Champion]} {bp.Champion}</span>
+          </div>}
+          {!bp.Champion&&(bp.F||[]).length===0&&<p style={{color:"#333",fontSize:10,fontFamily:"'Courier New',monospace"}}>No bracket picks submitted.</p>}
+        </div>}
+        <button onClick={onClose} style={{...S.ghost,width:"100%",marginTop:16}}>CLOSE</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── LEADERBOARD ──────────────────────────────────────────────────────────────
+// ─── MAX POSSIBLE POINTS ──────────────────────────────────────────────────────
+function maxPossible(e, actuals){
+  const g=scoreGroups(e.groupPicks||{},actuals.groupResults||{});
+  const w=scoreWildcards(e.groupPicks||{},e.wcRanking||[],actuals.wildcards||[],actuals.groupResults||{});
+  const b=scoreBracket(e.bracketPicks||{},actuals.bracket||{});
+  const current=g+w+b;
+  const ab=actuals.bracket||{};
+  const bp=e.bracketPicks||{};
+  let remaining=0;
+  const r32done=(ab.R32||[]).length>=12;
+  const r16done=(ab.R16||[]).length>=4;
+  const qfDone=(ab.QF||[]).length>=2;
+  const sfDone=(ab.SF||[]).length>=1;
+  const fDone=(ab.F||[]).length>=1;
+  const aliveAfterR32=r32done?(ab.R32||[]):(bp.R32||[]);
+  const aliveAfterR16=r16done?(ab.R16||[]):(bp.R16||[]).filter(t=>aliveAfterR32.includes(t));
+  const aliveAfterQF=qfDone?(ab.QF||[]):(bp.QF||[]).filter(t=>aliveAfterR16.includes(t));
+  const aliveAfterSF=sfDone?(ab.SF||[]):(bp.SF||[]).filter(t=>aliveAfterQF.includes(t));
+  const aliveAfterF=fDone?(ab.F||[]):(bp.F||[]).filter(t=>aliveAfterSF.includes(t));
+  if(!r32done)(bp.R32||[]).forEach(t=>{if(!(ab.R32||[]).includes(t))remaining+=3;});
+  if(!r16done)(bp.R16||[]).filter(t=>aliveAfterR32.includes(t)).forEach(t=>{if(!(ab.R16||[]).includes(t))remaining+=5;});
+  if(!qfDone)(bp.QF||[]).filter(t=>aliveAfterR16.includes(t)).forEach(t=>{if(!(ab.QF||[]).includes(t))remaining+=7;});
+  if(!sfDone)(bp.SF||[]).filter(t=>aliveAfterQF.includes(t)).forEach(t=>{if(!(ab.SF||[]).includes(t))remaining+=9;});
+  if(!fDone)(bp.F||[]).filter(t=>aliveAfterSF.includes(t)).forEach(t=>{if(!(ab.F||[]).includes(t))remaining+=11;});
+  if(!ab.Champion&&bp.Champion&&aliveAfterF.includes(bp.Champion))remaining+=15;
+  return current+remaining;
+}
+
+function bracketComplete(bp){
+  if(!bp)return{complete:false,missing:["all picks"]};
+  const missing=[];
+  if((bp.R32||[]).length<16)missing.push(`R32 ${(bp.R32||[]).length}/16`);
+  if((bp.R16||[]).length<8)missing.push(`R16 ${(bp.R16||[]).length}/8`);
+  if((bp.QF||[]).length<4)missing.push(`QF ${(bp.QF||[]).length}/4`);
+  if((bp.SF||[]).length<2)missing.push(`SF ${(bp.SF||[]).length}/2`);
+  if((bp.F||[]).length<1)missing.push("Final");
+  if(!bp.Champion)missing.push("Champion");
+  return{complete:missing.length===0,missing};
+}
+
+function Leaderboard({entries,actuals,onEdit}){
+  const locked=isLocked();
+  const[viewing,setViewing]=useState(null);
+  const[pinModal,setPinModal]=useState(null);
+  const[editName,setEditName]=useState("");
+  const[editErr,setEditErr]=useState("");
+  const[showEditBox,setShowEditBox]=useState(false);
+
+  // Calculate max possible points remaining for each entry
+  
+  const scored=entries.map(e=>{
+    const g=scoreGroups(e.groupPicks||{},actuals.groupResults||{});
+    const w=scoreWildcards(e.groupPicks||{},e.wcRanking||[],actuals.wildcards||[],actuals.groupResults||{});
+    const b=scoreBracket(e.bracketPicks||{},actuals.bracket||{});
+    const bc=bracketComplete(e.bracketPicks);
+    const mp=maxPossible(e,actuals);
+    return{...e,total:g+w+b,gPts:g,wPts:w,bPts:b,bracketOk:bc.complete,bracketMissing:bc.missing,maxPts:mp};
+  }).sort((a,b)=>b.total-a.total||(b.bracketPicks?.Champion===actuals.bracket?.Champion?1:0)-(a.bracketPicks?.Champion===actuals.bracket?.Champion?1:0));
+
+  function tryEdit(){
+    const match=entries.find(e=>e.name.trim().toLowerCase()===editName.trim().toLowerCase());
+    if(!match){setEditErr("No entry found with that name.");return;}
+    setEditErr("");
+    if(match.pin){setPinModal({mode:"verify",entry:match});}
+    else{setPinModal({mode:"set",entry:match});}
+  }
+
+  return(
+    <div>
+      {locked&&viewing&&<EntryViewer entry={viewing} onClose={()=>setViewing(null)}/>}
+      {pinModal&&<PinModal
+        mode={pinModal.mode}
+        name={pinModal.entry.name}
+        existingPin={pinModal.entry.pin}
+        onCancel={()=>setPinModal(null)}
+        onSuccess={(pin)=>{
+          setPinModal(null);
+          if(pinModal.mode==="set"){onEdit({...pinModal.entry,pin},true);}
+          else{onEdit(pinModal.entry,false);}
+        }}
+      />}
+      <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:8}}>
+        <h2 style={{fontSize:22,fontWeight:900,color:"#c9a227",letterSpacing:3,margin:0,fontFamily:"'Courier New',monospace"}}>LEADERBOARD</h2>
+        <span style={{fontSize:10,color:"#333",fontFamily:"'Courier New',monospace"}}>{scored.length} entries</span>
+      </div>
+      {!locked&&<div style={{marginBottom:14}}>
+        {!showEditBox
+          ?<button style={{...S.ghost,fontSize:10,padding:"6px 12px"}} onClick={()=>setShowEditBox(true)}>✏ Edit my picks</button>
+          :<div style={{padding:"12px 14px",background:"rgba(201,162,39,0.05)",border:"1px solid rgba(201,162,39,0.12)",borderRadius:8}}>
+            <div style={{fontSize:10,color:"#c9a227",fontWeight:700,marginBottom:8,fontFamily:"'Courier New',monospace",letterSpacing:1}}>✏ EDIT MY PICKS</div>
+            <p style={{fontSize:10,color:"#555",marginBottom:10,fontFamily:"'Courier New',monospace"}}>Enter your name to access your entry.</p>
+            <div style={{display:"flex",gap:6}}>
+              <input style={{...S.inp,flex:1,padding:"8px 10px",fontSize:11}} placeholder="Your name..." value={editName} onChange={e=>setEditName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&tryEdit()}/>
+              <button style={{...S.gold,padding:"8px 14px",fontSize:10,whiteSpace:"nowrap"}} onClick={tryEdit}>GO</button>
+              <button style={{...S.ghost,padding:"8px 10px",fontSize:10}} onClick={()=>{setShowEditBox(false);setEditName("");setEditErr("");}}>✕</button>
+            </div>
+            {editErr&&<p style={{fontSize:10,color:"#a44",marginTop:6,fontFamily:"'Courier New',monospace"}}>{editErr}</p>}
+          </div>
+        }
+      </div>}
+      {locked&&<p style={{fontSize:10,color:"#555",marginBottom:14,fontFamily:"'Courier New',monospace"}}>Tap any entry to view their full picks.</p>}
+      {!locked&&<p style={{fontSize:10,color:"#555",marginBottom:6,fontFamily:"'Courier New',monospace"}}>Picks and champion picks visible after lock on June 11 at 3pm ET.</p>}
+      {scored.length===0&&<p style={{color:"#3a3a3a",fontSize:12,fontFamily:"'Courier New',monospace"}}>No entries yet.</p>}
+      <div style={{display:"flex",flexDirection:"column",gap:5}}>
+        {scored.map((e,i)=>(
+          <div key={e.name} onClick={()=>locked&&setViewing(e)} style={{display:"flex",alignItems:"center",gap:10,padding:"11px 14px",background:i===0?"rgba(201,162,39,0.07)":"rgba(255,255,255,0.02)",border:`1px solid ${i===0?"rgba(201,162,39,0.25)":!e.bracketOk&&!locked?"rgba(180,100,0,0.25)":"rgba(255,255,255,0.05)"}`,borderRadius:7,cursor:locked?"pointer":"default"}}>
+            <span style={{fontSize:16,minWidth:24}}>{"🥇🥈🥉".split("").slice(i*2,i*2+2).join("")||`${i+1}.`}</span>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{display:"flex",alignItems:"center",gap:6}}>
+                <span style={{fontWeight:700,fontSize:13,color:"#ddd"}}>{e.name}</span>
+                <span style={{fontSize:8,color:"#555",fontFamily:"'Courier New',monospace"}}>#{i+1}</span>
+              </div>
+              {locked&&(e.bracketPicks?.Champion
+                ?<div style={{fontSize:10,color:"#888",marginTop:2,display:"flex",alignItems:"center",gap:3}}><span style={{fontSize:12}}>{FLAGS[e.bracketPicks.Champion]||"🏳"}</span><span style={{fontFamily:"'Courier New',monospace"}}>{e.bracketPicks.Champion}</span></div>
+                :<div style={{fontSize:9,color:"#3a3a3a",marginTop:2,fontFamily:"'Courier New',monospace"}}>no champion picked</div>
+              )}
+              {!locked&&(e.bracketOk
+                ?<div style={{fontSize:9,color:"#4a8",marginTop:2,fontFamily:"'Courier New',monospace"}}>✓ bracket complete</div>
+                :<div style={{fontSize:9,color:"#c96",marginTop:2,fontFamily:"'Courier New',monospace"}}>⚠ incomplete: {e.bracketMissing.join(" · ")}</div>
+              )}
+              <div style={{fontSize:8,color:"#444",marginTop:2,fontFamily:"'Courier New',monospace"}}>max possible: <b style={{color:"#666"}}>{e.maxPts}</b></div>
+            </div>
+            <div style={{display:"flex",gap:8,fontSize:10,color:"#444",fontFamily:"'Courier New',monospace"}}>
+              <span>G:<b style={{color:"#777"}}>{e.gPts}</b></span>
+              <span>W:<b style={{color:"#777"}}>{e.wPts}</b></span>
+              <span>B:<b style={{color:"#777"}}>{e.bPts}</b></span>
+            </div>
+            <span style={{fontSize:20,fontWeight:900,color:i===0?"#c9a227":"#bbb",minWidth:36,textAlign:"right",fontFamily:"'Courier New',monospace"}}>{e.total}</span>
+            {locked&&<span style={{fontSize:10,color:"#444"}}>›</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── RULES ────────────────────────────────────────────────────────────────────
+function Rules({onClose}){
+  return(
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={onClose}>
+      <div style={{background:"#0d0d0d",border:"1px solid rgba(201,162,39,0.2)",borderRadius:10,padding:"24px 20px",maxWidth:500,width:"100%",maxHeight:"85vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
+          <h2 style={{fontSize:15,fontWeight:900,color:"#c9a227",letterSpacing:3,margin:0,fontFamily:"'Courier New',monospace"}}>HOW TO PLAY</h2>
+          <button onClick={onClose} style={{background:"none",border:"none",color:"#666",fontSize:20,cursor:"pointer"}}>✕</button>
+        </div>
+        {[
+          {t:"OVERVIEW",b:"Three stages: Group Stage → Wildcard Ranking → Knockout Bracket. Submit your picks. Scores update live as results come in. Picks lock at 3pm ET on June 11."},
+          {t:"GROUP STAGE (max 72 pts)",b:<><p style={{marginBottom:6}}>Rank all 4 teams in each of 12 groups. Only your top 2 picks score.</p><RR l="Top 2, exact position" v="3 pts"/><RR l="Top 2, wrong position" v="1 pt"/><RR l="Missed entirely" v="0 pts"/></>},
+          {t:"WILDCARD RANKING (max 24 pts)",b:<><p style={{marginBottom:6}}>Rank all 12 third-place teams. Your top 8 are your wildcard picks.</p><RR l="Team advances + picked 3rd in group" v="3 pts"/><RR l="Team advances, not picked 3rd" v="1 pt"/><RR l="Team does not advance" v="0 pts"/></>},
+          {t:"KNOCKOUT BRACKET",b:<><p style={{marginBottom:6}}>R32 auto-populated from your picks. Advance teams round by round.</p><RR l="Round of 32" v="3"/><RR l="Round of 16" v="5"/><RR l="Quarterfinal" v="7"/><RR l="Semifinal" v="9"/><RR l="Finalist" v="11"/><RR l="🏆 Champion" v="15" gold/></>},
+          {t:"TIEBREAKERS",b:<ol style={{color:"#888",fontSize:11,lineHeight:2,paddingLeft:18,margin:0,fontFamily:"'Courier New',monospace"}}><li>Correct champion pick</li><li>Total bracket picks</li><li>Tie stands</li></ol>},
+        ].map(({t,b})=>(
+          <div key={t} style={{marginBottom:16}}>
+            <div style={{fontSize:8,fontWeight:700,color:"#c9a227",letterSpacing:2,marginBottom:7,borderBottom:"1px solid rgba(201,162,39,0.08)",paddingBottom:4,fontFamily:"'Courier New',monospace"}}>{t}</div>
+            <div style={{fontSize:11,color:"#888",lineHeight:1.7}}>{b}</div>
+          </div>
+        ))}
+        <button onClick={onClose} style={{...S.gold,width:"100%",marginTop:14}}>GOT IT</button>
+      </div>
+    </div>
+  );
+}
+function RR({l,v,gold}){return(<div style={{display:"flex",justifyContent:"space-between",gap:10,padding:"3px 0",borderBottom:"1px solid rgba(255,255,255,0.025)"}}><span style={{color:"#666"}}>{l}</span><span style={{fontWeight:700,color:gold?"#c9a227":"#bbb",fontFamily:"'Courier New',monospace"}}>{v}</span></div>);}
+
+
+function App(){
+  const[screen,setScreen]=useState("home");
+  const[name,setName]=useState("");
+  const[originalName,setOriginalName]=useState(""); // name before edit, for rename
+  const[adminCode,setAC]=useState("");
+  const[isAdmin,setAdmin]=useState(false);
+  const[adminErr,setAErr]=useState("");
+  const[step,setStep]=useState(0);
+  const[submitted,setSub]=useState(false);
+  const[showRules,setRules]=useState(false);
+  const[syncing,setSyncing]=useState(false);
+  const[syncMsg,setSyncMsg]=useState("");
+  const[entries,setEntries]=useState([]);
+  const[actuals,setActuals]=useState(EMPTY_ACT);
+  const[loaded,setLoaded]=useState(false);
+  const[gp,setGP]=useState({});
+  const[wcr,setWCR]=useState([]);
+  const[bp,setBP]=useState(EMPTY_BP);
+  const[pendingPin,setPendingPin]=useState(null); // pin to save on submit
+  const[showSetPin,setShowSetPin]=useState(false);
+
+  const[hasSubmitted,setHasSubmitted]=useState(()=>{
+    try{return !!localStorage.getItem(SUBMITTED_KEY);}catch(e){return false;}
+  });
+
+  const flash=(ok)=>{setSyncMsg(ok?"✓ saved":"⚠ failed");setTimeout(()=>setSyncMsg(""),2500);};
+
+  useEffect(()=>{
+    (async()=>{
+      setSyncing(true);
+      try{
+        const[e,a]=await Promise.all([fbGet("entries"),fbGet("actuals")]);
+        if(e&&typeof e==="object"&&!Array.isArray(e))setEntries(Object.values(e));
+        else if(Array.isArray(e))setEntries(e);
+        if(a)setActuals(a);
+      }catch(err){console.error(err);}
+      finally{setLoaded(true);setSyncing(false);}
+    })();
+  },[]);
+
+  useEffect(()=>{
+    if(screen!=="leaderboard")return;
+    const id=setInterval(async()=>{
+      const[e,a]=await Promise.all([fbGet("entries"),fbGet("actuals")]);
+      if(e&&typeof e==="object"&&!Array.isArray(e))setEntries(Object.values(e));
+      else if(Array.isArray(e))setEntries(e);
+      if(a)setActuals(a);
+    },15000);
+    return()=>clearInterval(id);
+  },[screen]);
+
+  const refresh=async()=>{
+    setSyncing(true);
+    const[e,a]=await Promise.all([fbGet("entries"),fbGet("actuals")]);
+    if(e&&typeof e==="object"&&!Array.isArray(e))setEntries(Object.values(e));
+    else if(Array.isArray(e))setEntries(e);
+    if(a)setActuals(a);
+    setSyncing(false);setSyncMsg("✓ refreshed");setTimeout(()=>setSyncMsg(""),2000);
+  };
+
+  const saveEntry=async(entry)=>{
+    setSyncing(true);
+    const key=entry.name.replace(/[^a-zA-Z0-9_-]/g,"_");
+    const ok=await fbSet(`entries/${key}`,entry);
+    setEntries(prev=>[...prev.filter(e=>e.name!==entry.name),entry]);
+    flash(ok);setSyncing(false);
+  };
+
+  const saveActuals=async(data)=>{
+    setActuals(data);setSyncing(true);
+    const ok=await fbSet("actuals",data);
+    flash(ok);setSyncing(false);
+  };
+
+  const deleteEntry=async(n)=>{
+    setSyncing(true);
+    const key=n.replace(/[^a-zA-Z0-9_-]/g,"_");
+    await fbDelete(`entries/${key}`);
+    setEntries(prev=>prev.filter(e=>e.name!==n));
+    flash(true);setSyncing(false);
+  };
+
+  const resetPin=async(entryName)=>{
+    const entry=entries.find(e=>e.name===entryName);
+    if(!entry)return;
+    const updated={...entry,pin:""};
+    await saveEntry(updated);
+  };
+
+  const ensureGP=()=>{const f={...gp};GROUPS.forEach(g=>{if(!f[g.id]||f[g.id].length!==4)f[g.id]=[...g.teams];});return f;};
+  const ensureWCR=(g)=>{if(wcr.length===12)return wcr;return GROUPS.map(x=>(g[x.id]||x.teams)[2]);};
+
+  const SB=()=>(
+    <div style={{display:"flex",alignItems:"center",gap:6}}>
+      {syncing&&<span style={{fontSize:9,color:"#444",fontFamily:"'Courier New',monospace"}}>⟳</span>}
+      {!syncing&&syncMsg&&<span style={{fontSize:9,color:syncMsg.startsWith("✓")?"#4a8":"#a44",fontFamily:"'Courier New',monospace"}}>{syncMsg}</span>}
+    </div>
+  );
+
+  const r32=resolveR32(gp,wcr.length===12?wcr:GROUPS.map(g=>(gp[g.id]||g.teams)[2]));
+
+  if(!loaded)return(
+    <div style={{...S.app,display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh"}}>
+      <div style={{textAlign:"center"}}>
+        <div style={{fontSize:40,marginBottom:12}}>⚽</div>
+        <div style={{color:"#c9a227",fontSize:12,letterSpacing:4,fontFamily:"'Courier New',monospace"}}>LOADING…</div>
+      </div>
+    </div>
+  );
+
+  // HOME
+  if(screen==="home")return(
+    <div style={S.app}>
+      {showRules&&<Rules onClose={()=>setRules(false)}/>}
+      <header style={S.hdr}>
+        <div>
+          <div style={{fontSize:16,fontWeight:900,letterSpacing:3,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
+        </div>
+        <nav style={{display:"flex",gap:5,alignItems:"center"}}>
+          <SB/>
+          <button style={S.nav(false)} onClick={()=>setRules(true)}>Rules</button>
+          <button style={S.nav(false)} onClick={()=>{refresh();setScreen("leaderboard");}}>Leaderboard</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("report")}>📋 Report</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("bios")}>👥 Bios</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("admin")}>Admin</button>
+        </nav>
+      </header>
+      <div style={S.main}>
+        <LockBanner/>
+        <div style={{textAlign:"center",padding:"36px 0 28px"}}>
+          <div style={{fontSize:52,marginBottom:10}}>🏆</div>
+          <h1 style={{fontSize:28,fontWeight:900,letterSpacing:3,marginBottom:6,color:"#fff",fontFamily:"'Courier New',monospace"}}>MAKE YOUR PICKS</h1>
+          <p style={{color:"#555",fontSize:12,maxWidth:380,margin:"0 auto 26px",lineHeight:1.8}}>Rank all 12 groups, order the wildcard third-placers, fill the bracket. No login needed — just enter your name.</p>
+          {isLocked()
+            ?<div style={{...S.card,maxWidth:380,margin:"0 auto",textAlign:"center",padding:"20px"}}>
+               <div style={{fontSize:11,color:"#e07070",fontFamily:"'Courier New',monospace",marginBottom:8}}>🔒 Picks are locked</div>
+               <button style={S.gold} onClick={()=>{refresh();setScreen("leaderboard");}}>VIEW LEADERBOARD →</button>
+             </div>
+            :<div style={{maxWidth:320,margin:"0 auto"}}>
+               <input style={S.inp} placeholder="Enter your name to begin…" value={name} onChange={e=>setName(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&name.trim()){setGP({});setWCR([]);setBP(EMPTY_BP);setPendingPin(null);setOriginalName("");setStep(0);setSub(false);setScreen("entry");}}}/>
+               <button style={{...S.gold,width:"100%",marginTop:7,fontSize:12}} onClick={()=>{if(!name.trim())return;setGP({});setWCR([]);setBP(EMPTY_BP);setPendingPin(null);setOriginalName("");setStep(0);setSub(false);setScreen("entry");}}>START MY PICKS →</button>
+             </div>
+          }
+          <button style={{...S.ghost,marginTop:10}} onClick={()=>setRules(true)}>📋 How to Play</button>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+          {[{i:"📊",l:"GROUP STAGE",d:"Rank all 12 groups. 3pts exact · 1pt partial. Max 72 pts."},{i:"🃏",l:"WILDCARDS",d:"Rank third-placers. Top 8 advance. Max 24 pts."},{i:"🏟",l:"BRACKET",d:"R32→R16→QF→SF→F→Champion. 3→5→7→9→11→15 pts."}].map(x=>(
+            <div key={x.l} style={S.card}><div style={{fontSize:22,marginBottom:5}}>{x.i}</div><div style={{fontWeight:700,fontSize:9,marginBottom:3,color:"#c9a227",letterSpacing:1.5,fontFamily:"'Courier New',monospace"}}>{x.l}</div><div style={{fontSize:10,color:"#3a3a3a",lineHeight:1.5}}>{x.d}</div></div>
+          ))}
+        </div>
+        {entries.length>0&&<div style={{...S.card,marginTop:8,textAlign:"center"}}>
+          <span style={{color:"#3a3a3a",fontSize:10,fontFamily:"'Courier New',monospace"}}>{entries.length} {entries.length===1?"entry":"entries"} · </span>
+          <button style={{background:"none",border:"none",color:"#c9a227",fontSize:10,cursor:"pointer",fontFamily:"'Courier New',monospace"}} onClick={()=>{refresh();setScreen("leaderboard");}}>view leaderboard →</button>
+        </div>}
+      </div>
+    </div>
+  );
+
+  // ENTRY
+  if(screen==="entry")return(
+    <div style={S.app}>
+      {showRules&&<Rules onClose={()=>setRules(false)}/>}
+      {showSetPin&&<PinModal
+        mode="set"
+        name={name}
+        onCancel={()=>setShowSetPin(false)}
+        onSuccess={async(pin)=>{
+          setShowSetPin(false);
+          setPendingPin(pin);
+          const g=ensureGP(),w=ensureWCR(g);
+          const entry={name:name.trim(),groupPicks:g,wcRanking:w,bracketPicks:{...bp},pin,submittedAt:new Date().toISOString()};
+          await saveEntry(entry);
+          try{localStorage.setItem(SUBMITTED_KEY,name.trim());}catch(e){}
+          setHasSubmitted(true);setSub(true);
+        }}
+      />}
+      <header style={S.hdr}>
+        <div style={{fontSize:14,fontWeight:900,letterSpacing:2,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ WC 2026</div>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <SB/>
+          <span style={{color:"#c9a227",fontWeight:700,fontSize:10,fontFamily:"'Courier New',monospace"}}>{name}</span>
+          <button style={S.nav(false)} onClick={()=>setRules(true)}>Rules</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("home")}>← Back</button>
+        </div>
+      </header>
+      <div style={S.main}>
+        <LockBanner/>
+        <div style={{display:"flex",marginBottom:18,borderRadius:5,overflow:"hidden",border:"1px solid rgba(255,255,255,0.05)"}}>
+          {STEPS.map((s,i)=>(<div key={s} style={{flex:1,padding:"7px 3px",textAlign:"center",fontSize:8,fontWeight:700,letterSpacing:1.5,background:i<step?"rgba(201,162,39,0.08)":i===step?"rgba(201,162,39,0.05)":"rgba(255,255,255,0.01)",color:i<step?"#c9a227":i===step?"#ddd":"#222",borderRight:i<3?"1px solid rgba(255,255,255,0.04)":"none",fontFamily:"'Courier New',monospace"}}>{s}</div>))}
+        </div>
+
+        {step===0&&<>
+          <span style={S.sh}>Rank all 12 groups — top 2 advance</span>
+          <p style={{color:"#3a3a3a",fontSize:10,marginBottom:14,lineHeight:1.6,fontFamily:"'Courier New',monospace"}}>Tap a team to select, then tap another to swap. ▲▼ to nudge.</p>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(250px,1fr))",gap:10,marginBottom:16}}>
+            {GROUPS.map(g=>(
+              <div key={g.id} style={S.card}>
+                <div style={{fontWeight:900,fontSize:11,color:"#c9a227",marginBottom:8,letterSpacing:2,fontFamily:"'Courier New',monospace"}}>GROUP {g.id}</div>
+                <RankList teams={g.teams} ranked={gp[g.id]||g.teams} onChange={o=>{
+                  const newGP={...gp,[g.id]:o};
+                  setGP(newGP);
+                  // Only clear bracket picks for teams no longer in R32 field
+                  const newR32=resolveR32(newGP, wcr.length===12?wcr:GROUPS.map(x=>(newGP[x.id]||x.teams)[2]));
+                  const validTeams=new Set(newR32.flatMap(m=>[m.a,m.b]).filter(t=>t&&t!=="TBD"));
+                  setBP(prev=>({
+                    ...prev,
+                    R32:(prev.R32||[]).filter(t=>validTeams.has(t)),
+                    R16:(prev.R16||[]).filter(t=>validTeams.has(t)),
+                    QF:(prev.QF||[]).filter(t=>validTeams.has(t)),
+                    SF:(prev.SF||[]).filter(t=>validTeams.has(t)),
+                    F:(prev.F||[]).filter(t=>validTeams.has(t)),
+                    Champion:validTeams.has(prev.Champion)?prev.Champion:null,
+                  }));
+                }}/>
+              </div>
+            ))}
+          </div>
+          <div style={{textAlign:"right"}}><button style={S.gold} onClick={()=>{
+            const g=ensureGP();setGP(g);
+            // Remap wcRanking to new third-place teams, preserving relative order
+            const newThirds=GROUPS.map(x=>(g[x.id]||x.teams)[2]);
+            if(wcr.length===12){
+              // Keep existing order but swap in new third-place teams by group
+              const oldThirds=GROUPS.map(x=>(gp[x.id]||x.teams)[2]);
+              const remapped=wcr.map(t=>{
+                const idx=oldThirds.indexOf(t);
+                return idx!==-1?newThirds[idx]:t;
+              });
+              // Replace any still-stale teams with the correct new thirds
+              const final=remapped.map(t=>newThirds.includes(t)?t:newThirds.find(nt=>!remapped.includes(nt))||t);
+              setWCR(final);
+            } else {
+              setWCR(newThirds);
+            }
+            setStep(1);
+          }}>NEXT: WILDCARDS →</button></div>
+        </>}
+
+        {step===1&&<>
+          <span style={S.sh}>Rank 12 third-place teams — top 8 advance as wildcards</span>
+          <p style={{color:"#3a3a3a",fontSize:10,marginBottom:12,lineHeight:1.6,fontFamily:"'Courier New',monospace"}}>Everything above the gold line advances. Your ranking also sets bracket slots (FIFA Annex C).</p>
+          <div style={S.card}><WildcardRanker groupPicks={gp} wcRanking={wcr} onChange={r=>{
+            setWCR(r);
+            // Only clear bracket picks for teams no longer in R32 field
+            const newR32=resolveR32(gp, r.length===12?r:GROUPS.map(x=>(gp[x.id]||x.teams)[2]));
+            const validTeams=new Set(newR32.flatMap(m=>[m.a,m.b]).filter(t=>t&&t!=="TBD"));
+            setBP(prev=>({
+              ...prev,
+              R32:(prev.R32||[]).filter(t=>validTeams.has(t)),
+              R16:(prev.R16||[]).filter(t=>validTeams.has(t)),
+              QF:(prev.QF||[]).filter(t=>validTeams.has(t)),
+              SF:(prev.SF||[]).filter(t=>validTeams.has(t)),
+              F:(prev.F||[]).filter(t=>validTeams.has(t)),
+              Champion:validTeams.has(prev.Champion)?prev.Champion:null,
+            }));
+          }}/></div>
+          <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
+            <button style={S.ghost} onClick={()=>setStep(0)}>← Back</button>
+            <button style={S.gold} onClick={()=>{const g=ensureGP();setGP(g);setWCR(ensureWCR(g));setStep(2);}}>NEXT: BRACKET →</button>
+          </div>
+        </>}
+
+        {step===2&&<>
+          <span style={S.sh}>Fill out the knockout bracket</span>
+          <p style={{color:"#3a3a3a",fontSize:10,marginBottom:8,lineHeight:1.6,fontFamily:"'Courier New',monospace"}}>R32 is pre-populated from your picks. Tap teams to advance them.</p>
+          {entries.find(e=>e.name===name)&&<div style={{background:"rgba(201,162,39,0.07)",border:"1px solid rgba(201,162,39,0.2)",borderRadius:7,padding:"9px 13px",marginBottom:12,fontSize:10,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>
+            ⚠ Your bracket has been reset so it reflects your updated group and wildcard picks. Please redo your bracket picks below.
+          </div>}
+          <Bracket r32={r32} picks={bp} setPicks={setBP}/>
+          <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
+            <button style={S.ghost} onClick={()=>setStep(1)}>← Back</button>
+            <button style={S.gold} onClick={()=>setStep(3)}>REVIEW & SUBMIT →</button>
+          </div>
+        </>}
+
+        {step===3&&<>
+          <span style={S.sh}>Review your picks</span>
+          {submitted
+            ?<div style={{...S.card,textAlign:"center",padding:"40px 16px"}}>
+               <div style={{fontSize:46,marginBottom:10}}>🎉</div>
+               <h2 style={{fontSize:18,color:"#c9a227",marginBottom:6,fontFamily:"'Courier New',monospace",letterSpacing:2}}>PICKS SUBMITTED</h2>
+               <p style={{color:"#666",fontSize:11}}>Good luck, {name}! Your picks are locked in with your PIN.</p>
+               <div style={{display:"flex",gap:7,justifyContent:"center",marginTop:18}}>
+                 <button style={S.gold} onClick={()=>{refresh();setScreen("leaderboard");}}>VIEW LEADERBOARD</button>
+                 <button style={S.ghost} onClick={()=>setScreen("home")}>HOME</button>
+               </div>
+             </div>
+            :<>
+               {originalName&&<div style={S.card}>
+                 <span style={S.sh}>Display Name</span>
+                 <p style={{color:"#444",fontSize:10,marginBottom:8,fontFamily:"'Courier New',monospace"}}>Change your name as it appears on the leaderboard.</p>
+                 <input style={S.inp} placeholder="Your name…" value={name} onChange={e=>setName(e.target.value)} maxLength={30}/>
+               </div>}
+               <div style={S.card}>
+                 <span style={S.sh}>Groups</span>
+                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(170px,1fr))",gap:8}}>
+                   {GROUPS.map(g=>(
+                     <div key={g.id}>
+                       <div style={{fontSize:8,color:"#c9a227",fontWeight:700,marginBottom:4,fontFamily:"'Courier New',monospace"}}>GROUP {g.id}</div>
+                       {(gp[g.id]||g.teams).map((t,i)=>(<div key={t} style={{fontSize:9,color:i<2?"#aaa":"#2a2a2a",padding:"2px 0",display:"flex",gap:4}}><span style={{color:"#2a2a2a",fontFamily:"'Courier New',monospace"}}>{i+1}.</span><span>{FLAGS[t]}</span>{t}</div>))}
+                     </div>
+                   ))}
+                 </div>
+               </div>
+               <div style={S.card}>
+                 <span style={S.sh}>Wildcards (top 8)</span>
+                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))",gap:4}}>
+                   {(wcr.length===12?wcr:GROUPS.map(g=>(gp[g.id]||g.teams)[2])).map((t,i)=>(<div key={t} style={{display:"flex",alignItems:"center",gap:4,fontSize:9,color:i<8?"#aaa":"#2a2a2a"}}><span style={{color:i<8?"#c9a227":"#a44",fontFamily:"'Courier New',monospace"}}>{i+1}.</span><span>{FLAGS[t]}</span>{t}{i<8&&<span style={{fontSize:7,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>WC</span>}</div>))}
+                 </div>
+               </div>
+               <div style={S.card}>
+                 <span style={S.sh}>Bracket</span>
+                 {["R32","R16","QF","SF","F"].map(r=>(bp[r]||[]).length>0&&(<div key={r} style={{marginBottom:7}}><div style={{fontSize:8,color:"#3a3a3a",marginBottom:3,fontFamily:"'Courier New',monospace"}}>{r==="R32"?"ROUND OF 32":r==="R16"?"ROUND OF 16":r==="QF"?"QF":r==="SF"?"SF":"FINAL"}</div><div style={{display:"flex",flexWrap:"wrap",gap:5}}>{(bp[r]||[]).map(t=><span key={t} style={{fontSize:9,color:"#888"}}>{FLAGS[t]} {t}</span>)}</div></div>))}
+                 {bp.Champion&&<div style={{marginTop:8,padding:"6px 10px",background:"rgba(201,162,39,0.07)",borderRadius:5,border:"1px solid rgba(201,162,39,0.18)"}}><span style={{color:"#c9a227",fontWeight:700,fontSize:11,fontFamily:"'Courier New',monospace"}}>🏆 {FLAGS[bp.Champion]} {bp.Champion}</span></div>}
+               </div>
+
+               {/* Completion warnings */}
+               {(()=>{
+                 const warns=[];
+                 if((bp.R32||[]).length<16)warns.push(`R32: ${(bp.R32||[]).length}/16`);
+                 if((bp.R16||[]).length<8)warns.push(`R16: ${(bp.R16||[]).length}/8`);
+                 if((bp.QF||[]).length<4)warns.push(`QF: ${(bp.QF||[]).length}/4`);
+                 if((bp.SF||[]).length<2)warns.push(`SF: ${(bp.SF||[]).length}/2`);
+                 if((bp.F||[]).length<1)warns.push("Final: 0/1");
+                 if(!bp.Champion)warns.push("No champion");
+                 if(warns.length===0)return null;
+                 return(<div style={{background:"rgba(180,100,0,0.1)",border:"1px solid rgba(180,100,0,0.25)",borderRadius:7,padding:"10px 14px",marginBottom:10}}>
+                   <div style={{fontSize:9,color:"#c96",fontWeight:700,marginBottom:5,fontFamily:"'Courier New',monospace"}}>⚠ INCOMPLETE PICKS</div>
+                   <div style={{display:"flex",flexWrap:"wrap",gap:6}}>{warns.map(w=><span key={w} style={{fontSize:9,color:"#c96",fontFamily:"'Courier New',monospace",background:"rgba(180,100,0,0.1)",padding:"2px 6px",borderRadius:3}}>{w}</span>)}</div>
+                 </div>);
+               })()}
+
+               <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
+                 <button style={S.ghost} onClick={()=>setStep(2)}>← Back</button>
+                 <button style={{...S.gold,opacity:syncing?0.6:1}} onClick={()=>{
+                   // Check if editing existing entry with PIN already set
+                   // Look up by originalName (in case name was changed)
+                   const lookupName=originalName||name.trim();
+                   const existing=entries.find(e=>e.name.trim()===lookupName.trim());
+                   if(existing&&existing.pin){
+                     (async()=>{
+                       const g=ensureGP(),w=ensureWCR(g);
+                       const newName=name.trim();
+                       const entry={name:newName,groupPicks:g,wcRanking:w,bracketPicks:{...bp},pin:existing.pin,submittedAt:new Date().toISOString()};
+                       // If name changed, delete old entry first
+                       if(newName!==existing.name){
+                         await deleteEntry(existing.name);
+                       }
+                       await saveEntry(entry);
+                       try{localStorage.setItem(SUBMITTED_KEY,newName);}catch(e){}
+                       setOriginalName(newName);
+                       setHasSubmitted(true);setSub(true);
+                     })();
+                   } else {
+                     // New entry — prompt for PIN
+                     setShowSetPin(true);
+                   }
+                 }} disabled={syncing}>{syncing?"SAVING…":"SUBMIT PICKS ✓"}</button>
+               </div>
+             </>
+          }
+        </>}
+      </div>
+    </div>
+  );
+
+  // LEADERBOARD
+  if(screen==="leaderboard")return(
+    <div style={S.app}>
+      <header style={S.hdr}>
+        <div style={{fontSize:14,fontWeight:900,letterSpacing:2,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
+        <nav style={{display:"flex",gap:5,alignItems:"center"}}>
+          <SB/>
+          <button style={S.nav(false)} onClick={refresh}>↻</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("home")}>← Home</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("report")}>📋 Report</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("bios")}>👥 Bios</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("admin")}>Admin</button>
+        </nav>
+      </header>
+      <div style={S.main}>
+        <LockBanner/>
+        <div style={{fontSize:9,color:"#222",marginBottom:12,textAlign:"right",fontFamily:"'Courier New',monospace"}}>auto-refreshes every 15s</div>
+        <Leaderboard entries={entries} actuals={actuals}
+          onEdit={(entry,saveWithNewPin)=>{
+            if(saveWithNewPin){(async()=>{await saveEntry(entry);})();}
+            setName(entry.name);
+            setOriginalName(entry.name);
+            setGP(entry.groupPicks||{});
+            setWCR(entry.wcRanking||[]);
+            setBP(entry.bracketPicks||EMPTY_BP);
+            setStep(0);setSub(false);setScreen("entry");
+          }}/>
+      </div>
+    </div>
+  );
+
+  // ADMIN
+  if(screen==="admin"){
+    if(!isAdmin)return(
+      <div style={S.app}>
+        <header style={S.hdr}>
+          <div style={{fontSize:14,fontWeight:900,letterSpacing:2,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
+          <button style={S.nav(false)} onClick={()=>setScreen("home")}>← Home</button>
+        </header>
+        <div style={{...S.main,maxWidth:340,textAlign:"center"}}>
+          <div style={{...S.card,marginTop:50}}>
+            <div style={{fontSize:30,marginBottom:10}}>🔐</div>
+            <h2 style={{color:"#c9a227",marginBottom:14,fontSize:14,fontFamily:"'Courier New',monospace",letterSpacing:2}}>ADMIN</h2>
+            <input style={S.inp} type="password" placeholder="Admin code…" value={adminCode} onChange={e=>setAC(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"){if(adminCode===ADMIN_CODE){setAdmin(true);setAErr("");}else setAErr("Wrong code.");}}}/>
+            {adminErr&&<p style={{color:"#a44",fontSize:10,marginTop:6,fontFamily:"'Courier New',monospace"}}>{adminErr}</p>}
+            <button style={{...S.gold,width:"100%",marginTop:8}} onClick={()=>{if(adminCode===ADMIN_CODE){setAdmin(true);setAErr("");}else setAErr("Wrong code.");}}>ENTER</button>
+            <p style={{color:"#222",fontSize:9,marginTop:10,fontFamily:"'Courier New',monospace"}}>default: France2026</p>
+          </div>
+        </div>
+      </div>
+    );
+
+    const awcr=(()=>{
+      // Get the actual 3rd place team from each group's entered standings
+      const thirds=GROUPS.map(g=>{
+        const res=actuals.groupResults[g.id];
+        // Only use entered result if it has all 4 teams
+        return (res&&res.length===4)?res[2]:g.teams[2];
+      });
+      const sel=(actuals._wcRanking||actuals.wildcards||[]);
+      // Build full 12-team ranking: start from saved ranking, 
+      // replace any team no longer a 3rd-placer with the correct one
+      if(sel.length===12){
+        const seen=new Set();
+        const result=sel.map(t=>{
+          if(thirds.includes(t)&&!seen.has(t)){seen.add(t);return t;}
+          const replacement=thirds.find(x=>!seen.has(x));
+          if(replacement){seen.add(replacement);return replacement;}
+          return t;
+        });
+        // Ensure all thirds present
+        thirds.forEach(t=>{if(!result.includes(t)){const i=result.findIndex(x=>!thirds.includes(x));if(i!==-1)result[i]=t;}});
+        return result;
+      }
+      return thirds;
+    })();
+    // Official R32 bracket - all results confirmed
+    const ACTUAL_R32=[
+      {match:73,a:"South Africa",b:"Canada",winner:"Canada"},
+      {match:74,a:"Germany",b:"Paraguay",winner:"Paraguay"},
+      {match:75,a:"Netherlands",b:"Morocco",winner:"Morocco"},
+      {match:76,a:"Brazil",b:"Japan",winner:"Brazil"},
+      {match:77,a:"France",b:"Sweden",winner:"France"},
+      {match:78,a:"Ivory Coast",b:"Norway",winner:"Norway"},
+      {match:79,a:"Mexico",b:"Ecuador",winner:"Mexico"},
+      {match:80,a:"England",b:"DR Congo",winner:"England"},
+      {match:81,a:"USA",b:"Bosnia-Herzegovina",winner:"USA"},
+      {match:82,a:"Belgium",b:"Senegal",winner:"Belgium"},
+      {match:83,a:"Portugal",b:"Croatia",winner:"Portugal"},
+      {match:84,a:"Spain",b:"Austria",winner:"Spain"},
+      {match:85,a:"Colombia",b:"Ghana",winner:"Colombia"},
+      {match:86,a:"Argentina",b:"Cape Verde",winner:"Argentina"},
+      {match:87,a:"Australia",b:"Egypt",winner:"Egypt"},
+      {match:88,a:"Switzerland",b:"Algeria",winner:"Switzerland"},
+    ];
+    // R16 matchups - all confirmed
+    const ACTUAL_R16=[
+      {match:89,a:"Paraguay",b:"France"},
+      {match:90,a:"Canada",b:"Morocco"},
+      {match:91,a:"Brazil",b:"Norway"},
+      {match:92,a:"Mexico",b:"England"},
+      {match:93,a:"Portugal",b:"Spain"},
+      {match:94,a:"USA",b:"Belgium"},
+      {match:95,a:"Argentina",b:"Egypt"},
+      {match:96,a:"Switzerland",b:"Colombia"},
+    ];
+    const ar32=ACTUAL_R32;
+    const knownR32Winners=ACTUAL_R32.filter(m=>m.winner).map(m=>m.winner);
+    const adminR16Order=["Paraguay","France","Canada","Morocco","Brazil","Norway","Mexico","England","Portugal","Spain","USA","Belgium","Argentina","Egypt","Switzerland","Colombia"];
+    const validR16Set=new Set(adminR16Order);
+    // Cascade filter: each round's picks must come from prior round's picks
+    const savedR16=(actuals.bracket?.R16||[]).filter(t=>validR16Set.has(t));
+    const savedQF=(actuals.bracket?.QF||[]).filter(t=>savedR16.includes(t));
+    const savedSF=(actuals.bracket?.SF||[]).filter(t=>savedQF.includes(t));
+    const savedF=(actuals.bracket?.F||[]).filter(t=>savedSF.includes(t));
+    const savedChamp=savedF.includes(actuals.bracket?.Champion)?actuals.bracket.Champion:null;
+    const abp={R32:knownR32Winners,R16:savedR16,QF:savedQF,SF:savedSF,F:savedF,Champion:savedChamp};
+    const setABP=upd=>{
+      const n=typeof upd==="function"?upd({...abp,R32:adminR16Order}):upd;
+      // Always force correct R32, and cascade-filter all rounds
+      const cleanR16=(n.R16||[]).filter(t=>validR16Set.has(t));
+      const cleanQF=(n.QF||[]).filter(t=>cleanR16.includes(t));
+      const cleanSF=(n.SF||[]).filter(t=>cleanQF.includes(t));
+      const cleanF=(n.F||[]).filter(t=>cleanSF.includes(t));
+      const cleanChamp=cleanF.includes(n.Champion)?n.Champion:null;
+      saveActuals({...actuals,bracket:{R32:knownR32Winners,R16:cleanR16,QF:cleanQF,SF:cleanSF,F:cleanF,Champion:cleanChamp}});
+    };
+
+    return(
+      <div style={S.app}>
+        <header style={S.hdr}>
+          <div style={{fontSize:14,fontWeight:900,letterSpacing:2,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ ADMIN</div>
+          <nav style={{display:"flex",gap:5,alignItems:"center"}}>
+            <SB/>
+            <button style={S.nav(false)} onClick={refresh}>↻</button>
+            <button style={S.nav(false)} onClick={()=>setScreen("leaderboard")}>Leaderboard</button>
+            <button style={S.nav(false)} onClick={()=>{setAdmin(false);setScreen("home");}}>Sign Out</button>
+          </nav>
+        </header>
+        <div style={S.main}>
+          <span style={S.sh}>Entries ({entries.length})</span>
+          <div style={S.card}>
+            {entries.length===0?<p style={{color:"#222",fontSize:10,fontFamily:"'Courier New',monospace"}}>No entries yet.</p>
+            :<div style={{display:"flex",flexDirection:"column",gap:5}}>
+              {entries.map(e=>(
+                <div key={e.name} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 10px",background:"rgba(255,255,255,0.02)",borderRadius:5,flexWrap:"wrap",gap:6}}>
+                  <span style={{color:"#aaa",fontWeight:600,fontSize:12,flex:1}}>{e.name}</span>
+                  <span style={{color:"#555",fontSize:9,fontFamily:"'Courier New',monospace"}}>PIN: <b style={{color:e.pin?"#c9a227":"#444"}}>{e.pin||"not set"}</b></span>
+                  <span style={{color:"#333",fontSize:9,fontFamily:"'Courier New',monospace"}}>{new Date(e.submittedAt).toLocaleDateString()}</span>
+                  <button style={{...S.ghost,padding:"2px 8px",fontSize:9}} onClick={()=>resetPin(e.name)}>Reset PIN</button>
+                  <button style={{...S.ghost,padding:"2px 8px",fontSize:9,borderColor:"rgba(180,50,50,0.3)",color:"#a44"}} onClick={()=>deleteEntry(e.name)}>Delete</button>
+                </div>
+              ))}
+            </div>}
+          </div>
+
+          <span style={S.sh}>Actual Group Results</span>
+          <p style={{color:"#3a3a3a",fontSize:10,marginBottom:12,fontFamily:"'Courier New',monospace"}}>Rank each group by actual final standings.</p>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(248px,1fr))",gap:10,marginBottom:16}}>
+            {GROUPS.map(g=>(
+              <div key={g.id} style={S.card}>
+                <div style={{fontWeight:900,fontSize:9,color:"#c9a227",marginBottom:7,letterSpacing:2,fontFamily:"'Courier New',monospace"}}>GROUP {g.id}</div>
+                <RankList teams={g.teams} ranked={actuals.groupResults[g.id]||g.teams} onChange={o=>saveActuals({...actuals,groupResults:{...actuals.groupResults,[g.id]:o}})}/>
+              </div>
+            ))}
+          </div>
+
+          <span style={S.sh}>Actual Wildcard Advancers</span>
+          <p style={{color:"#3a3a3a",fontSize:10,marginBottom:10,fontFamily:"'Courier New',monospace"}}>Top 8 are the actual wildcards. Sets bracket slots via FIFA Annex C.</p>
+          <div style={S.card}>
+            <WildcardRanker
+              groupPicks={Object.fromEntries(GROUPS.map(g=>{
+                const res=actuals.groupResults[g.id];
+                return [g.id, (res&&res.length===4)?res:g.teams];
+              }))}
+              wcRanking={awcr}
+              onChange={r=>saveActuals({...actuals,wildcards:r.slice(0,8),_wcRanking:r})}/>
+          </div>
+
+          <span style={S.sh}>Actual Bracket Results</span>
+          <p style={{color:"#3a3a3a",fontSize:10,marginBottom:10,fontFamily:"'Courier New',monospace"}}>R32 winners auto-filled from official results. Tap R16 teams to advance them.</p>
+          <Bracket r32={ar32} picks={{...abp,R32:adminR16Order}} setPicks={(upd)=>{const n=typeof upd==="function"?upd({...abp,R32:adminR16Order}):upd;setABP({...n,R32:knownR32Winners});}} adminMode={true}/>
+
+          <div style={{textAlign:"center",color:"#1a1a1a",fontSize:9,marginTop:4,paddingBottom:16,fontFamily:"'Courier New',monospace"}}>
+            all saves go to firebase · no login required for participants
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
+  // BIOS
+  if(screen==="bios") return(
+    <div style={S.app}>
+      <header style={S.hdr}>
+        <div style={{fontSize:14,fontWeight:900,letterSpacing:2,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
+        <nav style={{display:"flex",gap:5,alignItems:"center"}}>
+          <button style={S.nav(false)} onClick={()=>setScreen("report")}>📋 Report</button>
+          <button style={S.nav(false)} onClick={()=>setScreen("leaderboard")}>← Leaderboard</button>
+        </nav>
+      </header>
+      <div style={{...S.main,maxWidth:720}}>
+        <div style={{fontSize:18,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:4,fontFamily:"'Courier New',monospace"}}>👥 THE CAST</div>
+        <div style={{fontSize:10,color:"#555",marginBottom:20,fontFamily:"'Courier New',monospace"}}>The people behind the picks.</div>
+        {[
+          {n:"48 Teams, No Clue! 🇧🇷",t:"Barry. Brian's dad. Just relocated to North Carolina with Brian's mom to retire. Not on the France trip — heading to Connecticut in mid-July to house-sit and keep Stormy and Cooper company. Barry is a child in a grown man's body. He likes Manhattans, one-liners, and busting people's balls. Brazil topped Group C. Barry does not know this. When last reached, sources indicate he said 'sounds good' and went to take his contacts out — which is Barry's universal signal that he is done for the evening. He will not be coming back."},
+          {n:"Brian 🇪🇸",t:"The Commissioner. Built this entire app using AI and refuses to apologize for it. Picked Spain, who won their group without conceding a single goal. Is currently in 6th place, which means five people have outscored him on the app he built. He will be in France for Alex's 40th birthday, which also happens to be his birthday on July 19th. He is competitive, emotional, and will absolutely bring up the app at least twice per day."},
+          {n:"Brian's 1st Born 🇫🇷",t:"Steven. Brian's former direct report and, in the workplace sense, his professional firstborn — a joke Steven named this entry after himself, fully aware of what he was doing. Not on the France trip. Has had several concussions, including a notable ski fall witnessed by multiple members of this pool. Picked France, who went 3-0 with 10 goals. Steven tries very hard and loves his small wins over Brian. The Commissioner feels it only fair to document the losses with equal enthusiasm."},
+          {n:"Byron Someoneson 🏴󠁧󠁢󠁥󠁮󠁧󠁿",t:"Ben. Henry's son. Henry gave Ben this entry and Ben picked England, who won Group L. Ben went to a USA vs Australia game with Henry. He has been to Phish concerts with Henry. Whether he is secretly an Australia fan remains the only unresolved question about him. The Commissioner notes this family entered two picks and both are performing well, which suggests either coordination or good genes."},
+          {n:"Carly 🇦🇷",t:"One of Alex's oldest friends — the trio of Alex, Kat, and Carly goes back to childhood in the Chicago suburbs. Easy-going, relaxed, the kind of person who after Alex and Brian's wedding was spotted walking barefoot through Hartford, at which point Alex and Brian rolled down the car window and asked if she needed a ride. She did not appear to need one. Picked Argentina, who went 3-0 with the best group stage record in the tournament. Her group picks cost her but Argentina is very much alive."},
+          {n:"Caroline 🇫🇷",t:"Gordon's wife and one of Alex and Brian's closest friends in Connecticut. She picked France, and France went 3-0. For the record, Caroline knows the entire Sound of Music soundtrack — which the Commissioner would like to acknowledge is more than most people in this pool know about anything. She and Kat have been making Sound of Music references for years and show no signs of stopping, least of all in France. She drove Alex and Brian to the emergency room on their wedding day without panicking. The hills will be alive. Her bracket is fine."},
+          {n:"Chris L 🇪🇸",t:"Brian's cousin and the wildcard of the France trip. First time leaving the country. Before departure, asked — in complete sincerity — whether France has coffee. It does, Chris. France invented the café. They will have one on every corner. Chris picked Spain, who won their group without conceding a goal, and is currently in first place. The Commissioner has checked this multiple times. The man who did not know France had coffee is leading this pool."},
+          {n:"Croissant 🇫🇷",t:"Kat. Alex's best friend and maid of honor, part of the Chicago trio with Carly. She ran her own restaurant for years and has the kind of taste in food and wine that makes dining with her a very good idea. She has not checked the score. She is more interested in what's for dinner. She says she will become part croissant by the end of this trip and has committed to this with full sincerity. A bartender once told Alex that Kat was being cut off because he looked into her eyes and there was nothing there. The Commissioner believes what he saw was peace."},
+          {n:"Eric 🇵🇹",t:"Brian's brother. Architect. Six years younger and also bigger, which Brian has not forgotten. Just returned from six months in Miami with his dog Hazey. Eric is the one who started the group's barefoot World Cup tradition — organized the whole thing, drew up the brackets, got everyone involved. Brian repaid him by slide tackling him into the ground in the finals. Brian's team won. Eric still organized the next one. Picked Portugal, who finished second in their group. Is currently in 12th but builds things for a living and the Commissioner expects a structural comeback."},
+          {n:"FIFA World Peace (of Shit) Prize 🇪🇸",t:"Chad. Carly's husband and the real wildcard of the trip. Lost the engagement ring from his grandmother in Italy — the one he was going to propose with — and had to go buy a new one on the spot. There is also a separate reported incident involving rental car keys and a toilet that the Commissioner has chosen not to investigate further. Picked Spain. Spain won their group without conceding a goal. Chad is built differently than other people and the Commissioner means that as a compliment."},
+          {n:"G3 🇪🇸",t:"Gordon. Caroline's husband and one of Brian's closest friends — met at work in insurance, bonded over the company soccer team and double IPAs, specifically Sip of Sunshine. Lives on a Christmas tree farm in New Hartford, Connecticut. Phenomenal skier. Organized a JDRF bar crawl years ago and did the Thriller dance in the middle of it, which is the single greatest thing the Commissioner has ever documented about him. Picked Spain. Spain delivered."},
+          {n:"Je Suis Baguette 🏴󠁧󠁢󠁥󠁮󠁧󠁿",t:"Henry. Kat's husband. Lawyer from Portland. Has known Alex, Kat, and Carly since high school back when his primary hobby was garage hopping — raiding neighborhood coolers for beers, a practice he has since traded for knowing good food, good wine, and his way around a bracket. Picked England, who won Group L. He is on the France trip, quietly doing everything right, and the Commissioner is not fooled."},
+          {n:"Kerry — NOT IN POOL 🏴󠁧󠁢󠁥󠁮󠁧󠁿",t:"Brian's older sister. On the France trip. Did not enter the pool. Kerry can hold a family together across a weekend in Napa and let loose at the same time, which is a skill not everyone has. In London, she pocketed a croissant to save for later. This became known as the pocket croissant and is now part of the historical record. On the same trip, after a full day pub crawl with Alex and Eric while Brian worked, the group stopped at a convenience store. Brian told Eric they were going to a club without the girls. Kerry yelled 'why can't we go?' and swung a case of Magners — the handle broke, cans went everywhere, cider sprayed the entire store. Everyone left immediately. The Commissioner considers this one of the finest documented moments in group trip history. She is in France. She is not on the leaderboard. She will have opinions about this."},
+          {n:"Mbappe Ever After 🇫🇷",t:"Alex. Sauce. Brian's wife. The 40th birthday honoree. The reason for the France trip. The favorite — of this family, of this pool, and of most rooms she enters. Just had Conrad on March 31st and is already operating at full capacity. Platinum Delta and Marriott. Straight As. Organized her own 40th birthday trip to France — which says everything about her, and arguably about Brian too. Grew up outside Chicago. Loves her Iowa Hawkeyes and Caitlin Clark. Former world-class flip cup champion. Now: rosé and champagne only. France went 3-0 with 10 goals. She is the favorite. She is always the favorite."},
+          {n:"Mike W 🇫🇷",t:"Mike Wallace. Brian's friend since elementary school in Medway, Massachusetts. Scary smart actuary. Sarcastic, dry, dark, witty. Not on the France trip. Has a bookshelf full of books he hasn't read yet and is watching films by decade starting from 1939. In 6th grade he told Brian he was tired, and Brian told him no one gives a shit that you're tired — a piece of advice Mike still brings up. After Brian's 40th birthday party in Hartford, Mike stayed to wait with Alex — who was pregnant at the time, which he didn't know — until her car came. He would never mention this himself."},
+        ].map(({n,t})=>(
+          <div key={n} style={{...S.card,marginBottom:12}}>
+            <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:8,fontFamily:"'Courier New',monospace"}}>{n}</div>
+            <p style={{fontSize:11,color:"#888",lineHeight:1.85,fontFamily:"Georgia,serif",margin:0}}>{t}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // REPORT
+  if(screen==="report"){
+    const ALIVE_CHAMPS=new Set(["Spain","France","Portugal","Argentina","Brazil","England","USA","Norway","Morocco","Canada","Paraguay","Mexico","Belgium","Colombia","Egypt","Switzerland"]);
+    const champBonus=champ=>{
+      if(["France","Spain","Argentina"].includes(champ))return 1.0;
+      if(["Brazil","Portugal","England"].includes(champ))return 0.8;
+      if(["USA","Belgium","Morocco","Norway"].includes(champ))return 0.6;
+      return 0.3;
+    };
+    const liveScored=[...entries].map(e=>{
+      const g=scoreGroups(e.groupPicks||{},actuals.groupResults||{});
+      const w=scoreWildcards(e.groupPicks||{},e.wcRanking||[],actuals.wildcards||[],actuals.groupResults||{});
+      const b=scoreBracket(e.bracketPicks||{},actuals.bracket||{});
+      const mp=maxPossible(e,actuals);
+      return{...e,total:g+w+b,gPts:g,wPts:w,bPts:b,maxPts:mp};
+    }).sort((a,b)=>b.total-a.total||(b.bracketPicks?.Champion===actuals.bracket?.Champion?1:0)-(a.bracketPicks?.Champion===actuals.bracket?.Champion?1:0));
+
+    const powerRanked=[...liveScored].map(e=>{
+      const champ=e.bracketPicks?.Champion||"";
+      const champAlive=ALIVE_CHAMPS.has(champ);
+      const score=e.total*0.4+e.maxPts*0.3+(champAlive?champBonus(champ)*50:0);
+      return{...e,powerScore:score,champAlive};
+    }).sort((a,b)=>b.powerScore-a.powerScore);
+
+    const pathAnalysis=(e)=>{
+      const champ=e.bracketPicks?.Champion||"";
+      if(!ALIVE_CHAMPS.has(champ))return "Champion pick eliminated. No path to the title.";
+      const r16alive=(e.bracketPicks?.R16||[]).filter(t=>ALIVE_CHAMPS.has(t));
+      if(liveScored[0]&&e.name===liveScored[0].name)return "Currently leading. "+champ+" must go deep.";
+      if(e.maxPts<(liveScored[0]?.total||0))return "Mathematically very difficult — needs leader to collapse.";
+      return champ+" must go deep. "+r16alive.length+" R16 picks still alive. Max possible: "+e.maxPts+"pts.";
+    };
+
+    const sections=[
+      {h:"HAPPY FOURTH — AND THE ROUND OF 32 IS IN THE BOOKS",ps:[
+        "Happy Fourth of July to everyone in this pool. Wherever you are right now — hopefully with a hot dog in one hand and a phone open to a World Cup match in the other — the Commissioner hopes the day is a good one. This is the last stretch before France, and the tournament has given everyone plenty to talk about over the grill this weekend.",
+        "The Round of 32 is done. Thirty-two teams entered. Sixteen survived. It was a genuinely wild stretch of football — four different matches went to penalties, one went to a 125th-minute goal, and Argentina survived a match that had no business being that close.",
+        "France looked like the best team in the tournament. They did not just beat Sweden — they dismantled them, playing with a fluency and clinical edge that made the scoreline feel inevitable well before it was. The Mbappe Ever After entry is sitting at 92 points and feeling justified. Brian, who picked Spain, is watching France's performances with the quiet unease of someone who chose wrong at a restaurant and is now watching his neighbor's plate arrive.",
+        "The Argentina match deserves its own paragraph. They survived Cape Verde 3-2 after extra time in genuinely the most chaotic match of the round — Messi scored, Cape Verde equalized, Lisandro Martinez scored two minutes into extra time, Cape Verde equalized again in the 103rd minute, and then a late own goal finally settled it. Three goals in extra time. The last one went in off a Cape Verde defender. That is how Argentina are still in this tournament, and the Commissioner means that as a compliment to Cape Verde as much as to Argentina.",
+        "Elsewhere: Paraguay beat Germany on penalties and Paraguay declared a national holiday over it. Morocco beat Netherlands on penalties. Belgium came back from two goals down to beat Senegal — Tielemans converting a penalty in the 125th minute, reportedly the latest goal ever scored in a World Cup match. Egypt beat Australia on penalties. Portugal needed extra time to beat Croatia. Haaland scored a late winner for Norway against Ivory Coast. USA beat Bosnia 2-0 — Balogun scored and then got himself sent off, and Malik Tillman sealed it with a finish that had no business being that clean given the circumstances. Colombia beat Ghana. Switzerland beat Algeria. Spain, England, and Brazil all came through without much drama, which is either what good teams do or a sign they haven't been tested yet.",
+      ]},
+      {h:"THE STATE OF THE POOL",ps:[
+        "Everyone in this pool is still scattered across their normal lives right now — Connecticut, Chicago, Portland, wherever — with France still two and a half weeks away. Alex's 40th birthday and Brian's birthday both land on the trip in late July, and by the sound of it half this group is already counting down the days. Barry will be house-sitting back in Connecticut once everyone leaves, but that is not until the 19th — he has not left yet and neither has anyone else. For now, everyone is watching this tournament from home, which apparently has not stopped anyone from having a very strong opinion about how their bracket is doing.",
+        "Chris L is in first place with 93 points. The Commissioner does not have much to add beyond what the number already says. The man had never left the country before this trip was booked and is currently leading a pool of fourteen entries that includes several actuaries and the person who built the app. He once rode a camel in a race — not metaphorically, an actual camel race — and came second with no training. There are photographs. The Commissioner has chosen to believe these two facts are related.",
+        "Three entries are deadlocked at 92 — Barry, Chad, and Alex, all one point behind Chris. Ben sits at 90, a point further back still. Five people within thirteen points of the lead heading into the Round of 16. That is a tight leaderboard by any measure, and the R16 alone could scramble the entire order. One good round and this looks like a completely different pool.",
+        "The France camp — Steven, Caroline, Kat, Alex, and Mike W — are feeling good about their champion pick given how convincingly France have played so far. The Spain camp — Brian, Chris, Gordon, and Ben — are leaning on Spain's clean defensive record and trying not to think too hard about France's last two performances.",
+        "The match everyone in this group is circling is Portugal vs Spain in the Round of 16. Eric picked Portugal to win the whole tournament and is currently sitting in 12th place, which means he needs a deep Portugal run more than almost anyone else needs anything in this pool. Brian, Chris, Gordon, and Ben all picked Spain and need the opposite outcome entirely. It is the kind of matchup that turns a group chat into a warzone, and the Commissioner expects nothing less once it kicks off.",
+        "Enjoy the holiday. Eat something off the grill. The Round of 16 starts this weekend and there is a lot more to fight about before France.",
+      ]},
+    ];
+
+    return(
+      <div style={S.app}>
+        <header style={S.hdr}>
+          <div style={{fontSize:14,fontWeight:900,letterSpacing:2,color:"#c9a227",fontFamily:"'Courier New',monospace"}}>⚽ WC 2026 POOL</div>
+          <nav style={{display:"flex",gap:5,alignItems:"center"}}>
+            <button style={S.nav(false)} onClick={()=>setScreen("bios")}>👥 Bios</button>
+            <button style={S.nav(false)} onClick={()=>setScreen("leaderboard")}>← Leaderboard</button>
+            <button style={S.nav(false)} onClick={()=>setScreen("home")}>Home</button>
+          </nav>
+        </header>
+        <div style={{...S.main,maxWidth:720}}>
+          <div style={{fontSize:20,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:2,fontFamily:"'Courier New',monospace"}}>📋 COMMISSIONER'S REPORT</div>
+          <div style={{fontSize:10,color:"#555",marginBottom:20,fontFamily:"'Courier New',monospace",letterSpacing:2}}>ROUND OF 16 EDITION</div>
+
+          {sections.map(({h,ps})=>(
+            <div key={h} style={{...S.card,marginBottom:14}}>
+              <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>{h}</div>
+              {ps.map((para,i)=>(
+                <p key={i} style={{fontSize:12,color:"#aaa",marginBottom:10,lineHeight:1.9,fontFamily:"Georgia,serif"}}>{para}</p>
+              ))}
+            </div>
+          ))}
+
+          <div style={{...S.card,marginBottom:14}}>
+            <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>⚡ POWER RANKINGS — LIKELIHOOD OF WINNING</div>
+            <p style={{fontSize:11,color:"#555",marginBottom:16,fontFamily:"Georgia,serif",lineHeight:1.7}}>Ranked by likelihood of winning the pool — factors in current score, max possible remaining, and whether your champion can realistically win the tournament.</p>
+            {powerRanked.map((e,i)=>(
+              <div key={e.name} style={{padding:"12px 0",borderBottom:"1px solid rgba(255,255,255,0.04)",display:"flex",gap:12,alignItems:"flex-start"}}>
+                <div style={{minWidth:32,textAlign:"center"}}>
+                  {i<3?<span style={{fontSize:20}}>{"🥇🥈🥉".slice(i*2,i*2+2)}</span>:<span style={{fontSize:13,fontWeight:700,color:"#444",fontFamily:"'Courier New',monospace"}}>#{i+1}</span>}
+                </div>
+                <div style={{flex:1}}>
+                  <div style={{display:"flex",alignItems:"baseline",gap:8,marginBottom:3,flexWrap:"wrap"}}>
+                    <span style={{fontWeight:700,fontSize:13,color:i<3?"#ddd":"#aaa"}}>{e.name}</span>
+                    <span style={{fontSize:16,fontWeight:900,color:i<3?"#c9a227":"#666",fontFamily:"'Courier New',monospace"}}>{e.total}pts</span>
+                    <span style={{fontSize:10,color:"#444",fontFamily:"'Courier New',monospace"}}>max:{e.maxPts}</span>
+                    <span style={{fontSize:10,color:e.champAlive?"#4a8":"#a44",fontFamily:"'Courier New',monospace"}}>{FLAGS[e.bracketPicks?.Champion]||"🏳"} {e.bracketPicks?.Champion||"?"} {e.champAlive?"✓":"✗"}</span>
+                  </div>
+                  <p style={{fontSize:10,color:"#666",margin:0,fontFamily:"Georgia,serif",lineHeight:1.6}}>{pathAnalysis(e)}</p>
+                </div>
+              </div>
+            ))}
+            <p style={{fontSize:10,color:"#2a2a2a",marginTop:14,fontFamily:"'Courier New',monospace",fontStyle:"italic",textAlign:"center"}}>This pool was built by AI. The Commissioner is the AI. Brian told it to roast his friends. It complied willingly.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
+  return null;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
