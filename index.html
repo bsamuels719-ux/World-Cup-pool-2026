@@ -1028,28 +1028,54 @@ function App(){
       }
       return thirds;
     })();
-    // Official R32 bracket - hardcoded from actual tournament results
+    // Official R32 bracket - all results confirmed
     const ACTUAL_R32=[
-      {match:73,a:"South Africa",b:"Canada"},
-      {match:74,a:"Germany",b:"Paraguay"},
-      {match:75,a:"Netherlands",b:"Morocco"},
-      {match:76,a:"Brazil",b:"Japan"},
-      {match:77,a:"France",b:"Sweden"},
-      {match:78,a:"Ivory Coast",b:"Norway"},
-      {match:79,a:"Mexico",b:"Ecuador"},
-      {match:80,a:"England",b:"DR Congo"},
-      {match:81,a:"USA",b:"Bosnia-Herzegovina"},
-      {match:82,a:"Belgium",b:"Senegal"},
-      {match:83,a:"Portugal",b:"Croatia"},
-      {match:84,a:"Spain",b:"Austria"},
-      {match:85,a:"Colombia",b:"Ghana"},
-      {match:86,a:"Argentina",b:"Cape Verde"},
-      {match:87,a:"Australia",b:"Egypt"},
-      {match:88,a:"Switzerland",b:"Algeria"},
+      {match:73,a:"South Africa",b:"Canada",winner:"Canada"},
+      {match:74,a:"Germany",b:"Paraguay",winner:"Paraguay"},
+      {match:75,a:"Netherlands",b:"Morocco",winner:"Morocco"},
+      {match:76,a:"Brazil",b:"Japan",winner:"Brazil"},
+      {match:77,a:"France",b:"Sweden",winner:"France"},
+      {match:78,a:"Ivory Coast",b:"Norway",winner:"Norway"},
+      {match:79,a:"Mexico",b:"Ecuador",winner:"Mexico"},
+      {match:80,a:"England",b:"DR Congo",winner:"England"},
+      {match:81,a:"USA",b:"Bosnia-Herzegovina",winner:"USA"},
+      {match:82,a:"Belgium",b:"Senegal",winner:"Belgium"},
+      {match:83,a:"Portugal",b:"Croatia",winner:"Portugal"},
+      {match:84,a:"Spain",b:"Austria",winner:"Spain"},
+      {match:85,a:"Colombia",b:"Ghana",winner:"Colombia"},
+      {match:86,a:"Argentina",b:"Cape Verde",winner:"Argentina"},
+      {match:87,a:"Australia",b:"Egypt",winner:"Egypt"},
+      {match:88,a:"Switzerland",b:"Algeria",winner:"Switzerland"},
+    ];
+    // R16 matchups - all confirmed
+    const ACTUAL_R16=[
+      {match:89,a:"Paraguay",b:"France"},
+      {match:90,a:"Canada",b:"Morocco"},
+      {match:91,a:"Brazil",b:"Norway"},
+      {match:92,a:"Mexico",b:"England"},
+      {match:93,a:"Portugal",b:"Spain"},
+      {match:94,a:"USA",b:"Belgium"},
+      {match:95,a:"Argentina",b:"Egypt"},
+      {match:96,a:"Switzerland",b:"Colombia"},
     ];
     const ar32=ACTUAL_R32;
-    const abp={R32:actuals.bracket?.R32||[],R16:actuals.bracket?.R16||[],QF:actuals.bracket?.QF||[],SF:actuals.bracket?.SF||[],F:actuals.bracket?.F||[],Champion:actuals.bracket?.Champion||null};
-    const setABP=upd=>{const n=typeof upd==="function"?upd(abp):upd;saveActuals({...actuals,bracket:n});};
+    // Pre-populate R32 winners from hardcoded results if not already set
+    const knownR32Winners=ACTUAL_R32.filter(m=>m.winner).map(m=>m.winner);
+    const savedR32=actuals.bracket?.R32||[];
+    const effectiveR32=knownR32Winners.length>savedR32.length?knownR32Winners:savedR32;
+    // Pre-populate R16 from hardcoded matchups
+    const knownR16Teams=ACTUAL_R16.flatMap(m=>[m.a,m.b]).filter(t=>t!=="TBD");
+    const abp={R32:effectiveR32,R16:actuals.bracket?.R16||[],QF:actuals.bracket?.QF||[],SF:actuals.bracket?.SF||[],F:actuals.bracket?.F||[],Champion:actuals.bracket?.Champion||null};
+    const setABP=upd=>{
+      const n=typeof upd==="function"?upd(abp):upd;
+      // Auto-save known R32 winners
+      if((!n.R32||n.R32.length===0)&&knownR32Winners.length>0){
+        n.R32=knownR32Winners;
+      }
+      saveActuals({...actuals,bracket:n});
+    };
+    // Build admin R16 display from ACTUAL_R16 hardcoded matchups
+    const adminR16Display=ACTUAL_R16.map(m=>({a:m.a,b:m.b,match:m.match}));
 
     return(
       <div style={S.app}>
@@ -1103,7 +1129,7 @@ function App(){
           </div>
 
           <span style={S.sh}>Actual Bracket Results</span>
-          <p style={{color:"#3a3a3a",fontSize:10,marginBottom:10,fontFamily:"'Courier New',monospace"}}>Enter real results. Leaderboard updates for everyone immediately.</p>
+          <p style={{color:"#3a3a3a",fontSize:10,marginBottom:10,fontFamily:"'Courier New',monospace"}}>R32 winners auto-filled from official results. Tap R16 teams to advance them.</p>
           <Bracket r32={ar32} picks={abp} setPicks={setABP}/>
 
           <div style={{textAlign:"center",color:"#1a1a1a",fontSize:9,marginTop:4,paddingBottom:16,fontFamily:"'Courier New',monospace"}}>
@@ -1189,6 +1215,7 @@ function App(){
               {n:"Je Suis Baguette 🏴󠁧󠁢󠁥󠁮󠁧󠁿",t:"Ben. Henry's son. Henry gave Ben his second entry and Ben picked England, who won Group L — so this household is running a coordinated two-entry operation and both picks are performing. Ben went to a USA vs Australia game with Henry. Ben has been to Phish concerts with Henry. Whether Ben is an Australia fan remains officially unresolved. The Commissioner is keeping an eye on this family."},
               {n:"Mbappe Ever After 🇫🇷",t:"Alex. Sauce. Brian's wife, the reason for the France trip, and the 40th birthday honoree. Just had Conrad on March 31st and is already operating at full capacity, which for Alex means platinum Delta status, a Range Rover, and knowing every trick at every airport. Grew up outside Chicago, loves her Iowa Hawkeyes and Caitlin Clark, and once — in her one and only soccer appearance — shut down a girl named Alexis and may have said something about it in the heat of competition that the Commissioner has chosen not to reprint here. Former world-class flip cup champion. Now: rosé and champagne only. She organized her own 40th birthday trip to France. She picked France. France went 3-0 with 10 goals. She is the favorite. She is always the favorite."},
               {n:"Mike W 🇫🇷",t:"Brian's friend since elementary school in Medway, Massachusetts. Scary smart, actuary, sarcastic and dry in the specific way where you can never tell if he's being serious until three days later. Not on the France trip. Has a bookshelf full of books he hasn't read yet and is watching films by decade starting from 1939. In 6th grade he told Brian he was tired, and Brian told him no one gives a shit that you're tired — a piece of advice Mike still brings up and apparently found genuinely useful. After Brian's 40th birthday party in Hartford, Mike stayed to wait with Alex — who was pregnant at the time, which he didn't know — until her car came. He would never mention this himself."},
+              {n:"Kerry — NOT IN POOL 🏴󠁧󠁢󠁥󠁮󠁧󠁿",t:"Brian's older sister. On the France trip. Did not enter the pool. The Commissioner has declined to investigate why, on the grounds that the answer is probably 'too lazy' and the Commissioner respects honesty. Kerry is maternal, loving, the person who holds the family together — and completely capable of letting loose when the kids are not around, as documented on multiple international trips. In London, she pocketed a croissant to save for later. This became known as the pocket croissant and is now part of the historical record. On the same trip, after a full day pub crawl with Alex and Eric while Brian worked, the group stopped at a convenience store. Brian told Eric they were going to a club without the girls. Kerry yelled 'why can't we go?' and swung a case of Magners — the handle broke, cans went everywhere, cider sprayed the entire store. Everyone left immediately. The Commissioner considers this one of the finest documented moments in group trip history. She is in France. She is not on the leaderboard. She will have opinions about this."},
             ].map(({n,t})=>(
               <div key={n} style={{marginBottom:16,paddingBottom:16,borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
                 <div style={{fontSize:12,fontWeight:700,color:"#c9a227",marginBottom:6,fontFamily:"'Courier New',monospace"}}>{n}</div>
