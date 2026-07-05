@@ -1229,25 +1229,26 @@ function App(){
     // Exact path-to-victory analysis: brute-forced all 4,096 remaining tournament
     // outcomes (5 R16 + 4 QF + 2 SF + Final) against every entry's actual bracket picks.
     const PATH_DATA={
-      "Chris L":{canWin:true,scenarios:1243,text:"Leads in 1,243 of 4,096 simulated outcomes (30%) — the widest path of anyone. Doesn't strictly need Spain to win it all; a wide range of results keeps him on top, though Spain going all the way is still the single strongest route."},
-      "Byron Someoneson":{canWin:true,scenarios:1091,text:"Wins in 1,091 of 4,096 scenarios (27%). Not tied to England winning the whole thing — accurate picks earlier in the bracket carry this entry even when other teams take the title."},
-      "Mbappe Ever After":{canWin:true,scenarios:844,text:"Wins in 844 of 4,096 scenarios (21%). More than half of those paths require France to actually win the tournament — France is the team that matters most here."},
-      "48 Teams , No clue!":{canWin:true,scenarios:550,text:"Wins in 550 of 4,096 scenarios (13%) — remarkable given Brazil, the champion pick, is already eliminated. The path runs through the remaining live picks (Colombia, Spain, France, England) plus a chaotic enough tournament that no one else pulls away."},
-      "Eric":{canWin:true,scenarios:282,text:"Wins in 282 of 4,096 scenarios (7%), and 91% of those require Portugal to win the whole tournament. Close to an all-or-nothing bet on Portugal."},
-      "Croissant":{canWin:true,scenarios:101,text:"Wins in 101 of 4,096 scenarios (2.5%). About half require France to win it all; the rest come from a chaotic bracket favoring the other picks."},
-      "FIFA World Peace (of shit) Prize":{canWin:true,scenarios:22,text:"Wins in just 22 of 4,096 scenarios (0.5%) — real but very narrow. Needs Spain to take the title in most of those, and needs the QF picks to outperform Chris L's along the way."},
-      "Brian's 1st born":{canWin:true,scenarios:20,text:"Wins in 20 of 4,096 scenarios (0.5%). The large majority require France to win the tournament outright."},
-      "Caroline":{canWin:true,scenarios:16,text:"Wins in 16 of 4,096 scenarios (0.4%) — every single one requires France to win the tournament. No other path exists."},
-      "Carly":{canWin:true,scenarios:12,text:"Wins in 12 of 4,096 scenarios (0.3%) — every one requires Argentina to win the tournament. It's the only way back into this."},
-      "Brian":{canWin:false,scenarios:0,text:"Zero winning scenarios out of 4,096. Fully locked into the same QF/SF/F/Champion picks as Chris L — no combination of remaining results closes the gap."},
-      "G3":{canWin:false,scenarios:0,text:"Zero winning scenarios. Same trap — the back-half bracket picks mirror the leader's too closely to make up the deficit."},
-      "Je Suis Baguette":{canWin:false,scenarios:0,text:"Zero winning scenarios. Mathematically eliminated for the same reason — picks track too closely with the leaders from the QF on."},
-      "Mike W":{canWin:false,scenarios:0,text:"Zero winning scenarios. The remaining bracket picks can't generate enough of an edge over the leaders."},
+      "Chris L":{canWin:true,scenarios:1243,tieOnly:false,text:"Leads in 1,243 of 4,096 simulated outcomes (30%) — the widest path of anyone. Doesn't strictly need Spain to win it all; a wide range of results keeps him on top, though Spain going all the way is still the single strongest route."},
+      "Byron Someoneson":{canWin:true,scenarios:1091,tieOnly:false,text:"Wins in 1,091 of 4,096 scenarios (27%). Not tied to England winning the whole thing — accurate picks earlier in the bracket carry this entry even when other teams take the title."},
+      "Mbappe Ever After":{canWin:true,scenarios:844,tieOnly:false,text:"Wins in 844 of 4,096 scenarios (21%). More than half of those paths require France to actually win the tournament — France is the team that matters most here."},
+      "48 Teams , No clue!":{canWin:true,scenarios:550,tieOnly:false,text:"Wins in 550 of 4,096 scenarios (13%) — remarkable given Brazil, the champion pick, is already eliminated. The path runs through the remaining live picks (Colombia, Spain, France, England) plus a chaotic enough tournament that no one else pulls away."},
+      "Eric":{canWin:true,scenarios:282,tieOnly:false,text:"Wins in 282 of 4,096 scenarios (7%), and 91% of those require Portugal to win the whole tournament. Close to an all-or-nothing bet on Portugal."},
+      "Croissant":{canWin:true,scenarios:101,tieOnly:false,text:"Wins in 101 of 4,096 scenarios (2.5%) — 72 outright, 29 as a tie. About half require France to win it all; the rest come from a chaotic bracket favoring the other picks."},
+      "FIFA World Peace (of shit) Prize":{canWin:true,scenarios:22,tieOnly:false,text:"Wins in just 22 of 4,096 scenarios (0.5%) — real but very narrow. Needs Spain to take the title in most of those, and needs the QF picks to outperform Chris L's along the way."},
+      "Brian's 1st born":{canWin:true,scenarios:20,tieOnly:false,text:"Wins in 20 of 4,096 scenarios (0.5%) — 14 outright, 6 as a tie. The large majority require France to win the tournament outright."},
+      "Caroline":{canWin:true,scenarios:16,tieOnly:true,text:"Wins in 16 of 4,096 scenarios (0.4%) — but every single one is a TIE for first with Mbappe Ever After, never an outright win. Requires France to win the tournament via a Morocco-then-Spain path through the QF and SF. No solo path exists."},
+      "Carly":{canWin:true,scenarios:12,tieOnly:false,text:"Wins in 12 of 4,096 scenarios (0.3%) — every one requires Argentina to win the tournament. It's the only way back into this."},
+      "Brian":{canWin:false,scenarios:0,tieOnly:false,text:"Zero winning scenarios out of 4,096. Fully locked into the same QF/SF/F/Champion picks as Chris L — no combination of remaining results closes the gap."},
+      "G3":{canWin:false,scenarios:0,tieOnly:false,text:"Zero winning scenarios. Same trap — the back-half bracket picks mirror the leader's too closely to make up the deficit."},
+      "Je Suis Baguette":{canWin:false,scenarios:0,tieOnly:false,text:"Zero winning scenarios. Mathematically eliminated for the same reason — picks track too closely with the leaders from the QF on."},
+      "Mike W":{canWin:false,scenarios:0,tieOnly:false,text:"Zero winning scenarios. The remaining bracket picks can't generate enough of an edge over the leaders."},
     };
 
     const powerRanked=[...liveScored].map(e=>{
-      const pd=PATH_DATA[e.name]||{canWin:false,scenarios:0,text:"Path data not yet computed for this entry."};
-      return{...e,canWin:pd.canWin,scenarios:pd.scenarios,pathText:pd.text};
+      const normName=(e.name||"").replace(/[\u2018\u2019]/g,"'").trim();
+      const pd=PATH_DATA[e.name]||PATH_DATA[normName]||{canWin:false,scenarios:0,tieOnly:false,text:"Path data not yet computed for this entry."};
+      return{...e,canWin:pd.canWin,scenarios:pd.scenarios,tieOnly:pd.tieOnly,pathText:pd.text};
     }).sort((a,b)=>b.scenarios-a.scenarios||b.total-a.total);
 
     const sections=[
@@ -1305,6 +1306,7 @@ function App(){
                     <span style={{fontSize:16,fontWeight:900,color:i<3?"#c9a227":"#666",fontFamily:"'Courier New',monospace"}}>{e.total}pts</span>
                     <span style={{fontSize:10,color:"#444",fontFamily:"'Courier New',monospace"}}>max:{e.maxPts}</span>
                     <span style={{fontSize:10,color:e.canWin?"#4a8":"#a44",fontFamily:"'Courier New',monospace"}}>{FLAGS[e.bracketPicks?.Champion]||"🏳"} {e.bracketPicks?.Champion||"?"} {e.canWin?((100*e.scenarios/4096).toFixed(1)+"% of paths"):"eliminated"}</span>
+                    {e.tieOnly&&<span style={{fontSize:9,color:"#c96",fontFamily:"'Courier New',monospace",border:"1px solid #c96",borderRadius:3,padding:"1px 5px"}}>TIE ONLY</span>}
                   </div>
                   <p style={{fontSize:10,color:"#666",margin:0,fontFamily:"Georgia,serif",lineHeight:1.6}}>{e.pathText}</p>
                 </div>
