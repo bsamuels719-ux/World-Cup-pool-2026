@@ -430,8 +430,13 @@ function EntryViewer({entry,onClose}){
 const R32_MATCHUPS=[["South Africa","Canada"],["Germany","Paraguay"],["Netherlands","Morocco"],["Brazil","Japan"],["France","Sweden"],["Ivory Coast","Norway"],["Mexico","Ecuador"],["England","DR Congo"],["USA","Bosnia-Herzegovina"],["Belgium","Senegal"],["Portugal","Croatia"],["Spain","Austria"],["Colombia","Ghana"],["Argentina","Cape Verde"],["Australia","Egypt"],["Switzerland","Algeria"]];
 const R16_MATCHUPS=[["Paraguay","France"],["Canada","Morocco"],["Brazil","Norway"],["Mexico","England"],["Portugal","Spain"],["USA","Belgium"],["Argentina","Egypt"],["Switzerland","Colombia"]];
 
+const VALID_R32_TEAMS=new Set(R32_MATCHUPS.flat());
+
 function isEliminated(team, actuals){
   const ab=actuals.bracket||{};
+  // If a team never even made the actual Round of 32, it's dead immediately
+  // (this catches picks like a group-stage team that didn't advance)
+  if(!VALID_R32_TEAMS.has(team)) return true;
   // Check R32: if a match containing this team has a recorded winner and it's not this team
   for(const [a,b] of R32_MATCHUPS){
     if(a===team||b===team){
@@ -446,8 +451,6 @@ function isEliminated(team, actuals){
       if(winnerRecorded && !(ab.R16||[]).includes(team)) return true;
     }
   }
-  // QF/SF/F: no fixed pairs yet, use round-complete fallback
-  if((ab.QF||[]).length>0 && !(ab.QF||[]).includes(team) && (ab.R16||[]).includes(team)===false) return false;
   return false;
 }
 
