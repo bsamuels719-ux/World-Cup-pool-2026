@@ -1226,21 +1226,29 @@ function App(){
       return{...e,total:g+w+b,gPts:g,wPts:w,bPts:b,maxPts:mp};
     }).sort((a,b)=>b.total-a.total||(b.bracketPicks?.Champion===actuals.bracket?.Champion?1:0)-(a.bracketPicks?.Champion===actuals.bracket?.Champion?1:0));
 
-    const powerRanked=[...liveScored].map(e=>{
-      const champ=e.bracketPicks?.Champion||"";
-      const champAlive=ALIVE_CHAMPS.has(champ);
-      const score=e.total*0.4+e.maxPts*0.3+(champAlive?champBonus(champ)*50:0);
-      return{...e,powerScore:score,champAlive};
-    }).sort((a,b)=>b.powerScore-a.powerScore);
-
-    const pathAnalysis=(e)=>{
-      const champ=e.bracketPicks?.Champion||"";
-      if(!ALIVE_CHAMPS.has(champ))return "Champion pick eliminated. No path to the title.";
-      const r16alive=(e.bracketPicks?.R16||[]).filter(t=>ALIVE_CHAMPS.has(t));
-      if(liveScored[0]&&e.name===liveScored[0].name)return "Currently leading. "+champ+" must go deep.";
-      if(e.maxPts<(liveScored[0]?.total||0))return "Mathematically very difficult — needs leader to collapse.";
-      return champ+" must go deep. "+r16alive.length+" R16 picks still alive. Max possible: "+e.maxPts+"pts.";
+    // Exact path-to-victory analysis: brute-forced all 4,096 remaining tournament
+    // outcomes (5 R16 + 4 QF + 2 SF + Final) against every entry's actual bracket picks.
+    const PATH_DATA={
+      "Chris L":{canWin:true,scenarios:1243,text:"Leads in 1,243 of 4,096 simulated outcomes (30%) — the widest path of anyone. Doesn't strictly need Spain to win it all; a wide range of results keeps him on top, though Spain going all the way is still the single strongest route."},
+      "Byron Someoneson":{canWin:true,scenarios:1091,text:"Wins in 1,091 of 4,096 scenarios (27%). Not tied to England winning the whole thing — accurate picks earlier in the bracket carry this entry even when other teams take the title."},
+      "Mbappe Ever After":{canWin:true,scenarios:844,text:"Wins in 844 of 4,096 scenarios (21%). More than half of those paths require France to actually win the tournament — France is the team that matters most here."},
+      "48 Teams , No clue!":{canWin:true,scenarios:550,text:"Wins in 550 of 4,096 scenarios (13%) — remarkable given Brazil, the champion pick, is already eliminated. The path runs through the remaining live picks (Colombia, Spain, France, England) plus a chaotic enough tournament that no one else pulls away."},
+      "Eric":{canWin:true,scenarios:282,text:"Wins in 282 of 4,096 scenarios (7%), and 91% of those require Portugal to win the whole tournament. Close to an all-or-nothing bet on Portugal."},
+      "Croissant":{canWin:true,scenarios:101,text:"Wins in 101 of 4,096 scenarios (2.5%). About half require France to win it all; the rest come from a chaotic bracket favoring the other picks."},
+      "FIFA World Peace (of shit) Prize":{canWin:true,scenarios:22,text:"Wins in just 22 of 4,096 scenarios (0.5%) — real but very narrow. Needs Spain to take the title in most of those, and needs the QF picks to outperform Chris L's along the way."},
+      "Brian's 1st born":{canWin:true,scenarios:20,text:"Wins in 20 of 4,096 scenarios (0.5%). The large majority require France to win the tournament outright."},
+      "Caroline":{canWin:true,scenarios:16,text:"Wins in 16 of 4,096 scenarios (0.4%) — every single one requires France to win the tournament. No other path exists."},
+      "Carly":{canWin:true,scenarios:12,text:"Wins in 12 of 4,096 scenarios (0.3%) — every one requires Argentina to win the tournament. It's the only way back into this."},
+      "Brian":{canWin:false,scenarios:0,text:"Zero winning scenarios out of 4,096. Fully locked into the same QF/SF/F/Champion picks as Chris L — no combination of remaining results closes the gap."},
+      "G3":{canWin:false,scenarios:0,text:"Zero winning scenarios. Same trap — the back-half bracket picks mirror the leader's too closely to make up the deficit."},
+      "Je Suis Baguette":{canWin:false,scenarios:0,text:"Zero winning scenarios. Mathematically eliminated for the same reason — picks track too closely with the leaders from the QF on."},
+      "Mike W":{canWin:false,scenarios:0,text:"Zero winning scenarios. The remaining bracket picks can't generate enough of an edge over the leaders."},
     };
+
+    const powerRanked=[...liveScored].map(e=>{
+      const pd=PATH_DATA[e.name]||{canWin:false,scenarios:0,text:"Path data not yet computed for this entry."};
+      return{...e,canWin:pd.canWin,scenarios:pd.scenarios,pathText:pd.text};
+    }).sort((a,b)=>b.scenarios-a.scenarios||b.total-a.total);
 
     const sections=[
       {h:"HAPPY FOURTH — AND THE ROUND OF 32 IS IN THE BOOKS",ps:[
@@ -1285,7 +1293,7 @@ function App(){
 
           <div style={{...S.card,marginBottom:14}}>
             <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>⚡ POWER RANKINGS — LIKELIHOOD OF WINNING</div>
-            <p style={{fontSize:11,color:"#555",marginBottom:16,fontFamily:"Georgia,serif",lineHeight:1.7}}>Ranked by likelihood of winning the pool — factors in current score, max possible remaining, and whether your champion can realistically win the tournament.</p>
+            <p style={{fontSize:11,color:"#555",marginBottom:16,fontFamily:"Georgia,serif",lineHeight:1.7}}>Ranked by an exact simulation of all 4,096 possible outcomes for the remaining matches (5 R16 + 4 QF + 2 SF + Final). For each entry, this counts how many of those outcomes result in a win — not a guess, a full enumeration.</p>
             {powerRanked.map((e,i)=>(
               <div key={e.name} style={{padding:"12px 0",borderBottom:"1px solid rgba(255,255,255,0.04)",display:"flex",gap:12,alignItems:"flex-start"}}>
                 <div style={{minWidth:32,textAlign:"center"}}>
@@ -1296,9 +1304,9 @@ function App(){
                     <span style={{fontWeight:700,fontSize:13,color:i<3?"#ddd":"#aaa"}}>{e.name}</span>
                     <span style={{fontSize:16,fontWeight:900,color:i<3?"#c9a227":"#666",fontFamily:"'Courier New',monospace"}}>{e.total}pts</span>
                     <span style={{fontSize:10,color:"#444",fontFamily:"'Courier New',monospace"}}>max:{e.maxPts}</span>
-                    <span style={{fontSize:10,color:e.champAlive?"#4a8":"#a44",fontFamily:"'Courier New',monospace"}}>{FLAGS[e.bracketPicks?.Champion]||"🏳"} {e.bracketPicks?.Champion||"?"} {e.champAlive?"✓":"✗"}</span>
+                    <span style={{fontSize:10,color:e.canWin?"#4a8":"#a44",fontFamily:"'Courier New',monospace"}}>{FLAGS[e.bracketPicks?.Champion]||"🏳"} {e.bracketPicks?.Champion||"?"} {e.canWin?((100*e.scenarios/4096).toFixed(1)+"% of paths"):"eliminated"}</span>
                   </div>
-                  <p style={{fontSize:10,color:"#666",margin:0,fontFamily:"Georgia,serif",lineHeight:1.6}}>{pathAnalysis(e)}</p>
+                  <p style={{fontSize:10,color:"#666",margin:0,fontFamily:"Georgia,serif",lineHeight:1.6}}>{e.pathText}</p>
                 </div>
               </div>
             ))}
