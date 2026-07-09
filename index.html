@@ -1075,17 +1075,20 @@ function App(){
     ];
     // R16 matchups - all confirmed
     const ACTUAL_R16=[
-      {match:89,a:"Paraguay",b:"France"},
-      {match:90,a:"Canada",b:"Morocco"},
-      {match:91,a:"Brazil",b:"Norway"},
-      {match:92,a:"Mexico",b:"England"},
-      {match:93,a:"Portugal",b:"Spain"},
-      {match:94,a:"USA",b:"Belgium"},
-      {match:95,a:"Argentina",b:"Egypt"},
-      {match:96,a:"Switzerland",b:"Colombia"},
+      {match:89,a:"Paraguay",b:"France",winner:"France"},
+      {match:90,a:"Canada",b:"Morocco",winner:"Morocco"},
+      {match:91,a:"Brazil",b:"Norway",winner:"Norway"},
+      {match:92,a:"Mexico",b:"England",winner:"England"},
+      {match:93,a:"Portugal",b:"Spain",winner:"Spain"},
+      {match:94,a:"USA",b:"Belgium",winner:"Belgium"},
+      {match:95,a:"Argentina",b:"Egypt",winner:"Argentina"},
+      {match:96,a:"Switzerland",b:"Colombia",winner:"Switzerland"},
     ];
+    // QF matchups (fixed bracket structure, confirmed): France/Morocco, Norway/England, Spain/Belgium, Argentina/Switzerland
+    const ACTUAL_QF_PAIRS=[["France","Morocco"],["Norway","England"],["Spain","Belgium"],["Argentina","Switzerland"]];
     const ar32=ACTUAL_R32;
     const knownR32Winners=ACTUAL_R32.filter(m=>m.winner).map(m=>m.winner);
+    const knownR16Winners=ACTUAL_R16.filter(m=>m.winner).map(m=>m.winner);
     const adminR16Order=["Paraguay","France","Canada","Morocco","Brazil","Norway","Mexico","England","Portugal","Spain","USA","Belgium","Argentina","Egypt","Switzerland","Colombia"];
     const validR16Set=new Set(adminR16Order);
     // Cascade filter: each round's picks must come from prior round's picks
@@ -1229,20 +1232,20 @@ function App(){
     // Exact path-to-victory analysis: brute-forced all 4,096 remaining tournament
     // outcomes (5 R16 + 4 QF + 2 SF + Final) against every entry's actual bracket picks.
     const PATH_DATA={
-      "Chris L":{canWin:true,scenarios:1243,tieOnly:false,text:"Leads in 1,243 of 4,096 simulated outcomes (30%) — the widest path of anyone. Doesn't strictly need Spain to win it all; a wide range of results keeps him on top, though Spain going all the way is still the single strongest route."},
-      "Byron Someoneson":{canWin:true,scenarios:1091,tieOnly:false,text:"Wins in 1,091 of 4,096 scenarios (27%). Not tied to England winning the whole thing — accurate picks earlier in the bracket carry this entry even when other teams take the title."},
-      "Mbappe Ever After":{canWin:true,scenarios:844,tieOnly:false,text:"Wins in 844 of 4,096 scenarios (21%). More than half of those paths require France to actually win the tournament — France is the team that matters most here."},
-      "48 Teams , No clue!":{canWin:true,scenarios:550,tieOnly:false,text:"Wins in 550 of 4,096 scenarios (13%) — remarkable given Brazil, the champion pick, is already eliminated. The path runs through the remaining live picks (Colombia, Spain, France, England) plus a chaotic enough tournament that no one else pulls away."},
-      "Eric":{canWin:true,scenarios:282,tieOnly:false,text:"Wins in 282 of 4,096 scenarios (7%), and 91% of those require Portugal to win the whole tournament. Close to an all-or-nothing bet on Portugal."},
-      "Croissant":{canWin:true,scenarios:101,tieOnly:false,text:"Wins in 101 of 4,096 scenarios (2.5%) — 72 outright, 29 as a tie. About half require France to win it all; the rest come from a chaotic bracket favoring the other picks."},
-      "FIFA World Peace (of shit) Prize":{canWin:true,scenarios:22,tieOnly:false,text:"Wins in just 22 of 4,096 scenarios (0.5%) — real but very narrow. Needs Spain to take the title in most of those, and needs the QF picks to outperform Chris L's along the way."},
-      "Brian's 1st born":{canWin:true,scenarios:20,tieOnly:false,text:"Wins in 20 of 4,096 scenarios (0.5%) — 14 outright, 6 as a tie. The large majority require France to win the tournament outright."},
-      "Caroline":{canWin:true,scenarios:16,tieOnly:true,text:"Wins in 16 of 4,096 scenarios (0.4%) — but every single one is a TIE for first with Mbappe Ever After, never an outright win. Requires France to win the tournament via a Morocco-then-Spain path through the QF and SF. No solo path exists."},
-      "Carly":{canWin:true,scenarios:12,tieOnly:false,text:"Wins in 12 of 4,096 scenarios (0.3%) — every one requires Argentina to win the tournament. It's the only way back into this."},
-      "Brian":{canWin:false,scenarios:0,tieOnly:false,text:"Zero winning scenarios out of 4,096. Fully locked into the same QF/SF/F/Champion picks as Chris L — no combination of remaining results closes the gap."},
-      "G3":{canWin:false,scenarios:0,tieOnly:false,text:"Zero winning scenarios. Same trap — the back-half bracket picks mirror the leader's too closely to make up the deficit."},
-      "Je Suis Baguette":{canWin:false,scenarios:0,tieOnly:false,text:"Zero winning scenarios. Mathematically eliminated for the same reason — picks track too closely with the leaders from the QF on."},
-      "Mike W":{canWin:false,scenarios:0,tieOnly:false,text:"Zero winning scenarios. The remaining bracket picks can't generate enough of an edge over the leaders."},
+      "Mbappe Ever After":{canWin:true,scenarios:62,tieOnly:false,text:"Wins in 62 of 128 remaining scenarios (48%) — the strongest position in the pool. 16 different champions can still get here to the top, but France winning it all is the single most common path by far."},
+      "Byron Someoneson":{canWin:true,scenarios:40,tieOnly:false,text:"Wins in 40 of 128 remaining scenarios (31%). England winning the tournament is the most frequent path, but not the only one — QF and SF accuracy matters just as much."},
+      "Chris L":{canWin:true,scenarios:19,tieOnly:false,text:"Wins in 19 of 128 remaining scenarios (15%). Spain winning it all covers the majority of these paths, and Spain just beat Portugal to reach the quarterfinal — very much alive."},
+      "FIFA World Peace (of shit) Prize":{canWin:true,scenarios:7,tieOnly:false,text:"Wins in just 7 of 128 remaining scenarios (5.5%) — narrow but real. Needs Spain to go all the way and needs QF/SF results to break unusually well."},
+      "48 Teams , No clue!":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Brazil lost to Norway in the Round of 16 — the champion pick is dead and there's no remaining combination of results that gets back to the top."},
+      "Brian":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Locked into the same QF/SF/F/Champion picks as Chris L with a deficit that can't be closed."},
+      "G3":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Same trap as Brian — the back-half bracket picks mirror the leaders too closely."},
+      "Je Suis Baguette":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Picks track too closely with the leaders from the QF on to make up the gap."},
+      "Mike W":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. France reaching the quarterfinal wasn't enough — the deficit was already too large."},
+      "Croissant":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Same story — France alive but the gap to the leaders can't close from here."},
+      "Eric":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Portugal lost to Spain in the Round of 16 — the champion pick is dead."},
+      "Caroline":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. France reaching the quarterfinal keeps hope alive in theory, but the current deficit is too large to close even in the best case."},
+      "Carly":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Argentina survived Egypt and remain alive, but Carly's overall deficit is too large for any combination of results to close."},
+      "Brian's 1st born":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. France reaching the quarterfinal wasn't enough to keep this one mathematically alive."},
     };
 
     const powerRanked=[...liveScored].map(e=>{
@@ -1252,20 +1255,17 @@ function App(){
     }).sort((a,b)=>b.scenarios-a.scenarios||b.total-a.total);
 
     const sections=[
-      {h:"HAPPY FOURTH — AND THE ROUND OF 32 IS IN THE BOOKS",ps:[
-        "Happy Fourth of July to everyone in this pool. Wherever you are right now — hopefully with a hot dog in one hand and a phone open to a World Cup match in the other — the Commissioner hopes the day is a good one. This is the last stretch before France, and the tournament has given everyone plenty to talk about over the grill this weekend.",
-        "The Round of 32 is done. Thirty-two teams entered. Sixteen survived. It was a genuinely wild stretch of football — four different matches went to penalties, one went to a 125th-minute goal, and Argentina survived a match that had no business being that close.",
-        "France looked like the best team in the tournament. They did not just beat Sweden — they dismantled them, playing with a fluency and clinical edge that made the scoreline feel inevitable well before it was. The Mbappe Ever After entry is sitting at 92 points and feeling justified. Brian, who picked Spain, is watching France's performances with the quiet unease of someone who chose wrong at a restaurant and is now watching his neighbor's plate arrive.",
-        "The Argentina match deserves its own paragraph. They survived Cape Verde 3-2 after extra time in genuinely the most chaotic match of the round — Messi scored, Cape Verde equalized, Lisandro Martinez scored two minutes into extra time, Cape Verde equalized again in the 103rd minute, and then a late own goal finally settled it. Three goals in extra time. The last one went in off a Cape Verde defender. That is how Argentina are still in this tournament, and the Commissioner means that as a compliment to Cape Verde as much as to Argentina.",
-        "Elsewhere: Paraguay beat Germany on penalties and Paraguay declared a national holiday over it. Morocco beat Netherlands on penalties. Belgium came back from two goals down to beat Senegal — Tielemans converting a penalty in the 125th minute, reportedly the latest goal ever scored in a World Cup match. Egypt beat Australia on penalties. Portugal needed extra time to beat Croatia. Haaland scored a late winner for Norway against Ivory Coast. USA beat Bosnia 2-0 — Balogun scored and then got himself sent off, and Malik Tillman sealed it with a finish that had no business being that clean given the circumstances. Colombia beat Ghana. Switzerland beat Algeria. Spain, England, and Brazil all came through without much drama, which is either what good teams do or a sign they haven't been tested yet.",
+      {h:"THE ROUND OF 16 IS DONE — AND IT WAS A LOT",ps:[
+        "The Round of 16 is complete. Eight teams remain: France, Morocco, Norway, England, Spain, Belgium, Argentina, and Switzerland. It was a stretch of football that had everything — a record blowout, a Presidential phone call, a coach accusing the referee of taking sides, and a group of tiny islanders who are somehow still the most talked-about story of the tournament.",
+        "Let's start with the hosts. The USA lost to Belgium 4-1 in Seattle — the Americans' worst knockout-stage defeat since 1930, when they lost 6-1 to Argentina in the semifinal. Before the match, Donald Trump personally intervened to get Folarin Balogun's red card suspension overturned so he could play against Belgium. Balogun played. The USA lost by three goals anyway. FIFA is now facing real scrutiny over the whole episode, and the tournament got its answer to whether presidential phone calls fix a back line: they do not.",
+        "Paraguay lost 1-0 to France but did not go quietly — pundits described their approach as leaning hard into the 'dark arts,' with enough fouls and theater that it took a VAR review just to award the penalty that decided the match. Paraguay's federation declared a national holiday after the Round of 32 win over Germany. After this loss, the vibe was less holiday, more sore.",
+        "Egypt's exit was the most dramatic of the round. They led Argentina 2-0 with eleven minutes to go and somehow lost 3-2 in stoppage time. Egypt's coach Hossam Hassan did not take it well — he accused the referee of favoring Argentina, questioned the officiating on five separate incidents, and complained about the noon kickoff time for good measure. The Egyptian FA followed up with a formal statement about 'controversial and influential refereeing incidents.' Messi scored the equalizer. Argentina scored the winner two minutes into stoppage time. The Commissioner has no ruling on the referee, but does have a ruling on blowing a 2-0 lead with eleven minutes left.",
+        "And then there's Norway. Erling Haaland has been the best story of the knockout rounds not named Cape Verde — he dragged Norway past Brazil, of all teams (Brazil have now never beaten Norway across six meetings), and at this point Norway appears to be the neutral's pick of the entire tournament. Everyone without a dog in the fight has quietly adopted Norway. The Commissioner understands the appeal and is not immune to it either.",
       ]},
       {h:"THE STATE OF THE POOL",ps:[
-        "Everyone in this pool is still scattered across their normal lives right now — Connecticut, Chicago, Portland, wherever — with France still two and a half weeks away. Alex's 40th birthday and Brian's birthday both land on the trip in late July, and by the sound of it half this group is already counting down the days. Barry will be house-sitting back in Connecticut once everyone leaves, but that is not until the 19th — he has not left yet and neither has anyone else. For now, everyone is watching this tournament from home, which apparently has not stopped anyone from having a very strong opinion about how their bracket is doing.",
-        "Chris L is in first place with 93 points. The Commissioner does not have much to add beyond what the number already says. The man had never left the country before this trip was booked and is currently leading a pool of fourteen entries that includes several actuaries and the person who built the app. He once rode a camel in a race — not metaphorically, an actual camel race — and came second with no training. There are photographs. The Commissioner has chosen to believe these two facts are related.",
-        "Three entries are deadlocked at 92 — Barry, Chad, and Alex, all one point behind Chris. Ben sits at 90, a point further back still. Five people within thirteen points of the lead heading into the Round of 16. That is a tight leaderboard by any measure, and the R16 alone could scramble the entire order. One good round and this looks like a completely different pool.",
-        "The France camp — Steven, Caroline, Kat, Alex, and Mike W — are feeling good about their champion pick given how convincingly France have played so far. The Spain camp — Brian, Chris, Gordon, and Ben — are leaning on Spain's clean defensive record and trying not to think too hard about France's last two performances.",
-        "The match everyone in this group is circling is Portugal vs Spain in the Round of 16. Eric picked Portugal to win the whole tournament and is currently sitting in 12th place, which means he needs a deep Portugal run more than almost anyone else needs anything in this pool. Brian, Chris, Gordon, and Ben all picked Spain and need the opposite outcome entirely. It is the kind of matchup that turns a group chat into a warzone, and the Commissioner expects nothing less once it kicks off.",
-        "Enjoy the holiday. Eat something off the grill. The Round of 16 starts this weekend and there is a lot more to fight about before France.",
+        "The Round of 16 results were brutal for this pool. Portugal, Brazil, Colombia, USA, Mexico, Canada, Paraguay, and Egypt are all out — which means Eric (Portugal), Barry (Brazil), Mike W and Steven and several others just lost their champion picks in one seven-day stretch. This pool has gone from fourteen entries with a live shot to four.",
+        "Alex is now in the strongest position — France reaching the quarterfinal alongside her current lead gives her the widest path back to the top. Ben is right behind her with England still alive. Chris L, the man who once asked if France has coffee, is still very much alive with Spain in the final eight. Chad rounds out the group with the narrowest but real window, also riding Spain.",
+        "Everyone else — including Brian, who built this entire app — is now mathematically out. Ten of fourteen entries are officially playing for pride only. The remaining four have real, if increasingly narrow, math in front of them.",
       ]},
     ];
 
@@ -1294,7 +1294,7 @@ function App(){
 
           <div style={{...S.card,marginBottom:14}}>
             <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>⚡ POWER RANKINGS — LIKELIHOOD OF WINNING</div>
-            <p style={{fontSize:11,color:"#555",marginBottom:16,fontFamily:"Georgia,serif",lineHeight:1.7}}>Ranked by an exact simulation of all 4,096 possible outcomes for the remaining matches (5 R16 + 4 QF + 2 SF + Final). For each entry, this counts how many of those outcomes result in a win — not a guess, a full enumeration.</p>
+            <p style={{fontSize:11,color:"#555",marginBottom:16,fontFamily:"Georgia,serif",lineHeight:1.7}}>Ranked by an exact simulation of all 128 possible outcomes for the remaining matches (4 QF + 2 SF + Final — the Round of 16 is now fully decided). For each entry, this counts how many of those outcomes result in a win — not a guess, a full enumeration.</p>
             {powerRanked.map((e,i)=>(
               <div key={e.name} style={{padding:"12px 0",borderBottom:"1px solid rgba(255,255,255,0.04)",display:"flex",gap:12,alignItems:"flex-start"}}>
                 <div style={{minWidth:32,textAlign:"center"}}>
