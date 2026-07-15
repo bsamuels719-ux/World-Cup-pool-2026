@@ -1097,11 +1097,11 @@ function App(){
     const savedSF=(actuals.bracket?.SF||[]).filter(t=>savedQF.includes(t));
     const savedF=(actuals.bracket?.F||[]).filter(t=>savedSF.includes(t));
     const savedChamp=savedF.includes(actuals.bracket?.Champion)?actuals.bracket.Champion:null;
-    const abp={R32:knownR32Winners,R16:savedR16,QF:savedQF,SF:savedSF,F:savedF,Champion:savedChamp};
+    const abp={R32:knownR32Winners,R16:knownR16Winners,QF:savedQF,SF:savedSF,F:savedF,Champion:savedChamp};
     const setABP=upd=>{
       const n=typeof upd==="function"?upd({...abp,R32:adminR16Order}):upd;
-      // Always force correct R32, and cascade-filter all rounds
-      const cleanR16=(n.R16||[]).filter(t=>validR16Set.has(t));
+      // Always force correct R32 and R16 (fixed canonical order), cascade-filter QF/SF/F
+      const cleanR16=knownR16Winners;
       const cleanQF=(n.QF||[]).filter(t=>cleanR16.includes(t));
       const cleanSF=(n.SF||[]).filter(t=>cleanQF.includes(t));
       const cleanF=(n.F||[]).filter(t=>cleanSF.includes(t));
