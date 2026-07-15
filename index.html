@@ -1187,14 +1187,14 @@ function App(){
         <div style={{fontSize:18,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:4,fontFamily:"'Courier New',monospace"}}>👥 THE CAST</div>
         <div style={{fontSize:10,color:"#555",marginBottom:20,fontFamily:"'Courier New',monospace"}}>The people behind the picks.</div>
         {[
-          {n:"48 Teams, No Clue! 🇧🇷",t:"Barry. Brian's dad. Just relocated to North Carolina with Brian's mom to retire. Not on the France trip — heading to Connecticut in mid-July to house-sit and keep Stormy and Cooper company. Barry is a child in a grown man's body. He likes Manhattans, one-liners, and busting people's balls. Brazil topped Group C. Barry does not know this. When last reached, sources indicate he said 'sounds good' and went to take his contacts out — which is Barry's universal signal that he is done for the evening. He will not be coming back."},
+          {n:"48 Teams, No Clue! 🇧🇷",t:"Barry. Brian's dad. Just relocated to North Carolina with Brian's mom to retire. Not on the France trip — he's in Connecticut right now house-sitting and keeping Stormy and Cooper company while everyone else travels to France this week. Barry is a child in a grown man's body. He likes Manhattans, one-liners, and busting people's balls. Brazil topped Group C. Barry does not know this. When last reached, sources indicate he said 'sounds good' and went to take his contacts out — which is Barry's universal signal that he is done for the evening. He will not be coming back."},
           {n:"Brian 🇪🇸",t:"The Commissioner. Built this entire app using AI and refuses to apologize for it. Picked Spain, who won their group without conceding a single goal. Is currently in 6th place, which means five people have outscored him on the app he built. He will be in France for Alex's 40th birthday, which also happens to be his birthday on July 19th. He is competitive, emotional, and will absolutely bring up the app at least twice per day."},
           {n:"Brian's 1st Born 🇫🇷",t:"Steven. Brian's former direct report and, in the workplace sense, his professional firstborn — a joke Steven named this entry after himself, fully aware of what he was doing. Not on the France trip. Has had several concussions, including a notable ski fall witnessed by multiple members of this pool. Picked France, who went 3-0 with 10 goals. Steven tries very hard and loves his small wins over Brian. The Commissioner feels it only fair to document the losses with equal enthusiasm."},
           {n:"Byron Someoneson 🏴󠁧󠁢󠁥󠁮󠁧󠁿",t:"Ben. Henry's son. Henry gave Ben this entry and Ben picked England, who won Group L. Ben went to a USA vs Australia game with Henry. He has been to Phish concerts with Henry. Whether he is secretly an Australia fan remains the only unresolved question about him. The Commissioner notes this family entered two picks and both are performing well, which suggests either coordination or good genes."},
           {n:"Carly 🇦🇷",t:"One of Alex's oldest friends — the trio of Alex, Kat, and Carly goes back to childhood in the Chicago suburbs. Easy-going, relaxed, the kind of person who after Alex and Brian's wedding was spotted walking barefoot through Hartford, at which point Alex and Brian rolled down the car window and asked if she needed a ride. She did not appear to need one. Picked Argentina, who went 3-0 with the best group stage record in the tournament. Her group picks cost her but Argentina is very much alive."},
           {n:"Caroline 🇫🇷",t:"Gordon's wife and one of Alex and Brian's closest friends in Connecticut. She picked France, and France went 3-0. For the record, Caroline knows the entire Sound of Music soundtrack — which the Commissioner would like to acknowledge is more than most people in this pool know about anything. She and Kat have been making Sound of Music references for years and show no signs of stopping, least of all in France. She drove Alex and Brian to the emergency room on their wedding day without panicking. The hills will be alive. Her bracket is fine."},
           {n:"Chris L 🇪🇸",t:"Brian's cousin and the wildcard of the France trip. First time leaving the country. Before departure, asked — in complete sincerity — whether France has coffee. It does, Chris. France invented the café. They will have one on every corner. Chris picked Spain, who won their group without conceding a goal, and is currently in first place. The Commissioner has checked this multiple times. The man who did not know France had coffee is leading this pool."},
-          {n:"Croissant 🇫🇷",t:"Kat. Alex's best friend and maid of honor, part of the Chicago trio with Carly. She ran her own restaurant for years and has the kind of taste in food and wine that makes dining with her a very good idea. She has not checked the score. She is more interested in what's for dinner. She says she will become part croissant by the end of this trip and has committed to this with full sincerity. A bartender once told Alex that Kat was being cut off because he looked into her eyes and there was nothing there. The Commissioner believes what he saw was peace."},
+          {n:"Croissant 🇫🇷",t:"Kat. Alex's best friend and maid of honor, part of the Chicago trio with Carly. She ran her own restaurant for years and has the kind of taste in food and wine that makes dining with her a very good idea. She has actually started watching this tournament, which the Commissioner considers a genuine plot twist. She says she will become part croissant by the end of this trip and has committed to this with full sincerity. A bartender once told Alex that Kat was being cut off because he looked into her eyes and there was nothing there. The Commissioner believes what he saw was peace."},
           {n:"Eric 🇵🇹",t:"Brian's brother. Architect. Six years younger and also bigger, which Brian has not forgotten. Just returned from six months in Miami with his dog Hazey. Eric is the one who started the group's barefoot World Cup tradition — organized the whole thing, drew up the brackets, got everyone involved. Brian repaid him by slide tackling him into the ground in the finals. Brian's team won. Eric still organized the next one. Picked Portugal, who finished second in their group. Is currently in 12th but builds things for a living and the Commissioner expects a structural comeback."},
           {n:"FIFA World Peace (of Shit) Prize 🇪🇸",t:"Chad. Carly's husband and the real wildcard of the trip. Lost the engagement ring from his grandmother in Italy — the one he was going to propose with — and had to go buy a new one on the spot. There is also a separate reported incident involving rental car keys and a toilet that the Commissioner has chosen not to investigate further. Picked Spain. Spain won their group without conceding a goal. Chad is built differently than other people and the Commissioner means that as a compliment."},
           {n:"G3 🇪🇸",t:"Gordon. Caroline's husband and one of Brian's closest friends — met at work in insurance, bonded over the company soccer team and double IPAs, specifically Sip of Sunshine. Lives on a Christmas tree farm in New Hartford, Connecticut. Phenomenal skier. Organized a JDRF bar crawl years ago and did the Thriller dance in the middle of it, which is the single greatest thing the Commissioner has ever documented about him. Picked Spain. Spain delivered."},
@@ -1232,20 +1232,20 @@ function App(){
     // Exact path-to-victory analysis: brute-forced all 4,096 remaining tournament
     // outcomes (5 R16 + 4 QF + 2 SF + Final) against every entry's actual bracket picks.
     const PATH_DATA={
-      "Mbappe Ever After":{canWin:true,scenarios:62,tieOnly:false,text:"Wins in 62 of 128 remaining scenarios (48%) — the strongest position in the pool. 16 different champions can still get here to the top, but France winning it all is the single most common path by far."},
-      "Byron Someoneson":{canWin:true,scenarios:40,tieOnly:false,text:"Wins in 40 of 128 remaining scenarios (31%). England winning the tournament is the most frequent path, but not the only one — QF and SF accuracy matters just as much."},
-      "Chris L":{canWin:true,scenarios:19,tieOnly:false,text:"Wins in 19 of 128 remaining scenarios (15%). Spain winning it all covers the majority of these paths, and Spain just beat Portugal to reach the quarterfinal — very much alive."},
-      "FIFA World Peace (of shit) Prize":{canWin:true,scenarios:7,tieOnly:false,text:"Wins in just 7 of 128 remaining scenarios (5.5%) — narrow but real. Needs Spain to go all the way and needs QF/SF results to break unusually well."},
-      "48 Teams , No clue!":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Brazil lost to Norway in the Round of 16 — the champion pick is dead and there's no remaining combination of results that gets back to the top."},
-      "Brian":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Locked into the same QF/SF/F/Champion picks as Chris L with a deficit that can't be closed."},
-      "G3":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Same trap as Brian — the back-half bracket picks mirror the leaders too closely."},
-      "Je Suis Baguette":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Picks track too closely with the leaders from the QF on to make up the gap."},
-      "Mike W":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. France reaching the quarterfinal wasn't enough — the deficit was already too large."},
-      "Croissant":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Same story — France alive but the gap to the leaders can't close from here."},
-      "Eric":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Portugal lost to Spain in the Round of 16 — the champion pick is dead."},
-      "Caroline":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. France reaching the quarterfinal keeps hope alive in theory, but the current deficit is too large to close even in the best case."},
-      "Carly":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Argentina survived Egypt and remain alive, but Carly's overall deficit is too large for any combination of results to close."},
-      "Brian's 1st born":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. France reaching the quarterfinal wasn't enough to keep this one mathematically alive."},
+      "Chris L":{canWin:true,scenarios:2,tieOnly:false,text:"Wins in 2 of 4 remaining scenarios (50%). Spain has already booked its place in the Final — this is now a coin flip on whether Spain wins the championship match."},
+      "Byron Someoneson":{canWin:true,scenarios:1,tieOnly:false,text:"Wins in 1 of 4 remaining scenarios (25%). Needs England to beat Argentina on July 15, then beat Spain in the Final on the 19th."},
+      "Mbappe Ever After":{canWin:true,scenarios:1,tieOnly:false,text:"Wins in 1 of 4 remaining scenarios (25%) — remarkably still alive even though France is out. The Semifinal picks included both France and Argentina, so if Argentina wins the whole tournament, there's still enough here to come out on top."},
+      "FIFA World Peace (of shit) Prize":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Spain reaching the Final wasn't enough on its own to close the gap to the leaders."},
+      "Brian":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Locked into the same picks as Chris L from the Quarterfinal on — the gap was set in stone weeks ago."},
+      "Je Suis Baguette":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Same trap — picks tracked too closely with the leaders."},
+      "G3":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Spain reaching the Final keeps this technically interesting but mathematically closed."},
+      "48 Teams , No clue!":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Brazil has been dead since the Round of 16."},
+      "Caroline":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. France's run is over and the gap was already too large regardless."},
+      "Croissant":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Same story as Caroline."},
+      "Mike W":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. France is out, and so is any realistic path back."},
+      "Eric":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Portugal has been dead since the Round of 16."},
+      "Brian's 1st born":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. France is out, closing the door for good."},
+      "Carly":{canWin:false,scenarios:0,tieOnly:false,text:"Eliminated. Argentina still alive in the tournament, which is more than can be said for the pool chances at this point."},
     };
 
     const powerRanked=[...liveScored].map(e=>{
@@ -1255,6 +1255,11 @@ function App(){
     }).sort((a,b)=>b.scenarios-a.scenarios||b.total-a.total);
 
     const sections=[
+      {h:"SPAIN IS IN THE FINAL — AND SO, BARELY, IS THIS POOL",ps:[
+        "Spain beat France 2-0 in the Semifinal today, July 14th, in Dallas. France is out. Spain is through to the Final on July 19th — Brian's birthday, for the record. The second Semifinal, England vs Argentina, is tomorrow. Whoever wins that joins Spain in New Jersey for the championship match.",
+        "This eliminates Alex's champion pick outright, but not quite her chances — she had both France and Argentina in her Semifinal picks, so if Argentina goes on to beat Spain in the Final, there's still enough points on the board to put her back on top. That's either clever bracket construction or accidental foresight, and the Commissioner is choosing not to ask which.",
+        "With Spain locked into the Final, the math is about as simple as it's going to get: three entries remain alive. Chris L sits at 50% — Spain just needs to win the whole thing. Ben needs England to beat Argentina tomorrow and then beat Spain in the Final. Alex needs Argentina to do both of those same things instead. Everyone else, all eleven other entries, is done.",
+      ]},
       {h:"THE ROUND OF 16 IS DONE — AND IT WAS A LOT",ps:[
         "The Round of 16 is complete. Eight teams remain: France, Morocco, Norway, England, Spain, Belgium, Argentina, and Switzerland. It was a stretch of football that had everything — a record blowout, a Presidential phone call, a coach accusing the referee of taking sides, and a group of tiny islanders who are somehow still the most talked-about story of the tournament.",
         "Let's start with the hosts. The USA lost to Belgium 4-1 in Seattle — the Americans' worst knockout-stage defeat since 1930, when they lost 6-1 to Argentina in the semifinal. Before the match, Donald Trump personally intervened to get Folarin Balogun's red card suspension overturned so he could play against Belgium. Balogun played. The USA lost by three goals anyway. FIFA is now facing real scrutiny over the whole episode, and the tournament got its answer to whether presidential phone calls fix a back line: they do not.",
@@ -1262,10 +1267,8 @@ function App(){
         "Egypt's exit was the most dramatic of the round. They led Argentina 2-0 with eleven minutes to go and somehow lost 3-2 in stoppage time. Egypt's coach Hossam Hassan did not take it well — he accused the referee of favoring Argentina, questioned the officiating on five separate incidents, and complained about the noon kickoff time for good measure. The Egyptian FA followed up with a formal statement about 'controversial and influential refereeing incidents.' Messi scored the equalizer. Argentina scored the winner two minutes into stoppage time. The Commissioner has no ruling on the referee, but does have a ruling on blowing a 2-0 lead with eleven minutes left.",
         "And then there's Norway. Erling Haaland has been the best story of the knockout rounds not named Cape Verde — he dragged Norway past Brazil, of all teams (Brazil have now never beaten Norway across six meetings), and at this point Norway appears to be the neutral's pick of the entire tournament. Everyone without a dog in the fight has quietly adopted Norway. The Commissioner understands the appeal and is not immune to it either.",
       ]},
-      {h:"THE STATE OF THE POOL",ps:[
-        "The Round of 16 results were brutal for this pool. Portugal, Brazil, Colombia, USA, Mexico, Canada, Paraguay, and Egypt are all out — which means Eric (Portugal), Barry (Brazil), Mike W and Steven and several others just lost their champion picks in one seven-day stretch. This pool has gone from fourteen entries with a live shot to four.",
-        "Alex is now in the strongest position — France reaching the quarterfinal alongside her current lead gives her the widest path back to the top. Ben is right behind her with England still alive. Chris L, the man who once asked if France has coffee, is still very much alive with Spain in the final eight. Chad rounds out the group with the narrowest but real window, also riding Spain.",
-        "Everyone else — including Brian, who built this entire app — is now mathematically out. Ten of fourteen entries are officially playing for pride only. The remaining four have real, if increasingly narrow, math in front of them.",
+      {h:"ONE HONEST CORRECTION",ps:[
+        "Several entries — including Brian and Chris L — picked Semifinal matchups like 'France vs Spain' that were never actually possible given the real tournament bracket. France and Spain were drawn on opposite halves from the start; they could only ever meet in the Final, not the Semifinal. This didn't cost anyone any points — every pick is scored on whether that team reached that round, not on whether the exact matchup imagined was realistic — but it's a fair critique of how the original picker was built, and worth fixing if this pool runs again.",
       ]},
     ];
 
@@ -1280,8 +1283,8 @@ function App(){
           </nav>
         </header>
         <div style={{...S.main,maxWidth:720}}>
-          <div style={{fontSize:20,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:2,fontFamily:"'Courier New',monospace"}}>📋 COMMISSIONER'S REPORT</div>
-          <div style={{fontSize:10,color:"#555",marginBottom:20,fontFamily:"'Courier New',monospace",letterSpacing:2}}>ROUND OF 16 EDITION</div>
+          <div style={{fontSize:20,fontWeight:900,color:"#c9a227",letterSpacing:2,marginBottom:2,fontFamily:"'Courier New',monospace"}}>📋 COMMISSIONER\'S REPORT</div>
+          <div style={{fontSize:10,color:"#555",marginBottom:20,fontFamily:"'Courier New',monospace",letterSpacing:2}}>SEMIFINAL EDITION</div>
 
           {sections.map(({h,ps})=>(
             <div key={h} style={{...S.card,marginBottom:14}}>
@@ -1291,6 +1294,35 @@ function App(){
               ))}
             </div>
           ))}
+
+          <div style={{...S.card,marginBottom:14}}>
+            <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:12,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>📋 FINAL GRADES</div>
+            {[
+              {n:"Mbappe Ever After (Alex)",grade:"A-",t:"France lost to Spain in the Semifinal, which should end this — but her Semifinal picks included Argentina too, so a 25% path survives on a technicality. Still the pool\'s most efficient bracket builder even in defeat."},
+              {n:"Byron Someoneson (Ben)",grade:"A",t:"Needs England to beat Argentina tomorrow and then Spain in the Final — a real but narrow 25% path. The Australia-fan jury is still out, but the bracket accuracy is not in question."},
+              {n:"Chris L",grade:"A+",t:"Leads the pool outright and sits at a 50/50 coin flip to win the whole thing. The man who didn\'t know France had coffee before this trip has Spain — already through to the Final — doing the heaviest lifting of any pick in this pool."},
+              {n:"FIFA World Peace (of shit) Prize (Chad)",grade:"B+",t:"Spain\'s run got him to 4th, agonizingly close to a real path, but the Quarterfinal results shut the door. Built differently, scored respectably. The engagement ring and the toilet incident remain undefeated as this pool\'s most enduring stories."},
+              {n:"Brian",grade:"B",t:"Built the app. Currently 5th on it. Locked into the exact same picks as Chris L from the Quarterfinal onward, which capped the ceiling weeks before anyone noticed. The engineering held up better than the bracket."},
+            {n:"48 Teams, No Clue! (Barry)",grade:"B-",t:"Brazil died in the Round of 16 and Barry is still tied for 6th, propped up almost entirely by group stage and wildcard points from back when Brazil still had a pulse. He's in Connecticut now holding down the house while everyone else heads to France this week, still unaware, contacts out."},
+              {n:"Je Suis Baguette (Henry)",grade:"B-",t:"Quietly doing fine. Saying nothing about it. Exactly as advertised since week one."},
+              {n:"G3 (Gordon)",grade:"B-",t:"The Christmas tree farm continues to yield modest, respectable returns. Spain's run got him into relevance. A Sip of Sunshine has been earned."},
+              {n:"Croissant (Kat)",grade:"C+",t:"Has, remarkably, actually started watching the tournament. France reaching the Semifinal only helps. The pocket croissant lifestyle continues undisturbed regardless."},
+              {n:"Caroline",grade:"C+",t:"France's run keeps this afloat. She remains unaware and unbothered. The hills, as previously established, remain alive. So does the Sound of Music discourse with Kat."},
+              {n:"Mike W",grade:"C",t:"Picked France, watched films by decade instead of checking his rank, and is currently sitting exactly where that level of engagement would predict. Scary smart, evidently not scary invested."},
+              {n:"Eric",grade:"C-",t:"Portugal lost to Spain, and Eric's ceiling caved in with it. The barefoot World Cup tradition he started remains intact. This bracket does not."},
+              {n:"Brian's 1st Born (Steven)",grade:"D+",t:"France remains alive, technically, but the math is not kind. A small win over Brian used to be an achievable goal for this entry; the current standings deny him even that."},
+              {n:"Carly",grade:"D",t:"Argentina remain alive in the tournament, which is more than can be said for realistic pool chances at this point. She is, as always, not worried."},
+              {n:"Kerry — Not In The Pool",grade:"N/A",t:"Did not enter a bracket, has no picks, cannot mathematically win or lose. By this measure, the only truly undefeated record in the entire pool. The pocket croissant and the Magners incident remain more memorable than anything on this leaderboard."},
+            ].map(({n,grade,t})=>(
+              <div key={n} style={{marginBottom:14,paddingBottom:14,borderBottom:"1px solid rgba(255,255,255,0.04)",display:"flex",gap:12}}>
+                <div style={{fontSize:20,fontWeight:900,color:grade==="N/A"?"#888":grade[0]==="A"?"#4a8":grade[0]==="B"?"#c9a227":grade[0]==="C"?"#c96":"#a44",fontFamily:"'Courier New',monospace",minWidth:38,textAlign:"center"}}>{grade}</div>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:12,fontWeight:700,color:"#ddd",marginBottom:4}}>{n}</div>
+                  <p style={{fontSize:11,color:"#888",lineHeight:1.8,fontFamily:"Georgia,serif",margin:0}}>{t}</p>
+                </div>
+              </div>
+            ))}
+          </div>
 
           <div style={{...S.card,marginBottom:14}}>
             <div style={{fontSize:12,fontWeight:900,color:"#c9a227",marginBottom:10,fontFamily:"'Courier New',monospace",letterSpacing:1,borderBottom:"1px solid rgba(201,162,39,0.15)",paddingBottom:7}}>⚡ POWER RANKINGS — LIKELIHOOD OF WINNING</div>
